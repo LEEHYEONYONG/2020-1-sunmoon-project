@@ -1,6 +1,7 @@
 package sale;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -21,23 +22,46 @@ public class SaleBtn extends JPanel {
 		setBackground(Color.WHITE);
 		
 		sBtnPdChange = new JButton("상품수정"); //상품수정버튼 꾸미기
+		sBtnPdChange.setBackground(new Color(0, 0, 128));
+		sBtnPdChange.setForeground(new Color(255, 255, 255));
+		sBtnPdChange.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+		sBtnPdChange.setBounds(0, 28, 164, 85);
 		add(sBtnPdChange);
 		
 		sBtnPdCancel = new JButton("상품취소");
+		sBtnPdCancel.setBackground(new Color(100, 149, 237));
+		sBtnPdCancel.setForeground(new Color(255, 255, 255));
+		sBtnPdCancel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+		sBtnPdCancel.setBounds(176, 28, 164, 85);
 		add(sBtnPdCancel);
 		
 		sBtnPdHold = new JButton("상품보류");
+		sBtnPdHold.setForeground(Color.WHITE);
+		sBtnPdHold.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+		sBtnPdHold.setBackground(new Color(0, 0, 128));
+		sBtnPdHold.setBounds(359, 28, 164, 85);
 		add(sBtnPdHold);
 		
-		sBtnPay = new JButton("결제");
-		add(sBtnPay);
-		
 		sBtnAcancel = new JButton("거래취소");
+		sBtnAcancel.setForeground(Color.WHITE);
+		sBtnAcancel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+		sBtnAcancel.setBackground(new Color(255, 51, 0));
+		sBtnAcancel.setBounds(547, 28, 164, 85);
 		add(sBtnAcancel);
 		
-		sBtnCancel = new JButton("취소버튼");
-		add(sBtnCancel);
+		sBtnPay = new JButton("결제");
+		sBtnPay.setForeground(Color.WHITE);
+		sBtnPay.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+		sBtnPay.setBackground(new Color(153, 0, 0));
+		sBtnPay.setBounds(723, 28, 164, 85);
+		add(sBtnPay);
 		
+		sBtnCancel = new JButton("환불");
+		sBtnCancel.setBounds(899, 28, 164, 85);
+		sBtnCancel.setForeground(Color.WHITE);
+		sBtnCancel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+		sBtnCancel.setBackground(new Color(153, 0, 0));
+		add(sBtnCancel);
 		
 		
 		
