@@ -159,7 +159,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) { //이벤트처리 
 		Object ob = e.getSource();
 		Object obb =e.getActionCommand();
 		
