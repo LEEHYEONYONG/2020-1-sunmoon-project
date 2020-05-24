@@ -17,7 +17,7 @@ import sale.SaleBtn;
 import sale.SalesInputService;
 import sale.ViewSalesInput;
 
-public class MainFrame extends JFrame implements ActionListener{
+public class MainFrame extends JFrame implements ActionListener{// 메인프레임 
 	
 	
 	public CardLayout monitor;

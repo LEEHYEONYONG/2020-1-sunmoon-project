@@ -7,7 +7,7 @@ import java.awt.event.KeyListener;
 
 import main.MainFrame;
 
-public class SalesInputService implements KeyListener, ActionListener{
+public class SalesInputService implements KeyListener, ActionListener{//판매 이벤트 처리
 	
 	SaleBtn salebtn = new SaleBtn();
 	MainFrame mainframe;

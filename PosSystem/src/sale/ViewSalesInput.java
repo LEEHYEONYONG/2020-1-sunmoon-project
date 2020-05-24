@@ -13,7 +13,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-public class ViewSalesInput extends JPanel{
+public class ViewSalesInput extends JPanel{//상품목록표시 GUI
 	public JTextField code_input;
 	public JTextField product_name_input;
 	public JTextField total_price_input;
