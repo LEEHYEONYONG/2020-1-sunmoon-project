@@ -19,10 +19,14 @@ import sale.Payment_4;
 import sale.SaleBtn;
 import sale.SalesInputService;
 import sale.ViewSalesInput;
+import stock.StockBtn;
+import stock.StockMonitor;
 
 public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀÎÇÁ·¹ÀÓ 
 	
 	
+	StockBtn stockbtn;
+	StockMonitor stockmonitor = new StockMonitor();
 	public CardLayout monitor;
 	public CardLayout btn;
 	Thread thread;
@@ -53,7 +57,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	public MainFrame(){
 		monitor = new CardLayout();
 		btn = new CardLayout();
-		
+		stockbtn = new StockBtn();
 		
 		setFont(new Font("¸¼Àº °íµñ",Font.BOLD,20));
 		setTitle("pos");
@@ -119,8 +123,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 		
 		//////////////////////////////////
+//		¸ð´ÏÅÍÆÐ³Î¿¡ Ä«µå·¹ÀÌ¾Æ¿ôÁÖ°í °¢È­¸é ÆÐ³Î °´Ã¼»ý¼ºÇÏ¿© Ãß°¡
 		pMonitor.add("ViewSalesInput", viewSalesInput);
-		
+		pMonitor.add(stockmonitor, "Stock");
 		
 		pFBtn = new JPanel();
 		pFBtn.setBackground(Color.WHITE);
@@ -130,8 +135,26 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 		
         //////////////////////////////////
+//		±â´É¹öÆ°ÆÐ³Î Ä«µå °¢±â´É¹öÆ° ÆÐ³Î °´Ã¼»ý¼ºÈÄ Ãß°¡
 		pFBtn.add(salebtn, "salebtn");
+		pFBtn.add(stockbtn, "Stockbtn");
+		//pFBtn.add(statbtn, "Statbtn");
+		//pFBtn.add(accbtn, "Accbtn");
+		//pFBtn.add(calcbtn, "Calcbtn");
 		
+		
+		// ¸ÞÀÎ±â´É¹öÆ°
+		mBtnInven.addActionListener(this);
+		mBtnSale.addActionListener(this);
+		//mBtnCalc.addActionListener(calcService);
+		mBtnStat.addActionListener(this);
+		
+		
+		// Àç°í ±â´É¹öÆ°
+		stockbtn.stockSearch.addActionListener(this);
+		stockbtn.stockIn.addActionListener(this);
+		stockbtn.stockChg.addActionListener(this);
+		stockbtn.stockevery.addActionListener(this);
 		
 		
 		//ÆÇ¸Å ±â´É ¸®½º³Ê
@@ -185,17 +208,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 		//¸ÞÀÎ±â´Éµé
 		if(ob==mBtnSale) {//ÆÇ¸Å°ü¸®
-			mBtnSale.setBackground(new Color(255, 69, 0));
-			mBtnAccount.setBackground(new Color(28, 94, 94));
-			mBtnCalc.setBackground(new Color(28, 94, 94));
-			mBtnInven.setBackground(new Color(28, 94, 94));
-			mBtnStat.setBackground(new Color(99, 166, 166));
 			monitor.show(pMonitor, "ViewSalesInput");
 			btn.show(pFBtn, "salebtn");
 		} else if (ob == mBtnStat) {//Åë°è
 			
 		} else if (ob == mBtnInven) {//Àç°í°ü¸®
-			
+			monitor.show(pMonitor, "Stock");
+			btn.show(pFBtn, "Stockbtn");
 		} else if (ob == mBtnCalc) {
 			
 		}
