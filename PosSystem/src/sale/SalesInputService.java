@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
+import db.PosDto;
 import main.MainFrame;
 
 public class SalesInputService implements KeyListener, ActionListener{//ÆÇ¸Å ÀÌº¥Æ® Ã³¸®
@@ -18,7 +19,7 @@ public class SalesInputService implements KeyListener, ActionListener{//ÆÇ¸Å ÀÌº
 	MainFrame mainframe;
 	//SalesInputDao salesInputDao;//DB
 	public static boolean key;
-	//Vector<PosDto> salesList;//DB
+	Vector<PosDto> salesList;
 	Vector<Object> getgoods;
 	int overlapRow;
 	boolean memshipcheck = false;
@@ -39,7 +40,7 @@ public class SalesInputService implements KeyListener, ActionListener{//ÆÇ¸Å ÀÌº
 		
 		if (e.getKeyCode() == 10) {
 			System.out.println(e);
-			//goodsListProcess();
+			goodsListProcess();
 		}
 
 
@@ -321,30 +322,6 @@ public class SalesInputService implements KeyListener, ActionListener{//ÆÇ¸Å ÀÌº
 		mainframe.payment_1.tfP1Afterprice.setText("");
 
 	}
-
-	
-	
-	public void listAdd(Vector<PosDto> salesList) {
-		if (salesList == null)
-			JOptionPane.showMessageDialog(mainframe, "»óÇ°ÀÌ Á¸ÀçÇÏÁö¾Ê½À´Ï´Ù.", "»óÇ°¾øÀ½", JOptionPane.ERROR_MESSAGE);
-		else {
-			int size = salesList.size();
-
-			Vector<String> rows = new Vector<String>();
-
-			rows.addElement(Integer.toString(salesList.get(0).getListNum()));
-			rows.addElement(salesList.get(0).getProductCode());
-			rows.addElement(salesList.get(0).getProductName());
-			rows.addElement(Integer.toString(salesList.get(0).getPrice()));
-			rows.addElement(String.valueOf(salesList.get(0).getSellCount()));
-			rows.addElement(String.valueOf(salesList.get(0).getPricensellCount()));
-			rows.addElement(salesList.get(0).getInDate());
-
-			mainframe.viewSalesInput.model.addRow(rows);
-			System.out.println("¹Ý¿µ¿Ï·á");
-
-		}
-	}
 	
 	
 	*/
@@ -367,17 +344,28 @@ public class SalesInputService implements KeyListener, ActionListener{//ÆÇ¸Å ÀÌº
 	}
 	
 	
-	/*
+	
 	
 	public void goodsListProcess() {
+
 		if (mainframe.viewSalesInput.code_input.getText().trim().length() > 0) {
 
 			if (checkOverlap(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase(), 1)) {
 				key = true;
 				System.out.println(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase());
 				System.out.println("ÄÚµå·Î°Ë»ö" + mainframe.viewSalesInput.code_input.getText().length());
-
-				listAdd(salesInputDao.searchBy(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase()));
+				/* test¿ë
+				String[] a= new String[7];
+				a[0]="1212";
+				a[1]="DB-78";
+				a[2]="¹Ù³ª³ª";
+				a[3]="2500";
+				a[4]="1";
+				a[5]="2500";
+				a[6]="2017-5-25";
+				mainframe.viewSalesInput.model.addRow(a);
+				*/
+				//listAdd(salesInputDao.searchBy(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase()));
 
 			} else {
 				// ¼ö·® º¯°æ
@@ -398,8 +386,8 @@ public class SalesInputService implements KeyListener, ActionListener{//ÆÇ¸Å ÀÌº
 			if (checkOverlap(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase(), 2)) {
 				key = false;
 				System.out.println("ÀÌ¸§À¸·Î°Ë»ö" + mainframe.viewSalesInput.product_name_input.getText().length());
-				listAdd(salesInputDao
-						.searchBy(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase()));
+				
+				//listAdd(salesInputDao.searchBy(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase()));
 
 			} else {
 				System.out.println("ÀÌ¸§Áßº¹ ¹ß»ý");
@@ -425,7 +413,29 @@ public class SalesInputService implements KeyListener, ActionListener{//ÆÇ¸Å ÀÌº
 	}
 	
 	
-	*/
+	public void listAdd(Vector<PosDto> salesList) {
+		if (salesList == null)
+			JOptionPane.showMessageDialog(mainframe, "»óÇ°ÀÌ Á¸ÀçÇÏÁö¾Ê½À´Ï´Ù.", "»óÇ°¾øÀ½", JOptionPane.ERROR_MESSAGE);
+		else {
+			int size = salesList.size();
+
+			Vector<String> rows = new Vector<String>();
+
+			rows.addElement(Integer.toString(salesList.get(0).getListNum()));
+			rows.addElement(salesList.get(0).getProductCode());
+			rows.addElement(salesList.get(0).getProductName());
+			rows.addElement(Integer.toString(salesList.get(0).getPrice()));
+			rows.addElement(String.valueOf(salesList.get(0).getSellCount()));
+			rows.addElement(String.valueOf(salesList.get(0).getPricensellCount()));
+			rows.addElement(salesList.get(0).getInDate());
+
+			mainframe.viewSalesInput.model.addRow(rows);
+			System.out.println("¹Ý¿µ¿Ï·á");
+
+		}
+	}
+	
+	
 	
 	public void totalApply() {
 		int tp = 0;

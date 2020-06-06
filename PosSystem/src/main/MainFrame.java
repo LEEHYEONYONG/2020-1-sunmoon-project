@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import sale.DealCancel;
+import sale.Payment_1;
 import sale.Payment_3;
 import sale.Payment_4;
 import sale.SaleBtn;
@@ -56,6 +57,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	
 	// °áÁ¦¹× °áÁ¦Ãë¼ÒÃ¢ ÇÁ·¹ÀÓ
 	public DealCancel dealCancel = new DealCancel();
+	public Payment_1 payment_1 = new Payment_1();
 	public Payment_3 payment_3 = new Payment_3();
 	public Payment_4 payment_4 = new Payment_4();
 	
@@ -193,6 +195,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		salebtn.sBtnPdChange.addActionListener(salesInputService);
 		salebtn.sBtnPdCancel.addActionListener(salesInputService);
 		
+//		°áÁ¦1 ÀÌº¥Æ® µî·Ï
+		//payment_1.cbP1Cooperation.addActionListener(salesInputService);
+		payment_1.btnP1Apply.addActionListener(salesInputService);
+		payment_1.btnP1Before.addActionListener(salesInputService);
+		payment_1.btnP1Next.addActionListener(salesInputService);
+		
 //		°áÁ¦3 ÀÌº¥Æ® µî·Ï
 		payment_3.btnP3Before.addActionListener(this);
 		payment_3.btnP3Cancel.addActionListener(this);
@@ -228,6 +236,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		});
 		
 	}
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) { //ÀÌº¥Æ®Ã³¸® 
@@ -255,11 +264,21 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		}
 		else if (ob == salebtn.sBtnPdHold) {//»óÇ°º¸·ù
 			
-		} else if (ob == payment_3.btnP3Before) {
-			payment_4.setVisible(false);
+		}
+		else if (ob == payment_1.btnP1Before) {
+			payment_1.setVisible(false);
 			payment_3.setVisible(false);
-
-		} else if (ob == payment_3.btnP3Cancel) {
+			payment_4.setVisible(false);
+		} else if (ob == payment_1.btnP1Next) {
+			payment_1.setVisible(false);
+			payment_3.setVisible(true);
+		}
+		else if (ob == payment_3.btnP3Before) {
+			payment_1.setVisible(true);
+			payment_3.setVisible(false);
+			payment_4.setVisible(false);
+		} 
+		else if (ob == payment_3.btnP3Cancel) {
 			payment_3.setVisible(false);
 		}
 		

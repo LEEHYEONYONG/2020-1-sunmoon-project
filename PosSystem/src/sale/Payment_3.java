@@ -32,7 +32,7 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 	public JButton btnP3Cancel;
 	public JButton btnP3Input;
 	
-	
+/*
 	public static void main(String[] args) {
 	EventQueue.invokeLater(new Runnable() {
 		public void run() {
@@ -45,7 +45,7 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 		}
 	});
   }
-
+*/
 
 	
 	
