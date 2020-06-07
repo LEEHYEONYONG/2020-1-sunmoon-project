@@ -11,7 +11,6 @@ public class SaleBtn extends JPanel {
 	//판매관리의 GUI 버튼들(GUI_003)
 	public JButton sBtnPdChange;//상품수정버튼
 	public JButton sBtnPdCancel;//상품취소버튼
-	public JButton sBtnPdHold;//상품보류버튼
 	public JButton sBtnPay;//상품결제버튼
 	public JButton sBtnAcancel;//거래초기화버튼(거래취소버튼)
 	public JButton sBtnCancel;//환불버튼
@@ -34,13 +33,6 @@ public class SaleBtn extends JPanel {
 		sBtnPdCancel.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		sBtnPdCancel.setBounds(176, 28, 164, 85);
 		add(sBtnPdCancel);
-		
-		sBtnPdHold = new JButton("상품보류");
-		sBtnPdHold.setForeground(Color.WHITE);
-		sBtnPdHold.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-		sBtnPdHold.setBackground(new Color(0, 0, 128));
-		sBtnPdHold.setBounds(359, 28, 164, 85);
-		add(sBtnPdHold);
 		
 		sBtnAcancel = new JButton("거래취소");
 		sBtnAcancel.setForeground(Color.WHITE);

@@ -32,7 +32,7 @@ public class Payment_1 extends JFrame {
 	*/
 	
 	public JButton btnP1Apply;
-	private JTextField txtP1Check;
+	JTextField txtP1Check;
 	
 	
 	

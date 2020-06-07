@@ -7,13 +7,16 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
+import db.PosDto;
 import sale.DealCancel;
 import sale.Payment_1;
 import sale.Payment_3;
@@ -51,6 +54,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	public JPanel pFBtn;
 	
 	public SaleBtn salebtn = new SaleBtn();
+	
+//	»óÇ°º¸·ù ¹öÆ° ´­¸² ¿©ºÎ È®ÀÎ
+	boolean isHold = false;
+//	º¸·ùÇÑ »óÇ°µéÀÇ PosDto°´Ã¼µéÀ» ÀúÀåÇÒ º¤ÅÍ
+	Vector<PosDto> hodingProductList = null;
 	
 	public ViewSalesInput viewSalesInput = new ViewSalesInput();
 	public SalesInputService salesInputService = new SalesInputService(this);
@@ -140,6 +148,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		pFBtn.setBounds(0, 601, 1157, 123);
 		contentPane.add(pFBtn);
 		pFBtn.setLayout(btn);
+		salebtn.sBtnAcancel.setLocation(352, 28);
+		salebtn.sBtnPay.setLocation(528, 28);
+		salebtn.sBtnCancel.setLocation(704, 28);
 		
 		
         //////////////////////////////////
@@ -188,7 +199,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 		
 		//ÆÇ¸Å ±â´É ¸®½º³Ê
-		salebtn.sBtnPdHold.addActionListener(this);
 		salebtn.sBtnCancel.addActionListener(this);
 		salebtn.sBtnPay.addActionListener(salesInputService);
 		salebtn.sBtnAcancel.addActionListener(salesInputService);
@@ -202,8 +212,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		payment_1.btnP1Next.addActionListener(salesInputService);
 		
 //		°áÁ¦3 ÀÌº¥Æ® µî·Ï
-		payment_3.btnP3Before.addActionListener(this);
-		payment_3.btnP3Cancel.addActionListener(this);
+		payment_3.btnP3Before.addActionListener(salesInputService);
+		payment_3.btnP3Cancel.addActionListener(salesInputService);
 		payment_3.btnP3Input.addActionListener(salesInputService);
 		payment_3.btnP3Next.addActionListener(salesInputService);
 		
@@ -261,26 +271,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		//ÆÇ¸Å°ü¸®ÀÇ ±â´Éµé
 		else if(ob == salebtn.sBtnCancel) {//È¯ºÒ
 			dealCancel.setVisible(true);
-		}
-		else if (ob == salebtn.sBtnPdHold) {//»óÇ°º¸·ù
-			
-		}
-		else if (ob == payment_1.btnP1Before) {
-			payment_1.setVisible(false);
-			payment_3.setVisible(false);
-			payment_4.setVisible(false);
-		} else if (ob == payment_1.btnP1Next) {
-			payment_1.setVisible(false);
-			payment_3.setVisible(true);
-		}
-		else if (ob == payment_3.btnP3Before) {
-			payment_1.setVisible(true);
-			payment_3.setVisible(false);
-			payment_4.setVisible(false);
-		} 
-		else if (ob == payment_3.btnP3Cancel) {
-			payment_3.setVisible(false);
-		}
+		} else if (ob == dealCancel.btnRefund) {
+			int choose = JOptionPane.showConfirmDialog(dealCancel, "È¯ºÒ ÀýÂ÷¸¦ ÁøÇàÇÏ½Ã°Ú½À´Ï±î?", "È¯ºÒ",
+					JOptionPane.OK_CANCEL_OPTION);
+			if (choose == 0) {
+				refundProcess();
+			}
+			dealCancel.Sell_id.setText("");
+		}	
 		
 		// Àç°í ÅÇÀÇ ±â´Éµé
 				else if (ob == stockbtn.stockevery) {
@@ -434,6 +432,40 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 		
 		
+	}
+	
+	private void refundProcess() {
+		String sellId = null;
+		sellId = dealCancel.Sell_id.getText().trim();
+
+		if (sellId.contentEquals("")) {
+			JOptionPane.showMessageDialog(dealCancel, "°Å·¡ ¹øÈ£¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.", "È¯ºÒ Á¶È¸ ¿À·ù", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+//		receipt.setVisible(true);
+//		receipt.refundDetail.append("Ãë¼Ò¿µ¼öÁõ/n" + "ÆÇ¸ÅÄÚµå : \t" );
+
+		Vector<PosDto> list = new Vector<PosDto>();
+		//list = salesDao.selectUpdateStock(sellId);
+
+		System.out.println(list.toString());
+
+		if (list.isEmpty()) {
+			JOptionPane.showMessageDialog(dealCancel, "°Å·¡ ¹øÈ£°¡ ¿Ã¹Ù¸£Áö ¾Ê½À´Ï´Ù.", "È¯ºÒ Á¶È¸ ¿À·ù", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		/*
+		salesDao.updateMembership(sellId); // ¸â¹ö½Ê : ¸â¹ö½Ê Æ÷ÀÎÆ® »©±â
+		salesDao.updateMoney(sellId); // Á¤»ê update : Çö±Ý °áÀç¾×¸¸Å­ »©±â
+		salesDao.updateStock(list); // Àç°í update : ±¸¸Å ¼ö·®¸¸Å­ Àç°í ¼ö·®¿¡ ´õÇÏ±â
+		salesDao.deletehistory_d(sellId);
+		salesDao.deletehisotry(sellId);
+		*/
+
+		JOptionPane.showMessageDialog(dealCancel, "È¯ºÒ Ã³¸®°¡ ¿Ï·áµÇ¾ú½À´Ï´Ù.", "È¯ºÒ ¿Ï·á", JOptionPane.INFORMATION_MESSAGE);
+		dealCancel.dispose();
 	}
 
 	private static boolean isNumber(String str) {
