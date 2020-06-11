@@ -20,7 +20,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import calc.Stat;
+
 import db.PosDto;
 import sale.DealCancel;
 import sale.Payment_1;
@@ -34,6 +34,9 @@ import stock.StockMonitor;
 import stock.StockPopupChange;
 import stock.StockPopupIn;
 import stock.StockPopupSearch;
+import calc.CalcBtn;
+import calc.CalcService;
+import db.Connect_DB;
 
 public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀÎÇÁ·¹ÀÓ 
 	
@@ -62,7 +65,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	public JButton mBtnAccount;//°èÁ¤¹öÆ°
 	public JPanel pFBtn;
 	
+	
+	CalcService calcService = new CalcService(this);
 	public SaleBtn salebtn = new SaleBtn();
+	public CalcBtn calcbtn = new CalcBtn();
 	
 //	»óÇ°º¸·ù ¹öÆ° ´­¸² ¿©ºÎ È®ÀÎ
 	boolean isHold = false;
@@ -71,6 +77,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	
 	public ViewSalesInput viewSalesInput = new ViewSalesInput();
 	public SalesInputService salesInputService = new SalesInputService(this);
+	
+	//µ¥ÀÌÅÍº£ÀÌ½º ÇÊµå Ãß°¡
+    public Connect_DB connect_db = new Connect_DB();
 	
 	// °áÁ¦¹× °áÁ¦Ãë¼ÒÃ¢ ÇÁ·¹ÀÓ
 	public DealCancel dealCancel = new DealCancel();
@@ -191,14 +200,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		pFBtn.add(stockbtn, "Stockbtn");
 		//pFBtn.add(statbtn, "Statbtn");
 		//pFBtn.add(accbtn, "Accbtn");
-		//pFBtn.add(calcbtn, "Calcbtn");
+		pFBtn.add(calcbtn, "Calcbtn");
 		
 		
 		
 		// ¸ÞÀÎ±â´É¹öÆ°
 		mBtnInven.addActionListener(this);
 		mBtnSale.addActionListener(this);
-		//mBtnCalc.addActionListener(calcService);
+		mBtnCalc.addActionListener(calcService);
 		mBtnStat.addActionListener(this);
 		
 		
@@ -237,6 +246,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		salebtn.sBtnAcancel.addActionListener(salesInputService);
 		salebtn.sBtnPdChange.addActionListener(salesInputService);
 		salebtn.sBtnPdCancel.addActionListener(salesInputService);
+		
+		//Á¤»ê¸®½º³Ê
+		
 		
 //		°áÁ¦1 ÀÌº¥Æ® µî·Ï
 		//payment_1.cbP1Cooperation.addActionListener(salesInputService);
@@ -295,10 +307,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		} else if (ob == mBtnInven) {//Àç°í°ü¸®
 			monitor.show(pMonitor, "Stock");
 			btn.show(pFBtn, "Stockbtn");
-		} else if (ob == mBtnCalc) {
+		} /*
+		  else if (ob == mBtnCalc) {//Á¤»ê
 			//monitor.show(pMonitor, "Stat");
-			//btn.show(pFBtn, "Stockbtn");
-		}
+			//btn.show(pFBtn, "Calcbtn");
+		} */
 		
 		//¼¼ºÎ±â´Éµé
 		

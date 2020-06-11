@@ -20,6 +20,11 @@ public class ViewSalesInput extends JPanel{//상품목록표시 GUI
 	public DefaultTableModel model;
 	public JTable table;
 	
+	String header[] = {"상품코드", "상품명", "수량", "금액(단가)", "제조사", "총금액"};
+	String contents[][]= {
+			
+	};
+	
 	public ViewSalesInput() {
 		setBounds(new Rectangle(0, 0, 1144, 535));
 		setBackground(Color.WHITE);
@@ -30,10 +35,13 @@ public class ViewSalesInput extends JPanel{//상품목록표시 GUI
 		add(backgroundpanel);
 		backgroundpanel.setLayout(null);
 		
+		
+		/*
 		String header[] = {"번호", "상품코드", "상품명", "단가", "수량", "금액"};
 		String contents[][]= {
 				
 		};
+		*/
 		
 		
 		model = new DefaultTableModel(contents, header) {

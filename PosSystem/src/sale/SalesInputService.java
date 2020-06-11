@@ -199,7 +199,6 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 				} else {
 					JOptionPane.showMessageDialog(mainframe.payment_3, "°áÁ¦Á¶°ÇÀÌ ÃæÁ·µÇÁö ¾Ê¾Ò½À´Ï´Ù.", "Á¶°ÇºÎÁ·",
 							JOptionPane.ERROR_MESSAGE);
-
 				}
 
 			}
@@ -369,13 +368,15 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 
 	public void goodsListProcess() {
 
+		/*
 		if (mainframe.viewSalesInput.code_input.getText().trim().length() > 0) {
 
 			if (checkOverlap(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase(), 1)) {
 				key = true;
 				System.out.println(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase());
 				System.out.println("ÄÚµå·Î°Ë»ö" + mainframe.viewSalesInput.code_input.getText().length());
-                /* ½ÇÇè¿ë */
+                
+				/* 
 				String[] a = new String[7];
 				a[0] = "1212";
 				a[1] = "DB-78";
@@ -384,6 +385,7 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 				a[4] = "1";
 				a[5] = "2500";
 				mainframe.viewSalesInput.model.addRow(a);
+				½ÇÇè¿ë 
 
 				// listAdd(salesInputDao.searchBy(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase()));
 
@@ -430,6 +432,56 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 		totalApply();
 		mainframe.viewSalesInput.code_input.setText("");
 		mainframe.viewSalesInput.product_name_input.setText("");
+		
+		*/
+		
+		//System.out.println(e);
+		//System.out.println(mainframe.viewSalesInput.product_name_input.getText().toString());
+		
+		int rowCount;
+		
+		if(mainframe.viewSalesInput.product_name_input.getText().toString().length() > 0)
+		{
+
+			//»óÇ°¸í ÀÔ·Â°ª ¹Þ±â
+			String p_name = mainframe.viewSalesInput.product_name_input.getText().toString();
+			//System.out.println("p_name = "+p_name);
+			
+			//»óÇ° °¹¼ö ¹Þ±â
+			rowCount = mainframe.connect_db.countRow(p_name);
+			//System.out.println("rowCount = "+rowCount);
+			
+			//2Â÷¿ø String ¹è¿­  »ý¼º ÈÄ »óÇ° °Ë»ö ¸Þ¼Òµå ½ÇÇà
+			mainframe.viewSalesInput.contents = new String[rowCount][5];
+			mainframe.viewSalesInput.contents = mainframe.connect_db.find_product(p_name, rowCount);
+			/*for(int i=0;i<rowCount;i++)
+			{
+				for(int j=0;j<5;j++)
+				{
+					System.out.print(mainframe.viewSalesInput.contents[i][j]);
+				}
+				System.out.println(" ");
+			}*/
+			for(int i =0;i<rowCount;i++)
+			{
+				mainframe.viewSalesInput.model.addRow(mainframe.viewSalesInput.contents[i]);
+			}
+			mainframe.viewSalesInput.product_name_input.setText(null);
+			
+		}
+		else if(mainframe.viewSalesInput.code_input.getText().toString().length() > 0)
+		{
+			
+			String p_num = mainframe.viewSalesInput.code_input.getText().toString();
+			int num = Integer.parseInt(p_num);
+			
+			mainframe.viewSalesInput.contents = new String[1][5];
+			mainframe.viewSalesInput.contents = mainframe.connect_db.find_product(num);
+			
+			mainframe.viewSalesInput.model.addRow(mainframe.viewSalesInput.contents[0]);
+			
+			mainframe.viewSalesInput.code_input.setText(null);
+		}
 	}
 
 	public void listAdd(Vector<PosDto> salesList) {
