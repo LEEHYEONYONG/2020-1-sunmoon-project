@@ -84,8 +84,8 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 
 				return;
 			}
-			// setblank();
-			// payEnd();
+			setblank();
+			//payEnd();
 
 		} else if (ob == mainframe.salebtn.sBtnPdCancel) {// »óÇ°Ãë¼ÒÅ¬¸¯½Ã
 			int row = mainframe.viewSalesInput.table.getSelectedRow();
@@ -383,7 +383,6 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 				a[3] = "2500";
 				a[4] = "1";
 				a[5] = "2500";
-				a[6] = "2017-5-25";
 				mainframe.viewSalesInput.model.addRow(a);
 
 				// listAdd(salesInputDao.searchBy(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase()));
@@ -489,37 +488,40 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 		}
 	}
 
+	private void setblank() {
+		clearRows(mainframe.viewSalesInput.table.getRowCount(), mainframe.viewSalesInput.model);
+		mainframe.viewSalesInput.total_price_input.setText("0");
+		mainframe.payment_1.tfP1SM.setText("");
+		mainframe.payment_1.tfP1BeforePrice.setText("");
+		mainframe.payment_1.tfP1Afterprice.setText("");
+		mainframe.payment_1.lbP1Afterprice.setText("");
+		mainframe.payment_1.txtP1Check.setText("");
+		mainframe.payment_3.tfP3SM.setText("");
+		mainframe.payment_3.tfP3CardP.setText("");
+		mainframe.payment_3.lbP3FinalPay.setText("");
+		mainframe.payment_3.lbP3Payment.setText("");
+		mainframe.payment_3.tfP3CashP.setText("");
+		mainframe.payment_3.lbP3FinalPayView.setText("");
+		mainframe.payment_3.lbP3PaymentView.setText("");
+
+	}
+
 	/*
-	 * 
-	 * 
-	 * private void setblank() {
-	 * clearRows(mainframe.viewSalesInput.table.getRowCount(),
-	 * mainframe.viewSalesInput.model);
-	 * mainframe.viewSalesInput.total_price_input.setText("0");
-	 * mainframe.payment_3.tfP3SM.setText("");
-	 * mainframe.payment_3.tfP3CardP.setText("");
-	 * mainframe.payment_3.lbP3FinalPay.setText("");
-	 * mainframe.payment_3.lbP3Payment.setText("");
-	 * mainframe.payment_3.tfP3CashP.setText("");
-	 * mainframe.payment_3.lbP3PointView.setText("");
-	 * mainframe.payment_3.lbP3FinalPayView.setText("");
-	 * mainframe.payment_3.lbP3PaymentView.setText("");
-	 * 
-	 * }
-	 * 
-	 
-	
-	  public void payEnd() { salesInputDao.posDto.setMembershipId("");
-	  salesInputDao.posDto.setMemberName(""); salesInputDao.posDto.setPoint(0);
-	  salesInputDao.posDto.setDiscountCode("");
-	  salesInputDao.posDto.setCooperateName("");
-	 salesInputDao.posDto.setDiscountPct(0);
-	  
-	  salesInputDao.posDto.setListNum(0); salesInputDao.posDto.setCardPrice(0);
-	  salesInputDao.posDto.setCashPrice(0); salesInputDao.posDto.setTotalPrice(0);
-	  
-	  }
-	  */
+	public void payEnd() {
+		salesInputDao.posDto.setMembershipId("");
+		salesInputDao.posDto.setMemberName("");
+		salesInputDao.posDto.setPoint(0);
+		salesInputDao.posDto.setDiscountCode("");
+		salesInputDao.posDto.setCooperateName("");
+		salesInputDao.posDto.setDiscountPct(0);
+
+		salesInputDao.posDto.setListNum(0);
+		salesInputDao.posDto.setCardPrice(0);
+		salesInputDao.posDto.setCashPrice(0);
+		salesInputDao.posDto.setTotalPrice(0);
+
+	}
+	*/
 	 
 
 }

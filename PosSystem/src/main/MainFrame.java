@@ -7,15 +7,20 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import calc.Stat;
 import db.PosDto;
 import sale.DealCancel;
 import sale.Payment_1;
@@ -37,6 +42,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	StockPopupSearch stockpopupsearch = new StockPopupSearch();
 	StockBtn stockbtn;
 	StockMonitor stockmonitor = new StockMonitor();
+	//Stat stat;
 	public CardLayout monitor;
 	public CardLayout btn;
 	Thread thread;
@@ -46,6 +52,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	private JPanel contentPane;
 	private JPanel pMainBtn;
 	public JPanel pMonitor;
+	private JPanel pStatusBar;
+	private JLabel titleLabel;
+	private JLabel dateLabel;
 	public JButton mBtnSale;//ÆÇ¸Å¹öÆ°
 	public JButton mBtnInven;//Àç°í¹öÆ°
 	public JButton mBtnCalc;//Á¤»ê¹öÆ°
@@ -87,6 +96,28 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		pStatusBar = new JPanel();
+		pStatusBar.setBackground(new Color(0, 0, 128));
+		pStatusBar.setBounds(0, 0, 1320, 51);
+		contentPane.add(pStatusBar);
+		pStatusBar.setLayout(null);
+		
+		titleLabel = new JLabel("Pos");
+		titleLabel.setForeground(Color.WHITE);
+		titleLabel.setBackground(new Color(0, 0, 128));
+		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		titleLabel.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 25));
+		titleLabel.setBounds(540, 10, 241, 31);
+		pStatusBar.add(titleLabel);
+		
+		dateLabel = new JLabel();
+		dateLabel.setBackground(new Color(0, 0, 128));
+		dateLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		dateLabel.setForeground(new Color(255, 255, 255));
+		dateLabel.setFont(new Font("¸¼Àº °íµñ", Font.PLAIN, 20));
+		dateLabel.setBounds(1016, 8, 278, 31);
+		pStatusBar.add(dateLabel);
 		
 		pMainBtn = new JPanel();
 		pMainBtn.setBackground(new Color(255,255,255));
@@ -142,6 +173,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 //		¸ð´ÏÅÍÆÐ³Î¿¡ Ä«µå·¹ÀÌ¾Æ¿ôÁÖ°í °¢È­¸é ÆÐ³Î °´Ã¼»ý¼ºÇÏ¿© Ãß°¡
 		pMonitor.add("ViewSalesInput", viewSalesInput);
 		pMonitor.add(stockmonitor, "Stock");
+		//pMonitor.add(stat,"stat");
 		
 		pFBtn = new JPanel();
 		pFBtn.setBackground(Color.WHITE);
@@ -160,6 +192,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		//pFBtn.add(statbtn, "Statbtn");
 		//pFBtn.add(accbtn, "Accbtn");
 		//pFBtn.add(calcbtn, "Calcbtn");
+		
 		
 		
 		// ¸ÞÀÎ±â´É¹öÆ°
@@ -263,7 +296,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 			monitor.show(pMonitor, "Stock");
 			btn.show(pFBtn, "Stockbtn");
 		} else if (ob == mBtnCalc) {
-			
+			//monitor.show(pMonitor, "Stat");
+			//btn.show(pFBtn, "Stockbtn");
 		}
 		
 		//¼¼ºÎ±â´Éµé
@@ -484,7 +518,22 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		while (true) {
+			SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+			Date d = new Date();
+			String str = df.format(d);
+
+			try {
+				thread.sleep(1000);
+				dateLabel.setText(str);
+			} catch (InterruptedException e) {
+
+				e.printStackTrace();
+			}
+//	         System.out.println("ÇöÀç½Ã°£ :: " + str);
+//	         idLabel.setText();
+//	         dateLabel.setText(str);
+		}
 		
 	}
 

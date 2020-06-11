@@ -51,7 +51,7 @@ public class StockPopupIn extends JFrame {
     
 	
 	public StockPopupIn() {
-		setTitle("\uC7AC\uACE0 \uAD00\uB9AC");
+		setTitle("재고 관리");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
 		contentPane = new JPanel();
