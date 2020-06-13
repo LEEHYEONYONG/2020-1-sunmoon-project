@@ -29,6 +29,9 @@ import sale.Payment_4;
 import sale.SaleBtn;
 import sale.SalesInputService;
 import sale.ViewSalesInput;
+import stat.ViewStatButtons;
+import stat.ViewStatDay;
+import stat.ViewStatProduct;
 import stock.StockBtn;
 import stock.StockMonitor;
 import stock.StockPopupChange;
@@ -44,6 +47,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	StockPopupChange stockpopupchange = new StockPopupChange();
 	StockPopupSearch stockpopupsearch = new StockPopupSearch();
 	StockBtn stockbtn;
+	CalcBtn calcbtn;
+	ViewStatButtons statbtn;
 	StockMonitor stockmonitor = new StockMonitor();
 	//Stat stat;
 	public CardLayout monitor;
@@ -66,9 +71,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	public JPanel pFBtn;
 	
 	
+	ViewStatProduct v1 = new ViewStatProduct(); // »óÇ°º° ÆÐ³Î
+	//ViewStatYear v2 = new ViewStatYear(); // ¿¬µµº° ÆÐ³Î
+	//ViewStatMonth v3 = new ViewStatMonth(); // ¿ùº° ÆÐ³Î
+	ViewStatDay v4 = new ViewStatDay(); // ÀÏº° ÆÐ³Î
+	
+	
 	CalcService calcService = new CalcService(this);
 	public SaleBtn salebtn = new SaleBtn();
-	public CalcBtn calcbtn = new CalcBtn();
+	
+	
 	
 //	»óÇ°º¸·ù ¹öÆ° ´­¸² ¿©ºÎ È®ÀÎ
 	boolean isHold = false;
@@ -92,6 +104,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		monitor = new CardLayout();
 		btn = new CardLayout();
 		stockbtn = new StockBtn();
+		calcbtn = new CalcBtn();
+		statbtn = new ViewStatButtons();
 		
 		setFont(new Font("¸¼Àº °íµñ",Font.BOLD,20));
 		setTitle("pos");
@@ -183,6 +197,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		pMonitor.add("ViewSalesInput", viewSalesInput);
 		pMonitor.add(stockmonitor, "Stock");
 		//pMonitor.add(stat,"stat");
+		pMonitor.add("viewStatProduct", v1);
+		//pMonitor.add("viewStatYear", v2);
+		//pMonitor.add("viewStatMonth", v3);
+		pMonitor.add("viewStatDay", v4);
+		
 		
 		pFBtn = new JPanel();
 		pFBtn.setBackground(Color.WHITE);
@@ -198,7 +217,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 //		±â´É¹öÆ°ÆÐ³Î Ä«µå °¢±â´É¹öÆ° ÆÐ³Î °´Ã¼»ý¼ºÈÄ Ãß°¡
 		pFBtn.add(salebtn, "salebtn");
 		pFBtn.add(stockbtn, "Stockbtn");
-		//pFBtn.add(statbtn, "Statbtn");
+		pFBtn.add(statbtn, "Statbtn");
 		//pFBtn.add(accbtn, "Accbtn");
 		pFBtn.add(calcbtn, "Calcbtn");
 		
@@ -239,6 +258,12 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		stockpopupin.indateInput.addActionListener(this);
 		stockpopupin.pcntInput.addActionListener(this);
 		
+		// Åë°è ±â´É¹öÆ°
+		statbtn.sBtnDay.addActionListener(this);
+		statbtn.sBtnMonth.addActionListener(this);
+		statbtn.sBtnProduct.addActionListener(this);
+		statbtn.sBtnYear.addActionListener(this);
+		
 		
 		//ÆÇ¸Å ±â´É ¸®½º³Ê
 		salebtn.sBtnCancel.addActionListener(this);
@@ -267,7 +292,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 //		°áÁ¦ 4 ÀÌº¥Æ® µî·Ï
 
-		payment_4.btnP4PrintReceipt.addActionListener(this);
+		payment_4.btnP4PrintReceipt.addActionListener(salesInputService);
 		payment_4.btnP4Payment.addActionListener(salesInputService);
 
 		dealCancel.btnRefund.addActionListener(this);
@@ -306,11 +331,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 			monitor.show(pMonitor, "ViewSalesInput");
 			btn.show(pFBtn, "salebtn");
 		} else if (ob == mBtnStat) {//Åë°è
-			
+			monitor.show(pMonitor, "viewStatProduct");
+			btn.show(pFBtn, "Statbtn");
 		} else if (ob == mBtnInven) {//Àç°í°ü¸®
 			monitor.show(pMonitor, "Stock");
 			btn.show(pFBtn, "Stockbtn");
-		} /*
+		} 
+	      /*
 		  else if (ob == mBtnCalc) {//Á¤»ê
 			//monitor.show(pMonitor, "Stat");
 			//btn.show(pFBtn, "Calcbtn");
@@ -331,7 +358,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		}	
 		
 		// Àç°í ÅÇÀÇ ±â´Éµé
-				else if (ob == stockbtn.stockevery) {
+				else if (ob == stockbtn.stockevery) {//
 					stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);
 					//stockmonitor.showMon(stockdao.StockAll());
 				} else if (ob == stockbtn.stockSearch) {
@@ -477,6 +504,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 					}
 		
 				}
+		
+		        //Åë°è ±â´ÉÀÇ ¹öÆ°µé
+				else if (ob == statbtn.sBtnProduct) {
+					monitor.show(pMonitor, "viewStatProduct");
+				} else if (ob == statbtn.sBtnYear) {
+					//monitor.show(pMonitor, "viewStatYear");
+				} else if (ob == statbtn.sBtnMonth) {
+					//monitor.show(pMonitor, "viewStatMonth");
+				} else if (ob == statbtn.sBtnDay) {
+					monitor.show(pMonitor, "viewStatDay");
+				}
+		
 		
 		
 		

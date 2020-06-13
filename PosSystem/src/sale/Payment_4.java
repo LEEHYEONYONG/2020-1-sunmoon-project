@@ -60,4 +60,5 @@ public class Payment_4 extends JFrame{//영수증 출력 GUI
 		
 	}
 
+
 }

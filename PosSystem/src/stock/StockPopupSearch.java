@@ -29,7 +29,7 @@ public class StockPopupSearch extends JFrame{
 	StockMonitor monitor = new StockMonitor();
 	
 	
-	
+	/*
 	public static void main(String[] args) {
 	EventQueue.invokeLater(new Runnable() {
 		public void run() {
@@ -42,6 +42,7 @@ public class StockPopupSearch extends JFrame{
 		}
 	});
     }
+    */
 	
 	public StockPopupSearch() {
 		

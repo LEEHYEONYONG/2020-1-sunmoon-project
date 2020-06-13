@@ -10,6 +10,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import main.MainFrame;
+import java.awt.Color;
 
 public class StockMonitor extends JPanel{
 	public JScrollPane stockScrollPane = new JScrollPane();
@@ -21,11 +22,13 @@ public class StockMonitor extends JPanel{
 	
 	
 	public StockMonitor() {
+		setBackground(Color.WHITE);
 //		col = getColum();
 
 		setLayout(null);
 		stockScrollPane.setBounds(12, 10, 1133, 532);
 		add(stockScrollPane);
+		StockTable.setBackground(Color.WHITE);
 
 //		tmodel = new DefaultTableModel(col, 0);
 		

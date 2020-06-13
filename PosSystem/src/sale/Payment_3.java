@@ -112,6 +112,7 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 		tfP3CashP.setColumns(10);
 		tfP3CashP.setBounds(212, 176, 150, 40);
 		payment_3.add(tfP3CashP);
+		tfP3CashP.setEnabled(false);//디폴트 고정(combobox 카드 선택 고정)
 		
 		lblCard = new JLabel("카드 받은 금액");
 		lblCard.setHorizontalAlignment(SwingConstants.CENTER);

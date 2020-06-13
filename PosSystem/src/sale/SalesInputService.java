@@ -1,19 +1,31 @@
 package sale;
 
+import java.awt.Component;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.EventListener;
 import java.util.EventObject;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import db.PosDto;
@@ -253,6 +265,10 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			}
 			
 			
+		} else if (ob == mainframe.payment_4.btnP4PrintReceipt) {
+			
+			PrintProcess();
+			
 		} else if (ob == mainframe.payment_4.btnP4Payment) {
 
 			mainframe.payment_4.setVisible(false);
@@ -261,107 +277,172 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 		}
 
 	}
+	
+	
+	public void PrintProcess() {//영수증출력
+		BufferedImage img =getScreenShot(mainframe.payment_4.taP4details);
+		
+		FileDialog dialog = new FileDialog(mainframe.payment_4, "저장", FileDialog.SAVE);
+		dialog.setDirectory(".");
+		dialog.setFile("*.jpg");
+		/*
+		JFileChooser chooser = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+		       "JPG & GIF Images", "jpg", "gif");
+		chooser.setFileFilter(filter);
+		chooser.showOpenDialog(chooser);
+		*/
+		
+		dialog.setVisible(true);
+		
+		if(dialog.getFile() == null) return;
+		
+		String dfName = dialog.getDirectory() + dialog.getFile();
+		
+		
+		File file = new File(dfName);
+		
+		try {
+			ImageIO.write(img, "jpg", file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		/*
+		BufferedWriter writer = new BufferedWriter(new FileWriter(dfName));
+
+		writer.write(getScreenShot(mainframe.payment_4));
+
+		writer.close();
+		*/
+
+	}
+	
+	public static BufferedImage getScreenShot(Component component) {//이미지얻기
+		
+		BufferedImage image = new BufferedImage(
+				component.getWidth(),
+				component.getHeight(),
+				BufferedImage.TYPE_INT_RGB
+				);
+		
+		component.paint(image.getGraphics());
+		return image;
+		
+	}
 
 	/*
-	 * 
-	 * public void StocksProcess() {
-	 * 
-	 * getgoods = new Vector<Object>(); int size =
-	 * mainframe.viewSalesInput.table.getRowCount(); for (int i = 0; i < size; i++)
-	 * { getgoods.addElement(mainframe.viewSalesInput.table.getValueAt(i, 1));//
-	 * p_code getgoods.addElement(mainframe.viewSalesInput.table.getValueAt(i,
-	 * 6));// in_date
-	 * getgoods.addElement(mainframe.viewSalesInput.table.getValueAt(i, 4));// p_cnt
-	 * getgoods.addElement(mainframe.viewSalesInput.table.getValueAt(i, 2));//
-	 * p_name getgoods.addElement(mainframe.viewSalesInput.table.getValueAt(i,
-	 * 3));// p_price }
-	 * 
-	 * salesInputDao.registerHisDetail(size, getgoods);
-	 * salesInputDao.reflectStocks(size, getgoods);
-	 * 
-	 * }
-	 * 
-	 * 
-	 * private void paymentProcess() { salesInputDao.registerHistory();
-	 * StocksProcess();
-	 * 
-	 * // if()유저이름이 없다면 멤버쉽등록이 안됬으므로 포인트처리 생략 if (memshipcheck == true)
-	 * pointreflect();
-	 * 
-	 * }
-	 * 
-	 * private void pointreflect() {
-	 * 
-	 * int point = Integer.parseInt(mainframe.payment_2.tfP2point.getText()); int
-	 * savePoint = Integer.parseInt(mainframe.payment_3.lbP3PointView.getText());
-	 * int usePoint = 0; if (!mainframe.payment_2.tfP2UsePoint.getText().equals(""))
-	 * usePoint = Integer.parseInt(mainframe.payment_2.tfP2UsePoint.getText());
-	 * 
-	 * salesInputDao.posDto.setPoint(point - usePoint + savePoint);
-	 * salesInputDao.pointUpdate(); }
-	 * 
-	 * 
-	 * private void payNPrint() { mainframe.payment_4.taP4details.setText("판매코드 : "
-	 * + ForcePos.selldto.getSellId() + "\t판매일자 : " + ForcePos.selldto.getSellDate()
-	 * + "\n\t판매원코드 : " + ForcePos.usercodeDto.getUserCode() +
-	 * "\n==========================================\n");
-	 * 
-	 * int x = mainframe.viewSalesInput.table.getRowCount(); for (int i = 0; i < x;
-	 * i++) { for (int j = 1; j < 6; j++) {
-	 * mainframe.payment_4.taP4details.append(mainframe.viewSalesInput.model.
-	 * getValueAt(i, j) + "\t"); } mainframe.payment_4.taP4details.append("\n"); }
-	 * 
-	 * mainframe.payment_4.taP4details.append(
-	 * "\n==========================================\n" +
-	 * (salesInputDao.posDto.getDiscountCode().equals("d4") ? "\n" : "할인코드 : " +
-	 * salesInputDao.posDto.getDiscountCode() + " 제휴사 : " +
-	 * salesInputDao.posDto.getCooperateName() + " 할인율 : " +
-	 * mainframe.payment_1.tfP1DiscountPercent.getText() + "\n"));
-	 * 
-	 * if (salesInputDao.posDto.getMembershipId().equals("nomember")) {
-	 * 
-	 * } else { if (mainframe.payment_2.tfP2UsePoint.getText().isEmpty()) {
-	 * mainframe.payment_4.taP4details.append("멤버쉽 : " +
-	 * salesInputDao.posDto.getMembershipId() + "\t적립된 포인트 : " +
-	 * mainframe.payment_3.lbP3PointView.getText() + "\n\t\t현재 포인트 : " +
-	 * (salesInputDao.posDto.getPoint() +
-	 * Integer.parseInt(mainframe.payment_3.lbP3PointView.getText())) + "\n"); }
-	 * else { mainframe.payment_4.taP4details.append("멤버쉽 : " +
-	 * salesInputDao.posDto.getMembershipId() + "\t사용포인트 : " +
-	 * mainframe.payment_2.tfP2UsePoint.getText() + "\n적립된 포인트 : " +
-	 * mainframe.payment_3.lbP3PointView.getText() + "\t현재 포인트 : " +
-	 * (salesInputDao.posDto.getPoint() -
-	 * Integer.parseInt(mainframe.payment_2.tfP2UsePoint.getText()) +
-	 * Integer.parseInt(mainframe.payment_3.lbP3PointView.getText())) + "\n"); }
-	 * 
-	 * }
-	 * 
-	 * mainframe.payment_4.taP4details.append((
-	 * "\n----------------------------------------------------------------\n" +
-	 * "\t 총결제금액 : " + salesInputDao.posDto.getTotalPrice() + "\n" +
-	 * (salesInputDao.posDto.getCardPrice() == 0 ? "" : "\t 카드결제금액 : " +
-	 * salesInputDao.posDto.getCardPrice() + "\n") +
-	 * (salesInputDao.posDto.getCashPrice() == 0 ? "" : "\t 현금결제금액 : " +
-	 * salesInputDao.posDto.getCashPrice() + "\n")));
-	 * 
-	 * }
-	 * 
-	 * public void membershipRef() { if
-	 * (mainframe.payment_2.tfP2phoneNum.getText().equals("")) {
-	 * JOptionPane.showMessageDialog(mainframe.payment_2, "번호를 입력하시오.", "입력오류",
-	 * JOptionPane.WARNING_MESSAGE); } else {
-	 * 
-	 * if (salesInputDao.costomerRef(mainframe.payment_2.tfP2phoneNum.getText()) ==
-	 * true) {
-	 * mainframe.payment_2.tfP2SM.setText(salesInputDao.posDto.getMemberName() + "("
-	 * + salesInputDao.posDto.getMembershipId() + ")님의 멤버쉽이 확인되었습니다.");
-	 * mainframe.payment_2.tfP2point.setText(String.valueOf(salesInputDao.posDto.
-	 * getPoint())); memshipcheck = true; } else {
-	 * mainframe.payment_2.tfP2SM.setText(mainframe.payment_2.tfP2phoneNum.getText()
-	 * + "님의 멤버쉽을 찾을 수 없습니다."); } }
-	 * 
-	 * }
-	 */
+	 
+	
+		public void StocksProcess() {
+
+		getgoods = new Vector<Object>();
+		int size = mainframe.viewSalesInput.table.getRowCount();
+		for (int i = 0; i < size; i++) {
+			getgoods.addElement(mainframe.viewSalesInput.table.getValueAt(i, 1));// p_code
+			getgoods.addElement(mainframe.viewSalesInput.table.getValueAt(i, 6));// in_date
+			getgoods.addElement(mainframe.viewSalesInput.table.getValueAt(i, 4));// p_cnt
+			getgoods.addElement(mainframe.viewSalesInput.table.getValueAt(i, 2));// p_name
+			getgoods.addElement(mainframe.viewSalesInput.table.getValueAt(i, 3));// p_price
+		}
+
+		salesInputDao.registerHisDetail(size, getgoods);
+		salesInputDao.reflectStocks(size, getgoods);
+
+	}
+
+	private void paymentProcess() {
+		salesInputDao.registerHistory();
+		StocksProcess();
+
+//		if()유저이름이 없다면 멤버쉽등록이 안됬으므로 포인트처리 생략
+		if (memshipcheck == true)
+			pointreflect();
+
+	}
+
+	private void pointreflect() {
+
+		int point = Integer.parseInt(mainframe.payment_2.tfP2point.getText());
+		int savePoint = Integer.parseInt(mainframe.payment_3.lbP3PointView.getText());
+		int usePoint = 0;
+		if (!mainframe.payment_2.tfP2UsePoint.getText().equals(""))
+			usePoint = Integer.parseInt(mainframe.payment_2.tfP2UsePoint.getText());
+
+		salesInputDao.posDto.setPoint(point - usePoint + savePoint);
+		salesInputDao.pointUpdate();
+	}
+
+	private void payNPrint() {
+		mainframe.payment_4.taP4details.setText("판매코드 : " + ForcePos.selldto.getSellId() + "\t판매일자 : "
+				+ ForcePos.selldto.getSellDate() + "\n\t판매원코드 : " + ForcePos.usercodeDto.getUserCode()
+				+ "\n==========================================\n");
+
+		int x = mainframe.viewSalesInput.table.getRowCount();
+		for (int i = 0; i < x; i++) {
+			for (int j = 1; j < 6; j++) {
+				mainframe.payment_4.taP4details.append(mainframe.viewSalesInput.model.getValueAt(i, j) + "\t");
+			}
+			mainframe.payment_4.taP4details.append("\n");
+		}
+
+		mainframe.payment_4.taP4details.append("\n==========================================\n"
+				+ (salesInputDao.posDto.getDiscountCode().equals("d4") ? "\n"
+						: "할인코드 : " + salesInputDao.posDto.getDiscountCode() + " 제휴사 : "
+								+ salesInputDao.posDto.getCooperateName() + " 할인율 : "
+								+ mainframe.payment_1.tfP1DiscountPercent.getText() + "\n"));
+
+		if (salesInputDao.posDto.getMembershipId().equals("nomember")) {
+
+		} else {
+			if (mainframe.payment_2.tfP2UsePoint.getText().isEmpty()) {
+				mainframe.payment_4.taP4details.append("멤버쉽 : " + salesInputDao.posDto.getMembershipId()
+						+ "\t적립된 포인트 : " + mainframe.payment_3.lbP3PointView.getText() + "\n\t\t현재 포인트 : "
+						+ (salesInputDao.posDto.getPoint()
+								+ Integer.parseInt(mainframe.payment_3.lbP3PointView.getText()))
+						+ "\n");
+			} else {
+				mainframe.payment_4.taP4details.append("멤버쉽 : " + salesInputDao.posDto.getMembershipId() + "\t사용포인트 : "
+						+ mainframe.payment_2.tfP2UsePoint.getText() + "\n적립된 포인트 : "
+						+ mainframe.payment_3.lbP3PointView.getText() + "\t현재 포인트 : "
+						+ (salesInputDao.posDto.getPoint()
+								- Integer.parseInt(mainframe.payment_2.tfP2UsePoint.getText())
+								+ Integer.parseInt(mainframe.payment_3.lbP3PointView.getText()))
+						+ "\n");
+			}
+
+		}
+
+		mainframe.payment_4.taP4details.append(("\n----------------------------------------------------------------\n"
+				+ "\t 총결제금액 : " + salesInputDao.posDto.getTotalPrice() + "\n"
+				+ (salesInputDao.posDto.getCardPrice() == 0 ? ""
+						: "\t 카드결제금액 : " + salesInputDao.posDto.getCardPrice() + "\n")
+				+ (salesInputDao.posDto.getCashPrice() == 0 ? ""
+						: "\t 현금결제금액 : " + salesInputDao.posDto.getCashPrice() + "\n")));
+
+	}
+
+	public void membershipRef() {
+		if (mainframe.payment_2.tfP2phoneNum.getText().equals("")) {
+			JOptionPane.showMessageDialog(mainframe.payment_2, "번호를 입력하시오.", "입력오류", JOptionPane.WARNING_MESSAGE);
+		} else {
+
+			if (salesInputDao.costomerRef(mainframe.payment_2.tfP2phoneNum.getText()) == true) {
+				mainframe.payment_2.tfP2SM.setText(salesInputDao.posDto.getMemberName() + "("
+						+ salesInputDao.posDto.getMembershipId() + ")님의 멤버쉽이 확인되었습니다.");
+				mainframe.payment_2.tfP2point.setText(String.valueOf(salesInputDao.posDto.getPoint()));
+				memshipcheck = true;
+			} else {
+				mainframe.payment_2.tfP2SM.setText(mainframe.payment_2.tfP2phoneNum.getText() + "님의 멤버쉽을 찾을 수 없습니다.");
+			}
+		}
+
+	}
+	
+	*/
+	
 
 	public void cpCalc() {
 		/*
