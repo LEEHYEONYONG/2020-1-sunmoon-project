@@ -7,7 +7,7 @@ public class Connect_DB {
 	Connection con = null;
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
-	String url = "jdbc:mysql://211.111.101.56/pos_system?serverTimezone=Asia/Seoul";
+	String url = "jdbc:mysql://localhost/pos_system?serverTimezone=Asia/Seoul";
 	String user = "POS_user";
 	String passwd = "pos project";
 	

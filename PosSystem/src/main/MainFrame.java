@@ -256,11 +256,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// 메�
 		payment_1.btnP1Before.addActionListener(salesInputService);
 		payment_1.btnP1Next.addActionListener(salesInputService);
 		
+		
 //		결제3 이벤트 등록
 		payment_3.btnP3Before.addActionListener(salesInputService);
 		payment_3.btnP3Cancel.addActionListener(salesInputService);
 		payment_3.btnP3Input.addActionListener(salesInputService);
 		payment_3.btnP3Next.addActionListener(salesInputService);
+		payment_3.JcomboBoxPay.addActionListener(salesInputService);
+		payment_3.JcomboBoxPay.addItemListener(salesInputService);
 		
 //		결제 4 이벤트 등록
 

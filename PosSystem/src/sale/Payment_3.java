@@ -15,6 +15,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
 
 public class Payment_3 extends JFrame {//결제화면 GUI
 
@@ -28,6 +29,11 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 	public JLabel lbP3PointView;
 	public JLabel lbP3FinalPayView;
 	public JLabel lbP3PaymentView;
+	public JLabel lblCard;
+	public JLabel lblCash;
+	public JComboBox JcomboBoxPay;
+	public JLabel lblPayCheck;
+	
 
 	public JButton btnP3Before;
 	public JButton btnP3Next;
@@ -70,11 +76,11 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 		tfP3SM.setColumns(10);
 		
 		btnP3Input = new JButton("입력완료");
-		btnP3Input.setBounds(369, 89, 140, 90);
+		btnP3Input.setBounds(397, 76, 150, 140);
 		payment_3.add(btnP3Input);
 		
 		tfP3CardP = new JTextField();
-		tfP3CardP.setBounds(153, 89, 150, 40);
+		tfP3CardP.setBounds(212, 127, 150, 40);
 		payment_3.add(tfP3CardP);
 		tfP3CardP.setColumns(10);
 		
@@ -92,7 +98,7 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 		btnP3Cancel.setBounds(212, 341, 150, 50);
 		payment_3.add(btnP3Cancel);
 		
-		lbP3FinalPay = new JLabel("결제 될 금액");
+		lbP3FinalPay = new JLabel("\uCD1D \uBC1B\uC740 \uAE08\uC561");
 		lbP3FinalPay.setHorizontalAlignment(SwingConstants.CENTER);
 		lbP3FinalPay.setBounds(397, 227, 150, 40);
 		payment_3.add(lbP3FinalPay);
@@ -104,18 +110,18 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 		
 		tfP3CashP = new JTextField();
 		tfP3CashP.setColumns(10);
-		tfP3CashP.setBounds(153, 139, 150, 40);
+		tfP3CashP.setBounds(212, 176, 150, 40);
 		payment_3.add(tfP3CashP);
 		
-		JLabel label = new JLabel("카드 받은 금액");
-		label.setHorizontalAlignment(SwingConstants.CENTER);
-		label.setBounds(12, 89, 129, 40);
-		payment_3.add(label);
+		lblCard = new JLabel("카드 받은 금액");
+		lblCard.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCard.setBounds(37, 126, 150, 40);
+		payment_3.add(lblCard);
 		
-		JLabel label_1 = new JLabel("현금 받은 금액");
-		label_1.setHorizontalAlignment(SwingConstants.CENTER);
-		label_1.setBounds(12, 139, 129, 40);
-		payment_3.add(label_1);
+		lblCash = new JLabel("현금 받은 금액");
+		lblCash.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCash.setBounds(37, 177, 150, 40);
+		payment_3.add(lblCash);
 		
 		lbP3PaymentView = new JLabel("");
 		lbP3PaymentView.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -129,11 +135,19 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 		lbP3FinalPayView.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		lbP3FinalPayView.setBounds(397, 277, 150, 40);
 		payment_3.add(lbP3FinalPayView);
+		
+		JcomboBoxPay = new JComboBox();
+		JcomboBoxPay.setBounds(212, 76, 150, 40);
+		payment_3.add(JcomboBoxPay);
+		
+		JcomboBoxPay.addItem("카드");
+		JcomboBoxPay.addItem("현금");
+		
+		lblPayCheck = new JLabel("결제방식");
+		lblPayCheck.setHorizontalAlignment(SwingConstants.CENTER);
+		lblPayCheck.setBounds(37, 76, 150, 40);
+		payment_3.add(lblPayCheck);
+		
 	    }
-	
-	    
-	
-	
-	
 	}
 	

@@ -2,18 +2,24 @@ package sale;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.EventListener;
+import java.util.EventObject;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import db.PosDto;
 import main.MainFrame;
 
-public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å ÀÌº¥Æ® Ã³¸®
+public class SalesInputService implements KeyListener, ActionListener, ItemListener {// ÆÇ¸Å ÀÌº¥Æ® Ã³¸®
 
 	SaleBtn salebtn = new SaleBtn();
 	MainFrame mainframe;
@@ -28,6 +34,29 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 		super();
 		this.mainframe = mainframe;
 		// salesInputDao = new SalesInputDao();
+	}
+
+	
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		
+		if(e.getStateChange()== ItemEvent.SELECTED) {
+		
+		/*mainframe.payment_3.JcomboBoxPay*/	
+	    Object item =e.getItem();
+	    
+        //String item = String.valueOf(mainframe.payment_3.JcomboBoxPay.getToolkit());
+		//String item = String.valueOf(mainframe.payment_3.JcomboBoxPay.getSelectedItem());
+		if(item.equals("Ä«µå")) {
+			mainframe.payment_3.tfP3CashP.setEnabled(false);
+			mainframe.payment_3.tfP3CardP.setEnabled(true);
+		} else {
+			mainframe.payment_3.tfP3CashP.setEnabled(true);
+			mainframe.payment_3.tfP3CardP.setEnabled(false);
+		}
+		
+		}
+
 	}
 
 	@Override
@@ -129,18 +158,32 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 				mainframe.payment_3.lbP3PaymentView.setText(mainframe.payment_1.tfP1Afterprice.getText());
 				mainframe.payment_3.lbP3FinalPayView.setText("0");
 			}
+		} else if (ob == mainframe.payment_3.JcomboBoxPay) {
+			/*
+			String item = String.valueOf(mainframe.payment_3.JcomboBoxPay.getToolkit());
+			
+			if(item.equals("Ä«µå")) {
+				mainframe.payment_3.tfP3CashP.setEnabled(false);
+				mainframe.payment_3.tfP3CardP.setEnabled(true);
+			} else {
+				mainframe.payment_3.tfP3CashP.setEnabled(true);
+				mainframe.payment_3.tfP3CardP.setEnabled(false);
+			}
+			*/
+			
 		} else if (ob == mainframe.payment_3.btnP3Input) {
+			
 			int card = 0;
 			int cash = 0;
 
 			if (mainframe.payment_3.tfP3CardP.getText().trim().equals("")
 					&& mainframe.payment_3.tfP3CashP.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(mainframe.payment_3, "Çö±Ý ¶Ç´Â Ä«µå¸¦ ¼±ÅÃÇØÁÖ½Ê½Ã¿À.", "°áÁ¦À¯Çü¿À·ù",
+				JOptionPane.showMessageDialog(mainframe.payment_3, "Çö±Ý ¶Ç´Â Ä«µå¸¦ ÀÔ·ÂÇØÁÖ½Ê½Ã¿À.", "°áÁ¦À¯Çü¿À·ù",
 						JOptionPane.ERROR_MESSAGE);
 
 			} else if (isNumber(mainframe.payment_3.tfP3CardP.getText().trim()) != true
 					|| isNumber(mainframe.payment_3.tfP3CashP.getText().trim()) != true) {
-				JOptionPane.showMessageDialog(mainframe.payment_3, "¼ýÀÚ¸¸ ÀÔ·ÂÇØÁÖ½Ê½Ã¿À.", "ÀÔ·Â¿À·ù¿À·ù",
+				JOptionPane.showMessageDialog(mainframe.payment_3, "¼ýÀÚ¸¸ ÀÔ·ÂÇØÁÖ½Ê½Ã¿À.", "ÀÔ·Â¿À·ù",
 						JOptionPane.WARNING_MESSAGE);
 
 			} else {
@@ -156,18 +199,23 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 					// salesInputDao.posDto.setCashPrice(cash);
 					// System.out.println(salesInputDao.posDto.getCashPrice());
 				}
+				
 				if (card + cash != Integer.parseInt(mainframe.payment_3.lbP3PaymentView.getText())) {
 					System.out.println(card + cash);
+					mainframe.payment_3.tfP3SM.setText("");
 					mainframe.payment_3.lbP3FinalPayView.setText(String.valueOf(card + cash));
 					JOptionPane.showMessageDialog(mainframe.payment_3, "°áÁ¦±Ý¾×°ú ¸ÂÁö¾Ê½À´Ï´Ù.", "°áÁ¦±Ý¾×´ë¼Ò¿À·ù",
 							JOptionPane.WARNING_MESSAGE);
 				} else {
 					// salesInputDao.posDto.setTotalPrice(card + cash);
 					// mainframe.payment_3.lbP3FinalPayView.setText(String.valueOf(salesInputDao.posDto.getTotalPrice()));
+					mainframe.payment_3.lbP3FinalPayView.setText(String.valueOf(card + cash));
 					mainframe.payment_3.tfP3SM.setText("°áÁ¦±Ý¾×ÀÌ ÃæÁ·µÇ¾ú½À´Ï´Ù");
 				}
 			}
-//----------------------------------------------------------------------------------------------
+			
+			
+//--------------------------------------------------------------------------------------------
 
 		} else if (ob == mainframe.payment_3.btnP3Before) {
 			mainframe.payment_1.setVisible(true);
@@ -176,6 +224,7 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 		} else if (ob == mainframe.payment_3.btnP3Cancel) {
 			mainframe.payment_3.setVisible(false);
 		} else if (ob == mainframe.payment_3.btnP3Next) {
+			
 
 			if (!mainframe.payment_3.tfP3SM.getText().equals("")) {
 				if (JOptionPane.showConfirmDialog(mainframe.payment_3, "°áÁ¦ÇÏ½Ã°Ú½À´Ï±î?", "°áÁ¦È®ÀÎ",
@@ -202,6 +251,8 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 				}
 
 			}
+			
+			
 		} else if (ob == mainframe.payment_4.btnP4Payment) {
 
 			mainframe.payment_4.setVisible(false);
@@ -557,6 +608,7 @@ public class SalesInputService implements KeyListener, ActionListener {// ÆÇ¸Å À
 		mainframe.payment_3.lbP3PaymentView.setText("");
 
 	}
+
 
 	/*
 	public void payEnd() {
