@@ -41,6 +41,9 @@ import calc.CalcBtn;
 import calc.CalcService;
 import db.Connect_DB;
 
+import account.AccountBtn;
+import account.ViewAccount;
+
 public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀÎÇÁ·¹ÀÓ 
 	
 	StockPopupIn stockpopupin = new StockPopupIn();
@@ -48,6 +51,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	StockPopupSearch stockpopupsearch = new StockPopupSearch();
 	StockBtn stockbtn;
 	CalcBtn calcbtn;
+	AccountBtn accountbtn;
 	ViewStatButtons statbtn;
 	StockMonitor stockmonitor = new StockMonitor();
 	//Stat stat;
@@ -63,6 +67,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	private JPanel pStatusBar;
 	private JLabel titleLabel;
 	private JLabel dateLabel;
+	
 	public JButton mBtnSale;//ÆÇ¸Å¹öÆ°
 	public JButton mBtnInven;//Àç°í¹öÆ°
 	public JButton mBtnCalc;//Á¤»ê¹öÆ°
@@ -80,7 +85,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	CalcService calcService = new CalcService(this);
 	public SaleBtn salebtn = new SaleBtn();
 	
-	
+	public ViewAccount viewAccount = new ViewAccount();
 	
 //	»óÇ°º¸·ù ¹öÆ° ´­¸² ¿©ºÎ È®ÀÎ
 	boolean isHold = false;
@@ -106,6 +111,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		stockbtn = new StockBtn();
 		calcbtn = new CalcBtn();
 		statbtn = new ViewStatButtons();
+		accountbtn = new AccountBtn();
 		
 		setFont(new Font("¸¼Àº °íµñ",Font.BOLD,20));
 		setTitle("pos");
@@ -144,21 +150,21 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 		pMainBtn = new JPanel();
 		pMainBtn.setBackground(new Color(255,255,255));
-		pMainBtn.setBounds(1157,50,163,625);
+		pMainBtn.setBounds(1157,50,163,674);
 		contentPane.add(pMainBtn);
 		pMainBtn.setLayout(null);
 		
 		
 		
 		mBtnSale = new JButton("ÆÇ¸Å");
-		mBtnSale.setBounds(0, 0, 163, 125);
+		mBtnSale.setBounds(0, 0, 163, 90);
 		pMainBtn.add(mBtnSale);
 		mBtnSale.setBackground(new Color(99, 166, 166));
 		mBtnSale.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
 		mBtnSale.setForeground(new Color(255, 255, 255));
 		
 		mBtnInven = new JButton("Àç°í");
-		mBtnInven.setBounds(0, 125, 163, 125);
+		mBtnInven.setBounds(0, 90, 163, 90);
 		pMainBtn.add(mBtnInven);
 		mBtnInven.setBackground(new Color(28, 94, 94));
 		mBtnInven.setForeground(new Color(255, 255, 255));
@@ -168,18 +174,25 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		mBtnCalc.setBackground(new Color(28, 94, 94));
 		mBtnCalc.setForeground(new Color(255, 255, 255));
 		mBtnCalc.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
-		mBtnCalc.setBounds(0, 250, 163, 125);
+		mBtnCalc.setBounds(0, 180, 163, 90);
 		pMainBtn.add(mBtnCalc);
 		
 		mBtnStat = new JButton("Åë°è");
 		mBtnStat.setBackground(new Color(99, 166, 166));
 		mBtnStat.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
 		mBtnStat.setForeground(new Color(255, 255, 255));
-		mBtnStat.setBounds(0, 375, 163, 125);
+		mBtnStat.setBounds(0, 270, 163, 90);
 		pMainBtn.add(mBtnStat);
 		
+		mBtnAccount = new JButton("°èÁ¤°ü¸®");
+		mBtnAccount.setBackground(new Color(99, 166, 166));
+		mBtnAccount.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		mBtnAccount.setForeground(new Color(255, 255, 255));
+		mBtnAccount.setBounds(0, 360, 163, 90);
+		pMainBtn.add(mBtnAccount);
+		
 		logout = new JButton("·Î±×¾Æ¿ô");
-		logout.setBounds(0, 499, 163, 125);
+		logout.setBounds(0, 450, 163, 90);
 		pMainBtn.add(logout);
 		logout.setBackground(Color.BLACK);
 		logout.setForeground(Color.WHITE);
@@ -196,6 +209,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 //		¸ð´ÏÅÍÆÐ³Î¿¡ Ä«µå·¹ÀÌ¾Æ¿ôÁÖ°í °¢È­¸é ÆÐ³Î °´Ã¼»ý¼ºÇÏ¿© Ãß°¡
 		pMonitor.add("ViewSalesInput", viewSalesInput);
 		pMonitor.add(stockmonitor, "Stock");
+		pMonitor.add("ViewAccount", viewAccount);
+		viewAccount.setLayout(null);
 		//pMonitor.add(stat,"stat");
 		pMonitor.add("viewStatProduct", v1);
 		//pMonitor.add("viewStatYear", v2);
@@ -220,6 +235,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		pFBtn.add(statbtn, "Statbtn");
 		//pFBtn.add(accbtn, "Accbtn");
 		pFBtn.add(calcbtn, "Calcbtn");
+		pFBtn.add(accountbtn, "accountbtn");
 		
 		
 		
@@ -228,6 +244,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		mBtnSale.addActionListener(this);
 		mBtnCalc.addActionListener(calcService);
 		mBtnStat.addActionListener(this);
+		mBtnAccount.addActionListener(this);
+		logout.addActionListener(this);
+		
 		
 		
 		// Àç°í ±â´É¹öÆ°
@@ -275,6 +294,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		//Á¤»ê¸®½º³Ê
 		
 		
+		//°èÁ¤ ±â´É ¸®½º³Ê
+		accountbtn.AccountSearch.addActionListener(this);
+		accountbtn.AccountChg.addActionListener(this);
+		accountbtn.Accountevery.addActionListener(this);
+		accountbtn.AccountIn.addActionListener(this);
+		
+		
+		
 //		°áÁ¦1 ÀÌº¥Æ® µî·Ï
 		//payment_1.cbP1Cooperation.addActionListener(salesInputService);
 		payment_1.btnP1Apply.addActionListener(salesInputService);
@@ -306,6 +333,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 
 	}//¸ÞÀÎÇÁ·¹ÀÓ¸Þ¼Òµå ³¡
 	
+	/*
 	public static void main(String[] args) {
 		
 		EventQueue.invokeLater(new Runnable() {
@@ -319,6 +347,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		});
 		
 	}
+	*/
 	
 
 	@Override
@@ -336,7 +365,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		} else if (ob == mBtnInven) {//Àç°í°ü¸®
 			monitor.show(pMonitor, "Stock");
 			btn.show(pFBtn, "Stockbtn");
-		} 
+		} else if (ob == mBtnAccount) {//°èÁ¤°ü¸®
+			monitor.show(pMonitor, "ViewAccount");
+			btn.show(pFBtn, "accountbtn");
+		} else if (ob == logout) {
+			Login drawing= new Login();
+			dispose();
+		}
 	      /*
 		  else if (ob == mBtnCalc) {//Á¤»ê
 			//monitor.show(pMonitor, "Stat");

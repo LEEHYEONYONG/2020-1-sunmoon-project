@@ -30,6 +30,7 @@ import javax.swing.table.DefaultTableModel;
 
 import db.PosDto;
 import main.MainFrame;
+import db.Connect_DB;
 
 public class SalesInputService implements KeyListener, ActionListener, ItemListener {// 판매 이벤트 처리
 
@@ -37,15 +38,23 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 	MainFrame mainframe;
 	// SalesInputDao salesInputDao;//DB
 	public static boolean key;
-	Vector<PosDto> salesList;
+	//Vector<PosDto> salesList;
+	Vector<PosUse> salesList;//DB
 	Vector<Object> getgoods;
 	int overlapRow;
 	boolean memshipcheck = false;
 
+	//데이터베이스 필드 추가
+	Connect_DB connect_db;
+	
 	public SalesInputService(MainFrame mainframe) {
 		super();
 		this.mainframe = mainframe;
 		// salesInputDao = new SalesInputDao();
+		
+		//김무현 추가
+		connect_db = new Connect_DB();
+		
 	}
 
 	
@@ -97,7 +106,9 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 		Object ob = e.getSource();
 
 		if (ob == mainframe.salebtn.sBtnPdChange) {// 상품수정클릭시
+			
 			int row = mainframe.viewSalesInput.table.getSelectedRow();
+			System.out.println("row : "+row);
 			if (row < 0) {
 				JOptionPane.showMessageDialog(mainframe, "수정할 상품을 클릭해 주세요.", "상품 수정 오류", JOptionPane.WARNING_MESSAGE);
 
@@ -110,14 +121,15 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 				if (cnt == null || !isNumber(cnt) || cnt.isEmpty() || cnt.trim().equals("")) {
 					return;
 				} else {
-					int price = Integer.parseInt(String.valueOf(mainframe.viewSalesInput.model.getValueAt(row, 3)));
-					mainframe.viewSalesInput.model.setValueAt(Integer.parseInt(cnt), row, 4);
-					mainframe.viewSalesInput.model.setValueAt(price * Integer.parseInt(cnt), row, 5);
+					int price = Integer.parseInt(String.valueOf(mainframe.viewSalesInput.model.getValueAt(row, 4)));//가격 4번
+					mainframe.viewSalesInput.model.setValueAt(Integer.parseInt(cnt), row, 3);//수량 3번
+					mainframe.viewSalesInput.model.setValueAt(price * Integer.parseInt(cnt), row, 7);//총 금액 7번
 				}
 			} else {
 				JOptionPane.showMessageDialog(mainframe, "수정할 상품을 선택해주세요", "선택오류", JOptionPane.ERROR_MESSAGE);
 			}
 			totalApply();
+
 		} else if (ob == mainframe.salebtn.sBtnAcancel) {// 거래취소클릭시
 			int row = mainframe.viewSalesInput.table.getRowCount();
 			if (row < 0) {
@@ -135,6 +147,25 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 						JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (del == 0) {
 					mainframe.viewSalesInput.model.removeRow(row);
+					
+					//listNum 재설정
+					int t_size = mainframe.viewSalesInput.table.getRowCount();
+					for(int i =0; i < t_size; i++)
+					{
+						mainframe.viewSalesInput.model.setValueAt(i+1,i,0);//삽입할 번호, 행번호, 열번호
+					}
+					//listNum 1감소
+					connect_db.removeListNum();
+					
+					int size = salesList.size();
+					System.out.println("사이즈 : "+size);
+				
+					System.out.println("getListNum : "+salesList.get(0).getListNum());
+					System.out.println("getp_num : "+salesList.get(0).getp_num());
+					System.out.println("getp_name : "+salesList.get(0).getp_name());
+					System.out.println("getp_amount : "+salesList.get(0).getp_amount());
+					System.out.println("getp_cost : "+salesList.get(0).getp_cost());
+					System.out.println("getp_provide : "+salesList.get(0).getp_provide());
 					totalApply();
 				}
 //				int price = Integer.parseInt(String.valueOf(mainframe.viewSalesInput.model.getValueAt(row, 3)));
@@ -500,39 +531,28 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 
 	public void goodsListProcess() {
 
-		/*
 		if (mainframe.viewSalesInput.code_input.getText().trim().length() > 0) {
 
 			if (checkOverlap(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase(), 1)) {
 				key = true;
 				System.out.println(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase());
 				System.out.println("코드로검색" + mainframe.viewSalesInput.code_input.getText().length());
-                
-				/* 
-				String[] a = new String[7];
-				a[0] = "1212";
-				a[1] = "DB-78";
-				a[2] = "바나나";
-				a[3] = "2500";
-				a[4] = "1";
-				a[5] = "2500";
-				mainframe.viewSalesInput.model.addRow(a);
-				실험용 
-
-				// listAdd(salesInputDao.searchBy(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase()));
+				
+				//김무현이 만든 connect_db.searchBy 메소드
+				listAdd(connect_db.searchBy(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase()));
 
 			} else {
 				// 수량 변경
 				System.out.println("코드중복 발생");
 				mainframe.viewSalesInput.model.setValueAt(
-						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 4))) + 1,
-						overlapRow, 4);
+						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3))) + 1,
+						overlapRow, 3);// 4로 되어있던 부분 3으로 변경(3번이 수량)
 				// 단가 * 수량
 				mainframe.viewSalesInput.model.setValueAt(
-						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3)))
+						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3)))//수량
 								* Integer.valueOf(
-										String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 4))),
-						overlapRow, 5);
+										String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 4))),//가격
+						overlapRow, 7);//5로 되어있던 부분 7으로 변경(7번 총 금액)
 			}
 			mainframe.viewSalesInput.product_name_input.setText("");
 		} else if (mainframe.viewSalesInput.product_name_input.getText().trim().length() > 0) {
@@ -540,21 +560,22 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			if (checkOverlap(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase(), 2)) {
 				key = false;
 				System.out.println("이름으로검색" + mainframe.viewSalesInput.product_name_input.getText().length());
-
-				// listAdd(salesInputDao.searchBy(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase()));
+				//김무현이 만든 connect_db.searchBy 메소드
+				listAdd(connect_db
+						.searchBy(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase()));
 
 			} else {
 				System.out.println("이름중복 발생");
 				// 수량만증가
 				mainframe.viewSalesInput.model.setValueAt(
-						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 4))) + 1,
-						overlapRow, 4);
+						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3))) + 1,
+						overlapRow, 3);//4로 되어있던 부분 3으로 변경
 				// 단가 * 수량 적용
 				mainframe.viewSalesInput.model.setValueAt(
-						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3)))
+						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3)))//수량
 								* Integer.valueOf(
-										String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 4))),
-						overlapRow, 5);
+										String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 4))),//가격
+						overlapRow, 7);//5로 되어있던 부분 7으로 변경
 			}
 
 		} else {
@@ -564,85 +585,66 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 		totalApply();
 		mainframe.viewSalesInput.code_input.setText("");
 		mainframe.viewSalesInput.product_name_input.setText("");
-		
-		*/
-		
-		//System.out.println(e);
-		//System.out.println(mainframe.viewSalesInput.product_name_input.getText().toString());
-		
-		int rowCount;
-		
-		if(mainframe.viewSalesInput.product_name_input.getText().toString().length() > 0)
-		{
-
-			//상품명 입력값 받기
-			String p_name = mainframe.viewSalesInput.product_name_input.getText().toString();
-			//System.out.println("p_name = "+p_name);
-			
-			//상품 갯수 받기
-			rowCount = mainframe.connect_db.countRow(p_name);
-			//System.out.println("rowCount = "+rowCount);
-			
-			//2차원 String 배열  생성 후 상품 검색 메소드 실행
-			mainframe.viewSalesInput.contents = new String[rowCount][5];
-			mainframe.viewSalesInput.contents = mainframe.connect_db.find_product(p_name, rowCount);
-			/*for(int i=0;i<rowCount;i++)
-			{
-				for(int j=0;j<5;j++)
-				{
-					System.out.print(mainframe.viewSalesInput.contents[i][j]);
-				}
-				System.out.println(" ");
-			}*/
-			for(int i =0;i<rowCount;i++)
-			{
-				mainframe.viewSalesInput.model.addRow(mainframe.viewSalesInput.contents[i]);
-			}
-			mainframe.viewSalesInput.product_name_input.setText(null);
-			
-		}
-		else if(mainframe.viewSalesInput.code_input.getText().toString().length() > 0)
-		{
-			
-			String p_num = mainframe.viewSalesInput.code_input.getText().toString();
-			int num = Integer.parseInt(p_num);
-			
-			mainframe.viewSalesInput.contents = new String[1][5];
-			mainframe.viewSalesInput.contents = mainframe.connect_db.find_product(num);
-			
-			mainframe.viewSalesInput.model.addRow(mainframe.viewSalesInput.contents[0]);
-			
-			mainframe.viewSalesInput.code_input.setText(null);
-		}
 	}
 
-	public void listAdd(Vector<PosDto> salesList) {
+	public void listAdd(Vector<PosUse> salesList) {
 		if (salesList == null)
 			JOptionPane.showMessageDialog(mainframe, "상품이 존재하지않습니다.", "상품없음", JOptionPane.ERROR_MESSAGE);
 		else {
 			int size = salesList.size();
+			
+			this.salesList = new Vector<PosUse>();
 
+			//this.salesList.addElement(salesList.get(0).getListNum());
+			
+			this.salesList = salesList;
+			
+			System.out.println("listAdd size : "+size);
 			Vector<String> rows = new Vector<String>();
-
+			/*
 			rows.addElement(Integer.toString(salesList.get(0).getListNum()));
-			rows.addElement(salesList.get(0).getProductCode());
-			rows.addElement(salesList.get(0).getProductName());
-			rows.addElement(Integer.toString(salesList.get(0).getPrice()));
-			rows.addElement(String.valueOf(salesList.get(0).getSellCount()));
-			rows.addElement(String.valueOf(salesList.get(0).getPricensellCount()));
-			rows.addElement(salesList.get(0).getInDate());
-
+			rows.addElement(salesList.get(0).getProductCode()); 1 String
+			rows.addElement(salesList.get(0).getProductName()); 2 String
+			rows.addElement(Integer.toString(salesList.get(0).getPrice())); 3 int
+			rows.addElement(String.valueOf(salesList.get(0).getSellCount())); 4 int
+			rows.addElement(String.valueOf(salesList.get(0).getPricensellCount())); 5 int
+			rows.addElement(salesList.get(0).getInDate()); 6 String*/
+			
+			rows.addElement(Integer.toString(salesList.get(0).getListNum()));
+			rows.addElement(Integer.toString(salesList.get(0).getp_num()));
+			rows.addElement(salesList.get(0).getp_name());
+			rows.addElement(String.valueOf(salesList.get(0).getp_amount()));
+			rows.addElement(Integer.toString(salesList.get(0).getp_cost()));
+			rows.addElement(salesList.get(0).getp_category());
+			rows.addElement(salesList.get(0).getp_provide());
+			rows.addElement(String.valueOf(salesList.get(0).getp_costsellCount()));
+			/*
+			System.out.println("rows.size : "+rows.size());
+			System.out.println("rows.get(0) : "+rows.get(0));
+			System.out.println("rows.get(1) : "+rows.get(1));
+			System.out.println("rows.get(2) : "+rows.get(2));
+			System.out.println("rows.get(3) : "+rows.get(3));
+			System.out.println("rows.get(4) : "+rows.get(4));
+			System.out.println("rows.get(5) : "+rows.get(5));
+			System.out.println("rows.get(6) : "+rows.get(6));
+			
+			System.out.println("salesList.get(0) : "+salesList.get(0));*/
+			
+			System.out.println(this.salesList.get(0).getp_name());
+			
+			
 			mainframe.viewSalesInput.model.addRow(rows);
+			
 			System.out.println("반영완료");
 
 		}
 	}
 
-	public void totalApply() {
+	public void totalApply() {//계산한 총금액가져오기
 		int tp = 0;
 		int row = mainframe.viewSalesInput.table.getRowCount();
 		for (int i = 0; i < row; i++) {
-			tp += Integer.parseInt(String.valueOf(mainframe.viewSalesInput.model.getValueAt(i, 5)));
+			tp += Integer.parseInt(String.valueOf(mainframe.viewSalesInput.model.getValueAt(i, 7)));
 		}
 		mainframe.viewSalesInput.total_price_input.setText(String.valueOf(tp));
 	}

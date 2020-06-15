@@ -1,17 +1,28 @@
 package db;
 
 import java.sql.*;
+import java.util.Vector;
+
+import sale.SalesInputService;
+import sale.PosUse;
 
 public class Connect_DB {
 	
 	Connection con = null;
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
-	String url = "jdbc:mysql://localhost/pos_system?serverTimezone=Asia/Seoul";
+	String url = "jdbc:mysql://211.111.101.56/pos_system?serverTimezone=Asia/Seoul";
 	String user = "POS_user";
 	String passwd = "pos project";
 	
+	ResultSet result = null;
 
+	PosDto posDto = null;
+	PosUse posUse = null;
+	SalesInputService salesInputService;
+	
+	
+	int i = 1;
 	
 	public Connect_DB()
 	{
@@ -476,7 +487,100 @@ public class Connect_DB {
 		return "삭제 실페";
 	}
 	
+	//상품을 삭제하여 ListNum을 1줄인다
+	public void removeListNum()
+	{
+		i = i-1;
+	}
 	
+	public Vector<PosUse> searchBy(String identifier)//결제 목록찾기 메소드
+	{
+		Vector<PosUse> salesList = new Vector<PosUse>();
+
+		String query = "";
+		try
+		{
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url,user,passwd);
+			stmt = con.createStatement();
+			
+			System.out.println(SalesInputService.key);
+//			"번호", "상품코드", "상품명", "단가", "수량", "금액", "유통기한"	
+			if (SalesInputService.key == true) 
+			{
+				//상품 코드, 상품명, 상품 가격, 1(수량), 유통기한을 가져오고 상품코드를 대문자이고 유통기한을 기준으로 오름차순으로 정렬 후 select하는 코드
+				query = "select p_num, p_name, 1, p_cost, p_category, p_provide from product where p_num = ?";
+				System.out.println("code");
+			} 
+			else if (SalesInputService.key == false) 
+			{
+				query = "select p_num, p_name, 1, p_cost, p_category, p_provide from product where p_name = ?";
+				System.out.println("name");
+
+			}
+			
+			pstmt = con.prepareStatement(query);
+			
+			pstmt.setString(1, identifier);
+
+			result = pstmt.executeQuery();
+			
+			System.out.println("작동");
+			
+			while (result.next()) 
+			{/*
+				posDto = new PosDto();
+				posDto.setListNum(i);
+				posDto.setProductCode(result.getString(1)); //1 String
+				posDto.setProductName(result.getString(2)); //2 String
+				posDto.setPrice(result.getInt(3)); //3 int
+				posDto.setSellCount(1); //4 int
+				posDto.setPricensellCount(result.getInt(3) * posDto.getSellCount()); //5 int
+				posDto.setInDate(result.getString(5)); //6 String
+				
+
+				salesList.add(posDto);*/
+				System.out.println("작동: " +i);
+				posUse = new PosUse();
+				posUse.setListNum(i);
+				posUse.setp_num(result.getInt(1)); //int 형
+				posUse.setp_name(result.getString(2));// String 형
+				posUse.setp_amount(1);// int 형
+				posUse.setp_cost(result.getInt(4));// int 형
+				posUse.setp_category(result.getString(5));// String 형
+				posUse.setp_provide(result.getString(6)); // String 형
+				posUse.setp_costsellCount(result.getInt(4)*posUse.getp_sellCount());//int 형
+				
+				System.out.println("값 넣기 성공");
+				salesList.add(posUse);
+				i++;
+				
+				return salesList;
+			}
+			
+			int x = salesList.size();
+			System.out.println(x);
+			System.out.println("조회완료");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				pstmt.close();
+				con.close();
+				result.close();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 	
 	
 	//로그인 기능

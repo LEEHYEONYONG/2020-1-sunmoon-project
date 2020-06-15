@@ -20,7 +20,8 @@ public class ViewSalesInput extends JPanel{//상품목록표시 GUI
 	public DefaultTableModel model;
 	public JTable table;
 	
-	String header[] = {"상품코드", "상품명", "수량", "금액(단가)", "제조사", "총금액"};
+	//String header[] = {"상품코드", "상품명", "수량", "금액(단가)", "제조사", "총금액"};
+	String header[] = {"번호", "상품코드", "상품명", "수량", "금액", "종류", "제조사", "총 금액"};
 	String contents[][]= {
 			
 	};
