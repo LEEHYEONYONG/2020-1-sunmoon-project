@@ -39,6 +39,8 @@ import stock.StockPopupIn;
 import stock.StockPopupSearch;
 import calc.CalcBtn;
 import calc.CalcService;
+import calc.PCalc;
+import calc.Recepit;
 import db.Connect_DB;
 
 import account.AccountBtn;
@@ -53,7 +55,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	CalcBtn calcbtn;
 	AccountBtn accountbtn;
 	ViewStatButtons statbtn;
+	
 	StockMonitor stockmonitor = new StockMonitor();
+	public ViewAccount viewAccount = new ViewAccount();
+	//public Recepit recepit = new Recepit();
+	public PCalc pcalc = new PCalc();
+ 
+	
 	//Stat stat;
 	public CardLayout monitor;
 	public CardLayout btn;
@@ -85,7 +93,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	CalcService calcService = new CalcService(this);
 	public SaleBtn salebtn = new SaleBtn();
 	
-	public ViewAccount viewAccount = new ViewAccount();
+	
 	
 //	»óÇ°º¸·ù ¹öÆ° ´­¸² ¿©ºÎ È®ÀÎ
 	boolean isHold = false;
@@ -210,6 +218,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		pMonitor.add("ViewSalesInput", viewSalesInput);
 		pMonitor.add(stockmonitor, "Stock");
 		pMonitor.add("ViewAccount", viewAccount);
+		pMonitor.add("PCalc",pcalc);
+
 		viewAccount.setLayout(null);
 		//pMonitor.add(stat,"stat");
 		pMonitor.add("viewStatProduct", v1);
@@ -233,7 +243,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		pFBtn.add(salebtn, "salebtn");
 		pFBtn.add(stockbtn, "Stockbtn");
 		pFBtn.add(statbtn, "Statbtn");
-		//pFBtn.add(accbtn, "Accbtn");
 		pFBtn.add(calcbtn, "Calcbtn");
 		pFBtn.add(accountbtn, "accountbtn");
 		
@@ -243,6 +252,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		mBtnInven.addActionListener(this);
 		mBtnSale.addActionListener(this);
 		mBtnCalc.addActionListener(calcService);
+		//mBtnCalc.addActionListener(this);
 		mBtnStat.addActionListener(this);
 		mBtnAccount.addActionListener(this);
 		logout.addActionListener(this);
@@ -292,7 +302,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		salebtn.sBtnPdCancel.addActionListener(salesInputService);
 		
 		//Á¤»ê¸®½º³Ê
-		
+		calcbtn.cBtnCalc.addActionListener(this);
+		//calcbtn.cBtnCalc.addActionListener(this);
 		
 		//°èÁ¤ ±â´É ¸®½º³Ê
 		accountbtn.AccountSearch.addActionListener(this);
@@ -372,11 +383,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 			Login drawing= new Login();
 			dispose();
 		}
-	      /*
-		  else if (ob == mBtnCalc) {//Á¤»ê
-			//monitor.show(pMonitor, "Stat");
-			//btn.show(pFBtn, "Calcbtn");
-		} */
+		/*
+		else if (ob == mBtnCalc) {//Á¤»ê
+			monitor.show(pMonitor, "Recepit");
+			btn.show(pFBtn, "Calcbtn");
+		}
+		*/
+
 		
 		//¼¼ºÎ±â´Éµé
 		

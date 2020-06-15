@@ -22,6 +22,9 @@ public class CalcService implements ActionListener {
 		
 		if(ob ==mainframe.mBtnCalc) {
 			mainframe.btn.show(mainframe.pFBtn, "Calcbtn");
+			mainframe.monitor.show(mainframe.pMonitor, "PCalc");
+			//pMonitor.add("PCalc",pcalc);
+			
 		}
 		
 		
