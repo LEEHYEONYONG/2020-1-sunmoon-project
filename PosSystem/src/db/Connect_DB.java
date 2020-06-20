@@ -3,15 +3,20 @@ package db;
 import java.sql.*;
 import java.util.Vector;
 
+import javax.swing.table.DefaultTableModel;
+
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+
 import sale.SalesInputService;
-import sale.PosUse;
 
 public class Connect_DB {
 	
 	Connection con = null;
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
-	String url = "jdbc:mysql://211.111.101.56/pos_system?serverTimezone=Asia/Seoul";
+	//String url = "jdbc:mysql://211.111.101.56/pos_system?serverTimezone=Asia/Seoul";
+	String url = "jdbc:mysql://localhost/pos_system?serverTimezone=Asia/Seoul";
 	String user = "POS_user";
 	String passwd = "pos project";
 	
@@ -22,7 +27,7 @@ public class Connect_DB {
 	SalesInputService salesInputService;
 	
 	
-	int i = 1;
+	public int i = 1;
 	
 	public Connect_DB()
 	{
@@ -488,9 +493,9 @@ public class Connect_DB {
 	}
 	
 	//상품을 삭제하여 ListNum을 1줄인다
-	public void removeListNum()
+	public void removeListNum(int getRows)
 	{
-		i = i-1;
+		i = i-getRows;
 	}
 	
 	public Vector<PosUse> searchBy(String identifier)//결제 목록찾기 메소드
@@ -543,13 +548,13 @@ public class Connect_DB {
 				System.out.println("작동: " +i);
 				posUse = new PosUse();
 				posUse.setListNum(i);
-				posUse.setp_num(result.getInt(1)); //int 형
+				posUse.setp_num(result.getString(1)); //int 형
 				posUse.setp_name(result.getString(2));// String 형
 				posUse.setp_amount(1);// int 형
 				posUse.setp_cost(result.getInt(4));// int 형
 				posUse.setp_category(result.getString(5));// String 형
 				posUse.setp_provide(result.getString(6)); // String 형
-				posUse.setp_costsellCount(result.getInt(4)*posUse.getp_sellCount());//int 형
+				posUse.setp_costsellCount(result.getInt(4)*posUse.getp_amount());//int 형
 				
 				System.out.println("값 넣기 성공");
 				salesList.add(posUse);
@@ -598,5 +603,138 @@ public class Connect_DB {
 	 *재고수를 변경하는 update문
 	 *오픈소스 참고 가능
 	 *판매관련 관계설정 및 명령문*/
+	
+	
+	//통계부분
+	//////////////////////////////// 상품별 통계 ////////////////////////////////
+	// <상품별 매출내역 select> 메소드
+	// : 소분류, 년, 월 입력받아 매출합계 랭킹순으로 조회
+	public Vector<PosUse> findProductSell(String minor_level, String year, String month) {
+		
+		Vector<PosUse> list= new Vector<PosUse>();
+		
+		int date = Integer.parseInt(year.concat(month).concat("01"));
+		try {
+			//DB연결
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url,user,passwd);
+			posDto = new PosDto();
+			//쿼리문 세팅
+			String query = "SELECT P.P_NUM AS '상품코드', P.P_CATEGORY AS '상품분류', P.P_NAME AS '상품명', P.P_COST AS '가격', V.SC AS '판매수량', P.P_COST * V.SC AS '매출합계', P.P_PROVIDE AS '제조사'\r\n"+
+					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE group by C_NAME) V\r\n"+
+					"WHERE P.P_NUM = V.C_NAME\r\n"+
+					"order by P.P_COST * V.SC desc";
+			
+			pstmt= con.prepareStatement(query);
+			result = pstmt.executeQuery();
+			
+			while (result.next()) {
+				posUse = new PosUse();
+				
+				posUse.setp_num(result.getString(1));
+				posUse.setp_category(result.getString(2));
+				posUse.setp_name(result.getString(3));
+				posUse.setp_cost(result.getInt(4));
+				posUse.setTotalamount(result.getInt(5));
+				posUse.setTotalproductprice(result.getInt(6));
+				posUse.setp_provide(result.getString(7));
+				
+				list.add(posUse);
+				
+			}
+
+		}catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			
+			try {
+				pstmt.close();
+				con.close();
+				result.close();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			
+		}
+		
+		return list;
+	}
+	
+	// <상품별 매출내역 BEST 5 select> 메소드
+	// : 소분류, 년, 월 입력받아 매출합계 랭킹 상위 5위까지 조회
+	public Vector<PosUse> findProductSellBestFive(String minor_level, String year, String month) {
+		// 쿼리문 결과 (여러 행) 담을 PosDto 객체
+		Vector<PosUse> list = new Vector<PosUse>();
+
+		// String으로 입력한 날짜를 '년월' 합쳐서 int로 변환
+		int date = Integer.parseInt(year.concat(month).concat("01"));
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+			String query = "SELECT P.P_NUM AS '상품코드', P.P_CATEGORY AS '상품분류', P.P_NAME AS '상품명', P.P_COST AS '가격', V.SC AS '판매수량', P.P_COST * V.SC AS '매출합계', P.P_PROVIDE AS '제조사'\r\n"+
+					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE group by C_NAME) V\r\n"+
+					"WHERE P.P_NUM = V.C_NAME\r\n"+
+					"order by P.P_COST * V.SC desc limit 5";
+			pstmt = con.prepareStatement(query);
+			//pstmt.setInt(1, date);
+			//pstmt.setString(2, minor_level);
+
+			// 쿼리문 실행
+			result = pstmt.executeQuery();
+
+			// 결과 저장
+			while (result.next()) {
+				posUse = new PosUse();
+				
+				
+				posUse.setp_num(result.getString(1));
+				posUse.setp_category(result.getString(2));
+				posUse.setp_name(result.getString(3));
+				posUse.setp_cost(result.getInt(4));
+				posUse.setTotalamount(result.getInt(5));
+				posUse.setTotalproductprice(result.getInt(6));
+				posUse.setp_provide(result.getString(7));
+
+				list.add(posUse);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// 결과 리턴
+		return list;
+	}
+	
+	// 테이블 행 모두 지우기 (화면단에서만)
+	public static void clearRows(int rowSize, DefaultTableModel dtm) {
+		if (rowSize > 0) {
+			for (int i = rowSize - 1; i >= 0; i--) {
+				dtm.removeRow(i);
+			}
+		}
+	}
+	
+	
+	
+
+
+	
+	
+	
+	
 
 }

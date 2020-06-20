@@ -126,7 +126,7 @@ public class ViewStatDay extends JPanel{
 		tableResult.setRowMargin(10);
 		tableResult.setRowHeight(30);
 		// 테이블 값 가운데 정렬
-		//MainFrame.tableCellCenter(tableResult);
+		MainFrame.tableCellCenter(tableResult);
 
 		spShowTable.setViewportView(tableResult);
 

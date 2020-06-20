@@ -16,10 +16,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.table.TableColumnModel;
 
 import db.PosDto;
 import sale.DealCancel;
@@ -31,7 +33,9 @@ import sale.SalesInputService;
 import sale.ViewSalesInput;
 import stat.ViewStatButtons;
 import stat.ViewStatDay;
+import stat.ViewStatMonth;
 import stat.ViewStatProduct;
+import stat.ViewStatYear;
 import stock.StockBtn;
 import stock.StockMonitor;
 import stock.StockPopupChange;
@@ -85,8 +89,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	
 	
 	ViewStatProduct v1 = new ViewStatProduct(); // »óÇ°º° ÆÐ³Î
-	//ViewStatYear v2 = new ViewStatYear(); // ¿¬µµº° ÆÐ³Î
-	//ViewStatMonth v3 = new ViewStatMonth(); // ¿ùº° ÆÐ³Î
+	ViewStatYear v2 = new ViewStatYear(); // ¿¬µµº° ÆÐ³Î
+	ViewStatMonth v3 = new ViewStatMonth(); // ¿ùº° ÆÐ³Î
 	ViewStatDay v4 = new ViewStatDay(); // ÀÏº° ÆÐ³Î
 	
 	
@@ -223,8 +227,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		viewAccount.setLayout(null);
 		//pMonitor.add(stat,"stat");
 		pMonitor.add("viewStatProduct", v1);
-		//pMonitor.add("viewStatYear", v2);
-		//pMonitor.add("viewStatMonth", v3);
+		pMonitor.add("viewStatYear", v2);
+		pMonitor.add("viewStatMonth", v3);
 		pMonitor.add("viewStatDay", v4);
 		
 		
@@ -557,9 +561,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 				else if (ob == statbtn.sBtnProduct) {
 					monitor.show(pMonitor, "viewStatProduct");
 				} else if (ob == statbtn.sBtnYear) {
-					//monitor.show(pMonitor, "viewStatYear");
+					monitor.show(pMonitor, "viewStatYear");
 				} else if (ob == statbtn.sBtnMonth) {
-					//monitor.show(pMonitor, "viewStatMonth");
+					monitor.show(pMonitor, "viewStatMonth");
 				} else if (ob == statbtn.sBtnDay) {
 					monitor.show(pMonitor, "viewStatDay");
 				}
@@ -603,6 +607,19 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 
 		JOptionPane.showMessageDialog(dealCancel, "È¯ºÒ Ã³¸®°¡ ¿Ï·áµÇ¾ú½À´Ï´Ù.", "È¯ºÒ ¿Ï·á", JOptionPane.INFORMATION_MESSAGE);
 		dealCancel.dispose();
+	}
+	
+	// <Å×ÀÌºí ³»¿ë °¡¿îµ¥ Á¤·Ä> ¸Þ¼Òµå
+	public static void tableCellCenter(JTable t) {
+		DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer(); // µðÆúÆ®Å×ÀÌºí¼¿·»´õ·¯¸¦ »ý¼º
+		dtcr.setHorizontalAlignment(SwingConstants.CENTER); // ·»´õ·¯ÀÇ °¡·ÎÁ¤·ÄÀ» CENTER·Î
+
+		TableColumnModel tcm = t.getColumnModel(); // Á¤·ÄÇÒ Å×ÀÌºíÀÇ ÄÃ·³¸ðµ¨À» °¡Á®¿È
+
+		// ÀüÃ¼ ¿­¿¡ ÁöÁ¤
+		for (int i = 0; i < tcm.getColumnCount(); i++) {
+			tcm.getColumn(i).setCellRenderer(dtcr);
+		}
 	}
 
 	private static boolean isNumber(String str) {

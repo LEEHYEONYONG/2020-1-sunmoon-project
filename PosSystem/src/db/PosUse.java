@@ -1,9 +1,11 @@
-package sale;
+package db;
+
+import java.util.Vector;
 
 public class PosUse {
 	
 	//상품 테이블
-	private int p_num;//상품번호
+	private String p_num;//상품번호
 	private String p_name;//상품명
 	private int p_amount;//상품 개수
 	private int p_cost;//단가
@@ -38,8 +40,12 @@ public class PosUse {
 	private String user_name;//사용자 이름
 	private String user_email;//사용자 이메일
 	private String rank;//사용자 직급
-	
 	private int listNum; // 상품등록창에서 행번호@@@@
+	
+	//통계 테이블
+	//상품별
+	private int totalamount;//상품별판매수량
+	private int totalproductprice;//상품별합계가격
 	
 	
 	public int getListNum() 
@@ -53,12 +59,12 @@ public class PosUse {
 	}
 	
 	
-	public int getp_num()
+	public String getp_num()
 	{
 		return p_num;
 	}
 	
-	public void setp_num(int p_num)
+	public void setp_num(String p_num)
 	{
 		this.p_num = p_num;
 	}
@@ -132,5 +138,22 @@ public class PosUse {
 	{
 		this.p_sellCount = p_sellCount;
 	}
+	
+	public int getTotalamount() {
+		return totalamount;
+	}
+
+	public void setTotalamount(int totalamount) {
+		this.totalamount = totalamount;
+	}
+
+	public int getTotalproductprice() {
+		return totalproductprice;
+	}
+
+	public void setTotalproductprice(int totalproductprice) {
+		this.totalproductprice = totalproductprice;
+	}
+
 
 }

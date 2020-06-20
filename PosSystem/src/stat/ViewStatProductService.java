@@ -14,20 +14,22 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.util.Rotation;
 
+import db.Connect_DB;
 import db.PosDto;
+import db.PosUse;
 
 public class ViewStatProductService implements ActionListener {
 	
-	Vector<PosDto> bests = null; // Best5 상품 그래프용 저장 백터
-
-	Vector<PosDto> results = null; // 검색 결과 상품 테이블용 저장 백터
-	//StatDao statDao = new StatDao(); // Dao 객체
+	Vector<PosUse> bests = null; // Best5 상품 그래프용 저장 백터
+	Vector<PosUse> results = null; // 검색 결과 상품 테이블용 저장 백터
+	Connect_DB connect_DB = new Connect_DB(); // Dao 객체
 
 	private String minorLevel = null; // 콤보 박스 저장 변수
 	private String year = null;
 	private String month = null;
 
 	private ViewStatProduct vp;
+	Connect_DB connect_db = new Connect_DB();
 
 	// [생성자]
 	public ViewStatProductService(ViewStatProduct vp) {
@@ -50,7 +52,7 @@ public class ViewStatProductService implements ActionListener {
 	public void search() {
 
 		// 테이블 행 화면 리셋
-		//StatDao.clearRows(vp.tmodel.getRowCount(), vp.tmodel);
+		Connect_DB.clearRows(vp.tmodel.getRowCount(), vp.tmodel);
 		
 		// 콤보박스의 값을 가져옴
 		// (소분류, 시작년도, 끝년도)
@@ -58,10 +60,10 @@ public class ViewStatProductService implements ActionListener {
 		year = vp.comboYear.getItemAt(vp.comboYear.getSelectedIndex()).toString();
 		month = vp.comboMonth.getItemAt(vp.comboMonth.getSelectedIndex()).toString();
 
-		results = new Vector<PosDto>(); // select 결과가 세팅된 Dto Vector
+		results = new Vector<PosUse>(); // select 결과가 세팅된 Dto Vector
 
 		// select 결과 저장
-		//results = statDao.findProductSell(minorLevel, year, month); // DB select 결과 저장 변수
+		results = connect_db.findProductSell(minorLevel, year, month); // DB select 결과 저장 변수
 
 		if (results.isEmpty()) { // 조회 결과 없으면, 알림창 날림
 			JOptionPane.showMessageDialog(null, "조회할 데이터가 없습니다.");
@@ -71,16 +73,15 @@ public class ViewStatProductService implements ActionListener {
 			int size = results.size();
 			for (int i = 0; i < size; i++) {
 				Vector<String> rows = new Vector<String>(); // 행
-				rows.addElement(Integer.toString(results.get(i).getRanking()));
-				rows.addElement(results.get(i).getProductCode());
-				rows.addElement(results.get(i).getMinorLevel());
-				rows.addElement(results.get(i).getProductName());
-				rows.addElement(Integer.toString(results.get(i).getPrice()));
-				rows.addElement(Integer.toString(results.get(i).getPurchase()));
-				rows.addElement(Integer.toString(results.get(i).getSellCount()));
-				rows.addElement(Integer.toString(results.get(i).getStatTotalPrice()));
-				rows.addElement(results.get(i).getCompany());
-
+				rows.addElement(Integer.toString(i+1));
+				rows.addElement(results.get(i).getp_num());
+				rows.addElement(results.get(i).getp_category());
+				rows.addElement(results.get(i).getp_name());
+				rows.addElement(Integer.toString(results.get(i).getp_cost()));
+				rows.addElement(Integer.toString(results.get(i).getTotalamount()));
+				rows.addElement(Integer.toString(results.get(i).getTotalproductprice()));
+				rows.addElement(results.get(i).getp_provide());
+				
 				vp.tmodel.addRow(rows);
 			}
 
@@ -99,9 +100,9 @@ public class ViewStatProductService implements ActionListener {
 		DefaultPieDataset pieDataset = null;
 		JFreeChart chart;
 		
-		bests = new Vector<PosDto>();
+		bests = new Vector<PosUse>();
 		if(results != null) {
-			//bests = statDao.findProductSellBestFive(minorLevel, year, month); // 랭킹 5 뽑기 sql문 결과 담음
+			bests = connect_DB.findProductSellBestFive(minorLevel, year, month); // 랭킹 5 뽑기 sql문 결과 담음
 
 			pieDataset = new DefaultPieDataset(); // 파이 차트 데이터셋 생성
 
@@ -112,8 +113,8 @@ public class ViewStatProductService implements ActionListener {
 			int size = bests.size();
 			for (int i = 0; i < size; i++) {
 
-				productName.addElement(bests.get(i).getProductName());
-				totalSellPrice.addElement(bests.get(i).getStatTotalPrice());
+				productName.addElement(bests.get(i).getp_name());
+				totalSellPrice.addElement(bests.get(i).getTotalproductprice());
 
 				// 값, 범례, 카테고리 지정
 				pieDataset.setValue(productName.get(i), totalSellPrice.get(i));

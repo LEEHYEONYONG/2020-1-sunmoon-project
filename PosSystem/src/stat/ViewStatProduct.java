@@ -53,11 +53,11 @@ public class ViewStatProduct extends JPanel {
 		Vector<Integer> YearValues = new Vector<Integer>(); // 년도 저장할 벡터
 		// 월 저장할 벡터
 		String MonthValues[] = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" };
-		// sYearValues에 현재 년도 - 1990년까지 넣기
+		// sYearValues에 현재 년도 - 1990년까지 넣
 		Calendar oCalendar = Calendar.getInstance(); // 현재 날짜/시간 등의 각종 정보 얻기
 		// 현재 날짜
 		int toyear = oCalendar.get(Calendar.YEAR);
-		for (int i = toyear; i >= 1990; i--) {
+		for (int i = toyear; i >= 2000; i--) {
 			YearValues.add(i);
 		}
 
@@ -104,8 +104,7 @@ public class ViewStatProduct extends JPanel {
 		col.add("상품코드");
 		col.add("상품분류");
 		col.add("상품명");
-		col.add("판매가");
-		col.add("매입가");
+		col.add("가격");
 		col.add("판매수량");
 		col.add("매출합계");
 		col.add("제조사");
@@ -116,7 +115,7 @@ public class ViewStatProduct extends JPanel {
 		tableResult.setRowMargin(10);
 		tableResult.setRowHeight(30);
 		// 테이블 값 가운데 정렬
-		//MainFrame.tableCellCenter(tableResult);
+		MainFrame.tableCellCenter(tableResult);
 
 		spShowTable.setViewportView(tableResult);
 

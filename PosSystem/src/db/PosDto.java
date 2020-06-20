@@ -2,6 +2,8 @@ package db;
 
 public class PosDto {
 
+	
+	
 	// 필드 선언
 
 	private int user_code; // 유저코드
@@ -469,5 +471,7 @@ public class PosDto {
 		this.discountCode = discountCode;
 	}
 
+
+    
 
 }

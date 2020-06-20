@@ -29,6 +29,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import db.PosDto;
+import db.PosUse;
 import main.MainFrame;
 import db.Connect_DB;
 
@@ -137,16 +138,40 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 
 				return;
 			}
+			connect_db.removeListNum(mainframe.viewSalesInput.table.getRowCount());
 			setblank();
 			//payEnd();
 
 		} else if (ob == mainframe.salebtn.sBtnPdCancel) {// 상품취소클릭시
 			int row = mainframe.viewSalesInput.table.getSelectedRow();
+			
+			int[] rows = mainframe.viewSalesInput.table.getSelectedRows();
+			
+            System.out.println("rows.length : "+rows.length);
+			
+			System.out.println("row : "+row);
+			
+			System.out.println("getRowCount : "+mainframe.viewSalesInput.model.getRowCount());
+			
+			for(int i=0;i<rows.length;i++)
+			{
+				System.out.println("\ngetSelectedRowsIndex : "+ i);
+				System.out.println("getSelectedRows : "+ rows[i]);//table row index
+			}
+			
 			if (row != -1) {
 				int del = JOptionPane.showConfirmDialog(mainframe, "선택한 상품을 취소하시겠습니까?", "상품취소",
 						JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (del == 0) {
-					mainframe.viewSalesInput.model.removeRow(row);
+					for(int i=0;i<rows.length;i++)
+					{
+						//상품인텍스가 0~5번까지 총 6개 있을 때 인텍스 1~4번까지 상품을 선택하고 삭제버튼을 누른다
+						//반복문을 돌면서 선택된 상품이 삭제된다
+						//1번 인덱스의 상품을 삭제하면 2~4번까지 있던 3개의 상품들은 1번 인덱스 상품이 삭제됬으므로
+						//인덱스가 1씩 줄어든다. 2번 인덱스 상품은 1번으로 바뀜 3번 인덱스 상품은 2번으로 바뀜
+						mainframe.viewSalesInput.model.removeRow(rows[i]-i);//목록 삭제 메소드
+						System.out.println("삭제 완료 row = "+(rows[i]-i));
+					}
 					
 					//listNum 재설정
 					int t_size = mainframe.viewSalesInput.table.getRowCount();
@@ -155,7 +180,7 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 						mainframe.viewSalesInput.model.setValueAt(i+1,i,0);//삽입할 번호, 행번호, 열번호
 					}
 					//listNum 1감소
-					connect_db.removeListNum();
+					connect_db.removeListNum(rows.length);
 					
 					int size = salesList.size();
 					System.out.println("사이즈 : "+size);
@@ -611,7 +636,7 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			rows.addElement(salesList.get(0).getInDate()); 6 String*/
 			
 			rows.addElement(Integer.toString(salesList.get(0).getListNum()));
-			rows.addElement(Integer.toString(salesList.get(0).getp_num()));
+			rows.addElement(salesList.get(0).getp_num());
 			rows.addElement(salesList.get(0).getp_name());
 			rows.addElement(String.valueOf(salesList.get(0).getp_amount()));
 			rows.addElement(Integer.toString(salesList.get(0).getp_cost()));
