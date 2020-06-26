@@ -719,6 +719,65 @@ public class Connect_DB {
 		return list;
 	}
 	
+	
+	//////////////////////////////// 기간별 통계 ////////////////////////////////
+	// <연도별 매출내역 select> 메소드
+	// : 년 입력받아 조회
+
+	public Vector<PosUse> findYearSell(int startYear, int endYear) {
+		// 쿼리문 결과 (여러 행) 담을 PosDto 객체
+		Vector<PosUse> list = new Vector<PosUse>();
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+			String query = "select A.aa as '매출년도', A.ab as '매출합계' , B.bb as '현금매출' ,C.cb as '카드매출', A.ac as '고객수'\r\n"+
+					       "from (select date_format(c_day,'%Y') as aa , sum(c_cost) as ab, count(distinct c_num) as ac from charge group by date_format(c_day,'%Y')) A , (select c_way as ba,sum(c_cost) as bb,date_format(c_day,'%Y') as bc from charge where c_way='현금' group by date_format(c_day,'%Y'),c_way) B , (select c_way as ca, sum(c_cost) as cb, date_format(c_day,'%Y') as cc from charge where c_way='카드' group by date_format(c_day,'%Y'),c_way) C\r\n"+
+					       "where A.aa=b.bc and A.aa=c.cc and A.aa between ? and ?\r\n"+
+					       "order by A.aa";
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, startYear);
+			pstmt.setInt(2, endYear);
+
+			// 쿼리문 실행
+			result = pstmt.executeQuery();
+
+			// 결과 저장
+			while (result.next()) {
+				
+				posUse = new PosUse();
+				
+				posUse.setYearSellDate(result.getString(1));
+				posUse.setYearTotalPrice(result.getInt(2));
+				posUse.setYearTotalcash(result.getInt(3));
+				posUse.setYearTotalcard(result.getInt(4));
+				posUse.setYearTotalaccount(result.getInt(5));
+				
+				list.add(posUse);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		// 결과 리턴
+		return list;
+	}
+	
+	
+	
+	
+	
 	// 테이블 행 모두 지우기 (화면단에서만)
 	public static void clearRows(int rowSize, DefaultTableModel dtm) {
 		if (rowSize > 0) {

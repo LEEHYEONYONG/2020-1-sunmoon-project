@@ -46,7 +46,12 @@ public class PosUse {
 	//상품별
 	private int totalamount;//상품별판매수량
 	private int totalproductprice;//상품별합계가격
-	
+	//연도별
+	private String YearSellDate;//매출년도
+	private int YearTotalPrice;//매출합계
+	private int YearTotalcash;//현금매출
+	private int YearTotalcard;//카드매출
+	private int YearTotalaccount;//고객수
 	
 	public int getListNum() 
 	{
@@ -154,6 +159,48 @@ public class PosUse {
 	public void setTotalproductprice(int totalproductprice) {
 		this.totalproductprice = totalproductprice;
 	}
+	
+	public String getYearSellDate() {
+		return YearSellDate;
+	}
+
+	public void setYearSellDate(String yearSellDate) {
+		YearSellDate = yearSellDate;
+	}
+
+	public int getYearTotalPrice() {
+		return YearTotalPrice;
+	}
+
+	public void setYearTotalPrice(int yearTotalPrice) {
+		YearTotalPrice = yearTotalPrice;
+	}
+
+	public int getYearTotalcash() {
+		return YearTotalcash;
+	}
+
+	public void setYearTotalcash(int yearTotalcash) {
+		YearTotalcash = yearTotalcash;
+	}
+
+	public int getYearTotalcard() {
+		return YearTotalcard;
+	}
+
+	public void setYearTotalcard(int yearTotalcard) {
+		YearTotalcard = yearTotalcard;
+	}
+
+	public int getYearTotalaccount() {
+		return YearTotalaccount;
+	}
+
+	public void setYearTotalaccount(int yearTotalaccount) {
+		YearTotalaccount = yearTotalaccount;
+	}
+
+
 
 
 }

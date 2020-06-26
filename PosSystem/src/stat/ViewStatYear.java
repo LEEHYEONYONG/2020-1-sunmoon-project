@@ -95,7 +95,6 @@ public class ViewStatYear extends JPanel {
 		Vector<String> col = new Vector<String>(); // 열
 		col.add("매출날짜");
 		col.add("매출합계");
-		col.add("부가세");
 		col.add("현금매출");
 		col.add("카드매출");
 		col.add("고객수");
@@ -124,13 +123,8 @@ public class ViewStatYear extends JPanel {
 		rdBtnTotalPrice = new JRadioButton("매출합계");
 		rdBtnTotalPrice.setSelected(true);
 		rdBtnTotalPrice.setFont(new Font("맑은 고딕", Font.PLAIN, 20));
-		rdBtnTotalPrice.setBounds(800, 41, 105, 23);
+		rdBtnTotalPrice.setBounds(890, 41, 105, 23);
 		add(rdBtnTotalPrice);
-
-		rdBtnNetIncome = new JRadioButton("순매출");
-		rdBtnNetIncome.setFont(new Font("맑은 고딕", Font.PLAIN, 20));
-		rdBtnNetIncome.setBounds(909, 41, 85, 23);
-		add(rdBtnNetIncome);
 
 		rdBtnCash = new JRadioButton("현금");
 		rdBtnCash.setFont(new Font("맑은 고딕", Font.PLAIN, 20));
@@ -144,7 +138,6 @@ public class ViewStatYear extends JPanel {
 		
 		// 버튼 그룹에 라디오버튼 등록
 		bgp.add(rdBtnTotalPrice);
-		bgp.add(rdBtnNetIncome);
 		bgp.add(rdBtnCash);
 		bgp.add(rdBtnCard);
 
@@ -153,7 +146,6 @@ public class ViewStatYear extends JPanel {
 		
 		btnSearch.addActionListener(vys);
 		rdBtnTotalPrice.addItemListener(vys);
-		rdBtnNetIncome.addItemListener(vys);
 		rdBtnCash.addItemListener(vys);
 		rdBtnCard.addItemListener(vys);
 		

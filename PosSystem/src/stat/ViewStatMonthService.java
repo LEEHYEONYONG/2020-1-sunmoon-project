@@ -20,12 +20,13 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.TextAnchor;
 
 import db.PosDto;
+import db.PosUse;
 
 
 
 public class ViewStatMonthService implements ActionListener, ItemListener {
 
-	private Vector<db.PosDto> results; // 조건에 따른 검색 결과
+	private Vector<db.PosUse> results; // 조건에 따른 검색 결과
 
 	private String statType = "매출합계"; // 라디오버튼 값 (디폴트는 "매출합계")
 
@@ -113,7 +114,7 @@ public class ViewStatMonthService implements ActionListener, ItemListener {
 
 	// <라디오버튼 값에 따른 막대 그래프 세팅> 이벤트
 	// option : 1 - 매출합계 / 2 - 순매출 / 3 - 현금매출 / 4 - 카드매출
-	public void setChart(String type, Vector<PosDto> results) {
+	public void setChart(String type, Vector<PosUse> results) {
 
 		// #차트 생성#
 		// [데이터 생성]

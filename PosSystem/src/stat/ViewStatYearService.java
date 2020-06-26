@@ -18,7 +18,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.HorizontalAlignment;
 import org.jfree.ui.TextAnchor;
 
+import db.Connect_DB;
 import db.PosDto;
+import db.PosUse;
 
 
 
@@ -26,7 +28,7 @@ public class ViewStatYearService implements ActionListener, ItemListener {
 
 	private ViewStatYear vy;
 
-	private Vector<db.PosDto> results;  //조건에 따른 검색 결과
+	private Vector<db.PosUse> results;  //조건에 따른 검색 결과
 	
 	private String statType = "매출합계";        //라디오버튼 값 (디폴트는 "매출합계")
 
@@ -34,7 +36,7 @@ public class ViewStatYearService implements ActionListener, ItemListener {
 	public ViewStatYearService(ViewStatYear vy) {
 		this.vy = vy;
 		
-		//setChart(statType, results);
+	    setChart(statType, results);
 	}
 
 	// [ActionListener override/조회버튼]
@@ -56,13 +58,13 @@ public class ViewStatYearService implements ActionListener, ItemListener {
 
 		// 선택된 라디오 버튼의 이름 비교 후, 맞는 차트 설정
 		if (statType.equals("매출합계")) {
-			//setChart(statType, results); // 차트 생성 & pShowGraph패널의 카드 레이아웃으로 show()
-		} else if (statType.equals("순매출")) {
-			//setChart(statType, results);
-		} else if (statType.equals("현금")) {
-			//setChart(statType, results);
+			setChart(statType, results); // 차트 생성 & pShowGraph패널의 카드 레이아웃으로 show()
+		} /*else if (statType.equals("순매출")) {
+			setChart(statType, results);
+		}*/else if (statType.equals("현금")) {
+			setChart(statType, results);
 		} else if (statType.equals("카드")) {
-			//setChart(statType, results);
+			setChart(statType, results);
 		}
 
 	}
@@ -72,18 +74,19 @@ public class ViewStatYearService implements ActionListener, ItemListener {
 	public void search() {
 
 		// 테이블 행 화면 리셋
-		//StatDao.clearRows(vy.tmodel.getRowCount(), vy.tmodel);
+		Connect_DB.clearRows(vy.tmodel.getRowCount(), vy.tmodel);
 
 		// 콤보박스의 값을 가져옴
 		// (시작년도)
 		int startYear = (int) vy.comboStartYear.getItemAt(vy.comboStartYear.getSelectedIndex());
 		int endYear = (int) vy.comboEndYear.getItemAt(vy.comboEndYear.getSelectedIndex());
 
-		//StatDao statDao = new StatDao(); // Dao 객체
-		//results = new Vector<PosDto>(); // 쿼리 결과
+		
+		Connect_DB connect_db = new Connect_DB();
+		results = new Vector<PosUse>(); // 쿼리 결과
 
 		// select 결과 저장
-		//results = statDao.findYearSell(startYear, endYear); // DB select 결과 저장 변수
+		results = connect_db.findYearSell(startYear, endYear); // DB select 결과 저장 변수
 
 		if (results.isEmpty()) { // 조회 결과 없으면, 알림창 날림
 			JOptionPane.showMessageDialog(null, "조회할 데이터가 없습니다.");
@@ -95,12 +98,11 @@ public class ViewStatYearService implements ActionListener, ItemListener {
 			for (int i = 0; i < size; i++) {
 				Vector<String> rows = new Vector<String>(); // 행
 
-				rows.addElement(results.get(i).getSellDate());
-				rows.addElement(Integer.toString(results.get(i).getStatTotalPrice()));
-				rows.addElement(Integer.toString(results.get(i).getTotalTax()));
-				rows.addElement(Integer.toString(results.get(i).getCashPrice()));
-				rows.addElement(Integer.toString(results.get(i).getCardPrice()));
-				rows.addElement(Integer.toString(results.get(i).getCustomerCount()));
+				rows.addElement(results.get(i).getYearSellDate());
+				rows.addElement(Integer.toString(results.get(i).getYearTotalPrice()));
+				rows.addElement(Integer.toString(results.get(i).getYearTotalcash()));
+				rows.addElement(Integer.toString(results.get(i).getYearTotalcard()));
+				rows.addElement(Integer.toString(results.get(i).getYearTotalaccount()));
 				vy.tmodel.addRow(rows);
 			}
 
@@ -108,14 +110,14 @@ public class ViewStatYearService implements ActionListener, ItemListener {
 			vy.spShowTable.setViewportView(vy.tableResult);
 
 			// 디폴트 그래프인 매출합계도 같이 띄워줌
-			//setChart(statType, results);
+			setChart(statType, results);
 		}
 
 	}
 
 	// <라디오버튼 값에 따른 막대 그래프 세팅> 이벤트
 	// option : 1 - 매출합계 / 2 - 순매출 / 3 - 현금매출 / 4 - 카드매출
-	public void setChart(String type, Vector<PosDto> results) {
+	public void setChart(String type, Vector<PosUse> results) {
 
 		// #차트 생성#
 		// [데이터 생성]
@@ -203,7 +205,7 @@ public class ViewStatYearService implements ActionListener, ItemListener {
 	}
 
 	// <타입(매출합계, 순매출, 현금, 카드)에 따른 그래프 데이터셋 리턴> 메소드
-	public static DefaultCategoryDataset getGraphDataset(String type, Vector<PosDto> results) {
+	public static DefaultCategoryDataset getGraphDataset(String type, Vector<PosUse> results) {
 
 		DefaultCategoryDataset dataset = null;
 
@@ -219,33 +221,25 @@ public class ViewStatYearService implements ActionListener, ItemListener {
 			switch (type) {
 			case "매출합계":
 				for (int i = 0; i < size; i++) {
-					date.addElement(results.get(i).getSellDate()); // 20190407
-					values.addElement(results.get(i).getStatTotalPrice()); // 매출합계 (int)
+					date.addElement(results.get(i).getYearSellDate()); // 20190407
+					values.addElement(results.get(i).getYearTotalPrice()); // 매출합계 (int)
 
 					// 값, 범례, 카테고리 지정
 					dataset.addValue(values.get(i), type, date.get(i));
 				}
 				break;
-			case "순매출":
-				for (int i = 0; i < size; i++) {
-					date.addElement(results.get(i).getSellDate()); // 2019
-					values.addElement((int) (results.get(i).getStatTotalPrice() * 0.4)); // 순매출(매출합계*0.4) (int)
-
-					dataset.addValue(values.get(i), type, date.get(i));
-				}
-				break;
 			case "현금":
 				for (int i = 0; i < size; i++) {
-					date.addElement(results.get(i).getSellDate()); // 2019
-					values.addElement(results.get(i).getCashPrice()); // 현금매출 (int)
+					date.addElement(results.get(i).getYearSellDate()); // 2019
+					values.addElement(results.get(i).getYearTotalcash()); // 현금매출 (int)
 
 					dataset.addValue(values.get(i), type, date.get(i));
 				}
 				break;
 			default:
 				for (int i = 0; i < size; i++) {
-					date.addElement(results.get(i).getSellDate()); // 2019
-					values.addElement(results.get(i).getCardPrice()); // 카드매출 (int)
+					date.addElement(results.get(i).getYearSellDate()); // 2019
+					values.addElement(results.get(i).getYearTotalcard()); // 카드매출 (int)
 
 					dataset.addValue(values.get(i), type, date.get(i));
 				}
