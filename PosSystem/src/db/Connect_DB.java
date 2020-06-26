@@ -613,7 +613,8 @@ public class Connect_DB {
 		
 		Vector<PosUse> list= new Vector<PosUse>();
 		
-		int date = Integer.parseInt(year.concat(month).concat("01"));
+		//int date = Integer.parseInt(year.concat(month).concat("01"));
+		String date = year.concat(month);
 		try {
 			//DB연결
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -621,11 +622,14 @@ public class Connect_DB {
 			posDto = new PosDto();
 			//쿼리문 세팅
 			String query = "SELECT P.P_NUM AS '상품코드', P.P_CATEGORY AS '상품분류', P.P_NAME AS '상품명', P.P_COST AS '가격', V.SC AS '판매수량', P.P_COST * V.SC AS '매출합계', P.P_PROVIDE AS '제조사'\r\n"+
-					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE group by C_NAME) V\r\n"+
-					"WHERE P.P_NUM = V.C_NAME\r\n"+
+					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE where date_format(c_day,'%Y%m')=? group by C_NAME) V\r\n"+
+					"WHERE P.P_NUM = V.C_NAME and p.p_category =?\r\n"+
 					"order by P.P_COST * V.SC desc";
 			
 			pstmt= con.prepareStatement(query);
+			pstmt.setString(1, date);
+			pstmt.setString(2, minor_level);
+			
 			result = pstmt.executeQuery();
 			
 			while (result.next()) {
@@ -669,19 +673,21 @@ public class Connect_DB {
 		Vector<PosUse> list = new Vector<PosUse>();
 
 		// String으로 입력한 날짜를 '년월' 합쳐서 int로 변환
-		int date = Integer.parseInt(year.concat(month).concat("01"));
+		//int date = Integer.parseInt(year.concat(month).concat("01"));
+		String date = year.concat(month);
 		try {
 			// DB 연결
 			con = DriverManager.getConnection(url,user,passwd);
 
 			// 쿼리문 세팅
 			String query = "SELECT P.P_NUM AS '상품코드', P.P_CATEGORY AS '상품분류', P.P_NAME AS '상품명', P.P_COST AS '가격', V.SC AS '판매수량', P.P_COST * V.SC AS '매출합계', P.P_PROVIDE AS '제조사'\r\n"+
-					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE group by C_NAME) V\r\n"+
-					"WHERE P.P_NUM = V.C_NAME\r\n"+
+					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE where date_format(c_day,'%Y%m')=? group by C_NAME) V\r\n"+
+					"WHERE P.P_NUM = V.C_NAME and p.p_category =?\r\n"+
 					"order by P.P_COST * V.SC desc limit 5";
 			pstmt = con.prepareStatement(query);
 			//pstmt.setInt(1, date);
-			//pstmt.setString(2, minor_level);
+			pstmt.setString(1, date);
+			pstmt.setString(2, minor_level);
 
 			// 쿼리문 실행
 			result = pstmt.executeQuery();
@@ -770,6 +776,62 @@ public class Connect_DB {
 				e.printStackTrace();
 			}
 		}
+		// 결과 리턴
+		return list;
+	}
+	
+	
+	
+	// <월별 매출내역 select> 메소드
+	// : 년 입력받아 조회
+	public Vector<PosUse> findMonthSell(int year) {
+		// 쿼리문 결과 (여러 행) 담을 PosDto 객체
+		Vector<PosUse> list = new Vector<PosUse>();
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+			String query ="select A.aa as '월별매출', ifnull(A.ab,0) as '매출합계' , ifnull(B.bb,0) as '현금매출' ,ifnull(C.cb,0) as '카드매출', ifnull(A.ac,0) as '고객수'\r\n"+
+					      "from (select date_format(c_day,'%Y')as zz,date_format(c_day,'%Y%m') as aa , sum(c_cost) as ab, count(distinct c_num) as ac from charge group by date_format(c_day,'%Y%m') order by date_format(c_day,'%Y%m')) as A\r\n"+ 
+					      "left JOIN (select c_way as ba, sum(c_cost) as bb, date_format(c_day,'%Y%m') as bc from charge where c_way='현금' group by date_format(c_day,'%Y%m'),c_way order by date_format(c_day,'%Y%m')) as B on A.aa=B.bc \r\n"+
+					      "left JOIN (select c_way as ca, sum(c_cost) as cb, date_format(c_day,'%Y%m') as cc from charge where c_way='카드' group by date_format(c_day,'%Y%m'),c_way order by date_format(c_day,'%Y%m')) as C on A.aa=C.cc\r\n"+
+					      "where A.zz=? order by A.aa";
+			
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, year);
+			// 쿼리문 실행
+			result = pstmt.executeQuery();
+
+			// 결과 저장
+			while (result.next()) {
+				
+				posUse = new PosUse();
+				
+				posUse.setMonthSellDate(result.getString(1));
+				posUse.setMonthTotalPrice(result.getInt(2));
+				posUse.setMonthTotalcash(result.getInt(3));
+				posUse.setMonthTotalcard(result.getInt(4));
+				posUse.setMonthTotalaccount(result.getInt(5));
+				
+				list.add(posUse);
+				
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
 		// 결과 리턴
 		return list;
 	}

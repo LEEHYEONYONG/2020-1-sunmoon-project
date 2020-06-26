@@ -19,6 +19,7 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.TextAnchor;
 
+import db.Connect_DB;
 import db.PosDto;
 import db.PosUse;
 
@@ -59,8 +60,6 @@ public class ViewStatMonthService implements ActionListener, ItemListener {
 		// 선택된 라디오 버튼의 이름 비교 후, 맞는 차트 설정
 		if (statType.equals("매출합계")) {
 			setChart(statType, results); // 차트 생성 & pShowGraph패널의 카드 레이아웃으로 show()
-		} else if (statType.equals("순매출")) {
-			setChart(statType, results);
 		} else if (statType.equals("현금")) {
 			setChart(statType, results);
 		} else if (statType.equals("카드")) {
@@ -74,16 +73,16 @@ public class ViewStatMonthService implements ActionListener, ItemListener {
 	public void search() {
 
 		// 테이블 행 화면 리셋
-		//StatDao.clearRows(vm.tmodel.getRowCount(), vm.tmodel);
+		Connect_DB.clearRows(vm.tmodel.getRowCount(), vm.tmodel);
 
 		// 콤보박스의 값을 가져옴
 		// (조회년도)
-		String year = vm.comboYear.getItemAt(vm.comboYear.getSelectedIndex()).toString();
+		int year = (int) vm.comboYear.getItemAt(vm.comboYear.getSelectedIndex());
 
-		//StatDao statDao = new StatDao(); // Dao 객체
+		Connect_DB connect_db = new Connect_DB();
 
 		// select 결과 저장
-		//results = statDao.findMonthSell(Integer.parseInt(year)); // DB select 결과 저장 변수
+		results = connect_db.findMonthSell(year); // DB select 결과 저장 변수
 
 		if (results.isEmpty()) { // 조회 결과 없으면, 알림창 날림
 			JOptionPane.showMessageDialog(null, "조회할 데이터가 없습니다.");
@@ -93,6 +92,7 @@ public class ViewStatMonthService implements ActionListener, ItemListener {
 			int size = results.size();
 
 			for (int i = 0; i < size; i++) {
+				/*
 				Vector<String> rows = new Vector<String>(); // 행
 				rows.addElement(results.get(i).getSellDate());
 				rows.addElement(Integer.toString(results.get(i).getStatTotalPrice()));
@@ -101,6 +101,17 @@ public class ViewStatMonthService implements ActionListener, ItemListener {
 				rows.addElement(Integer.toString(results.get(i).getCardPrice()));
 				rows.addElement(Integer.toString(results.get(i).getCustomerCount()));
 
+				vm.tmodel.addRow(rows);
+				*/
+				
+				Vector<String> rows = new Vector<String>();
+				
+				rows.addElement(results.get(i).getMonthSellDate());
+				rows.addElement(Integer.toString(results.get(i).getMonthTotalPrice()));
+				rows.addElement(Integer.toString(results.get(i).getMonthTotalcash()));
+				rows.addElement(Integer.toString(results.get(i).getMonthTotalcard()));
+				rows.addElement(Integer.toString(results.get(i).getMonthTotalaccount()));
+				
 				vm.tmodel.addRow(rows);
 			}
 
@@ -122,7 +133,7 @@ public class ViewStatMonthService implements ActionListener, ItemListener {
 
 		// [데이터 세팅]
 		// type(통계 분류)에 따라 다르게 세팅됨
-		dataset = ViewStatYearService.getGraphDataset(type, results);
+		dataset = ViewStatMonthService.getGraphDataset(type, results);
 
 		// [렌더링]
 		// 렌더링 생성
@@ -199,6 +210,52 @@ public class ViewStatMonthService implements ActionListener, ItemListener {
 
 		vm.pShowGraph.setVisible(true);
 
+	}
+	
+	
+	// <타입(매출합계, 순매출, 현금, 카드)에 따른 그래프 데이터셋 리턴> 메소드
+	public static DefaultCategoryDataset getGraphDataset(String type, Vector<PosUse> results) {
+
+		DefaultCategoryDataset dataset = null;
+
+		if (results != null) { // 조회 결과 있을 때만 그래프 값 설정
+			System.out.println("그래프 값 설정!!!!!");
+			Vector<String> date = new Vector<String>(); // 날짜 (한 행)
+			Vector<Integer> values = new Vector<Integer>(); // 분류별 값 (한 행)
+
+			dataset = new DefaultCategoryDataset();
+
+			int size = results.size();
+
+			switch (type) {
+			case "매출합계":
+				for (int i = 0; i < size; i++) {
+					date.addElement(results.get(i).getMonthSellDate()); // 20190407
+					values.addElement(results.get(i).getMonthTotalPrice()); // 매출합계 (int)
+
+					// 값, 범례, 카테고리 지정
+					dataset.addValue(values.get(i), type, date.get(i));
+				}
+				break;
+			case "현금":
+				for (int i = 0; i < size; i++) {
+					date.addElement(results.get(i).getMonthSellDate()); // 2019
+					values.addElement(results.get(i).getMonthTotalcash()); // 현금매출 (int)
+
+					dataset.addValue(values.get(i), type, date.get(i));
+				}
+				break;
+			default:
+				for (int i = 0; i < size; i++) {
+					date.addElement(results.get(i).getMonthSellDate()); // 2019
+					values.addElement(results.get(i).getMonthTotalcard()); // 카드매출 (int)
+
+					dataset.addValue(values.get(i), type, date.get(i));
+				}
+			}
+
+		}
+		return dataset;
 	}
 
 }

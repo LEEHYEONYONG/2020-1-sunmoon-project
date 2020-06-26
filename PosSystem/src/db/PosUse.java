@@ -52,6 +52,12 @@ public class PosUse {
 	private int YearTotalcash;//현금매출
 	private int YearTotalcard;//카드매출
 	private int YearTotalaccount;//고객수
+	//월별
+	private String MonthSellDate;//월별매출
+	private int MonthTotalPrice;//매출합계
+	private int MonthTotalcash;//현금매출
+	private int MonthTotalcard;//카드매출
+	private int MonthTotalaccount;//고객수
 	
 	public int getListNum() 
 	{
@@ -199,6 +205,48 @@ public class PosUse {
 	public void setYearTotalaccount(int yearTotalaccount) {
 		YearTotalaccount = yearTotalaccount;
 	}
+
+	public String getMonthSellDate() {
+		return MonthSellDate;
+	}
+
+	public void setMonthSellDate(String monthSellDate) {
+		MonthSellDate = monthSellDate;
+	}
+
+	public int getMonthTotalPrice() {
+		return MonthTotalPrice;
+	}
+
+	public void setMonthTotalPrice(int monthTotalPrice) {
+		MonthTotalPrice = monthTotalPrice;
+	}
+
+	public int getMonthTotalcash() {
+		return MonthTotalcash;
+	}
+
+	public void setMonthTotalcash(int monthTotalcash) {
+		MonthTotalcash = monthTotalcash;
+	}
+
+	public int getMonthTotalcard() {
+		return MonthTotalcard;
+	}
+
+	public void setMonthTotalcard(int monthTotalcard) {
+		MonthTotalcard = monthTotalcard;
+	}
+
+	public int getMonthTotalaccount() {
+		return MonthTotalaccount;
+	}
+
+	public void setMonthTotalaccount(int monthTotalaccount) {
+		MonthTotalaccount = monthTotalaccount;
+	}
+	
+	
 
 
 

@@ -151,5 +151,7 @@ public class ViewStatProductService implements ActionListener {
 		vp.pShowGraph.setVisible(true);
 
 	}
+	
+	
 
 }
