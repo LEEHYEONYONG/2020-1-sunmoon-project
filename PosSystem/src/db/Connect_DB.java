@@ -1109,6 +1109,116 @@ public class Connect_DB {
 	}
 	
 	
+    ///////////////////조회
+    // 원하는 재고 조회 ( 상품코드 또는 상품명으로만)
+    // 코드로하는 메소드
+	public Vector<PosUse> StockSearchCode(String productCode) {
+    // 쿼리문 결과 (여러 행) 담을 PosDto 객체
+		Vector<PosUse> list = new Vector<PosUse>();
+
+		try {
+    // DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+     // 쿼리문 세팅
+			String query ="SELECT p_num ,p_name ,p_cost ,p_category ,p_provide ,p_amount FROM pos_system.product where p_num=?";
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, productCode);
+
+     // 쿼리문 실행
+			result = pstmt.executeQuery();
+
+     // 결과 저장
+			while (result.next()) {
+				posUse = new PosUse();
+
+				posUse.setp_num(result.getString(1));
+				posUse.setp_name(result.getString(2));
+				posUse.setp_cost(result.getInt(3));
+				posUse.setp_category(result.getString(4));
+				posUse.setp_provide(result.getString(5));
+				posUse.setp_amount(result.getInt(6));
+
+				list.add(posUse);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+    // 결과 리턴
+		return list;
+	}
+
+    /////////////////// 조회
+    // 원하는 재고 조회 ( 상품코드 또는 상품명으로만)
+    // 상품명으로하는 메소드
+	public Vector<PosUse> StockSearchName(String productName) {
+    // 쿼리문 결과 (여러 행) 담을 PosUse 객체
+		Vector<PosUse> list = new Vector<PosUse>();
+
+		try {
+    // DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+    // 쿼리문 세팅
+			String query ="SELECT p_num ,p_name ,p_cost ,p_category ,p_provide ,p_amount FROM pos_system.product where p_name=?";
+
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, productName);
+
+    // 쿼리문 실행
+			result = pstmt.executeQuery();
+
+    // 결과 저장
+			while (result.next()) {
+				posUse = new PosUse();
+
+				posUse.setp_num(result.getString(1));
+				posUse.setp_name(result.getString(2));
+				posUse.setp_cost(result.getInt(3));
+				posUse.setp_category(result.getString(4));
+				posUse.setp_provide(result.getString(5));
+				posUse.setp_amount(result.getInt(6));
+
+				list.add(posUse);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+    // 결과 리턴
+		return list;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

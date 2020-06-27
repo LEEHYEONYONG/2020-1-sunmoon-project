@@ -449,11 +449,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 					// Àç°íÁ¶È¸ ÄÚµå·Î °Ë»öÇÏ±â
 					// À¯È¿¼º °Ë»ç ÇÏ±â °ï¶õ productsÅ×ÀÌºí¿¡ Á¸ÀçÇÏ´Â ÄÚµå·Î¸¸ °Ë»ö°¡´ÉÇÔ
 
-					stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);
+					stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);//È­¸éºñ¿ì±â
 
 					String scode = stockpopupsearch.SearchCode.getText();
 
-					//stockmonitor.showMon(stockdao.StockSearchCode(scode));
+					stockmonitor.showMon(connect_db.StockSearchCode(scode));
 
 					stockpopupsearch.setVisible(false);
 					stockpopupsearch.SearchCode.setText("");
@@ -466,11 +466,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 				} else if (ob == stockpopupsearch.SearchName || ob == stockpopupsearch.sNbtn) {
 					// Àç°íÁ¶È¸ ÀÌ¸§À¸·Î °Ë»öÇÏ±â
 					// ¸¶Âù°¡Áö·Î Á¸ÀçÇÏ´Â ÀÌ¸§ÀÎ°¡ ¾Æ´Ñ°¡
-					stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);
+					stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);//È­¸éºñ¿ì±â
 
 					String sname = stockpopupsearch.SearchName.getText();
 
-					//stockmonitor.showMon(stockdao.StockSearchName(sname));
+					stockmonitor.showMon(connect_db.StockSearchName(sname));
 
 					stockpopupsearch.setVisible(false);
 					stockpopupsearch.SearchCode.setText("");
@@ -533,11 +533,11 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 					stockpopupin.pcntResult.setText(stockpopupin.PcntTf.getText());
 
 				} else if (ob == stockpopupin.PcategoryTf || ob == stockpopupin.pcategoryInput) {
-					// ¼ö·® ÀÔ·ÂÇÏ¸é ÀÔ·ÂÇÑ ¼ö·® Ç¥½Ã
+					// Á¾·ù ÀÔ·ÂÇÏ¸é ÀÔ·ÂÇÑ Á¾·ù Ç¥½Ã
 					stockpopupin.pcategoryResult.setText(stockpopupin.PcategoryTf.getText());
 
 				} else if (ob == stockpopupin.PprovideTf || ob == stockpopupin.pprovideInput) {
-					// ¼ö·® ÀÔ·ÂÇÏ¸é ÀÔ·ÂÇÑ ¼ö·® Ç¥½Ã
+					// Á¦Á¶»ç ÀÔ·ÂÇÏ¸é ÀÔ·ÂÇÑ Á¦Á¶»ç Ç¥½Ã
 					stockpopupin.pprovideResult.setText(stockpopupin.PprovideTf.getText());
 
 				} else if (ob == stockpopupin.inOk) {
@@ -614,10 +614,16 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 					String tmp3 = (String) stockmonitor.tmodel.getValueAt(tmp, 2);//¼ö·®
 					String tmp4 = (String) stockmonitor.tmodel.getValueAt(tmp, 3);//°¡°Ý
 					
-					System.out.println(productCode);			
+					System.out.println(productCode);
+					int rrr;
+					int rrrr =1;
+					if (JOptionPane.showConfirmDialog(this, "¼±ÅÃÇÑ »óÇ°À» »èÁ¦ÇÏ½Ã°Ú½À´Ï±î?", "»èÁ¦È®ÀÎ",
+							JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+						rrr = connect_db.stockdelete(productCode);//DB¿¬µ¿ÇØ¼­ »èÁ¦
+						rrrr=rrr;
+					}
 					
-					int rrr = connect_db.stockdelete(productCode);//DB¿¬µ¿ÇØ¼­ »èÁ¦
-					if (rrr == 0) {
+					if (rrrr == 0) {
 						JOptionPane.showMessageDialog(this, "ÀÌ¹Ì ÆÇ¸ÅÇÏ°í ÀÖ´Â »óÇ°Àº »èÁ¦ÇÒ ¼ö ¾ø½À´Ï´Ù.", "»èÁ¦ ¿À·ù", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
@@ -626,8 +632,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 					//º¯°æÈÄ È­¸é ¶ç¿ì±â
 					stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);
 					stockmonitor.showMon(connect_db.StockAll());
-					
-					
+
 				}
 		
 		        //Åë°è ±â´ÉÀÇ ¹öÆ°µé
