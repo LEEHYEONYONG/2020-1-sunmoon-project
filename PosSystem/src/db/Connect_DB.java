@@ -1037,7 +1037,7 @@ public class Connect_DB {
 	
 	
 	
-         ////////////입고
+         ////////////입고(상품등록)
          // 인자값 5개만 받아서 입력하기 상품코드 상품명 가격 종류 제조사
            // 나머지 5개 데이터는 product테이블 참조해서 채워넣기 가능?
 
@@ -1076,6 +1076,37 @@ public class Connect_DB {
 		return r;
 	}
 	
+	
+	////상품삭제 
+	
+	public int stockdelete(String productCode) {
+		int r=0;
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅, 조건으로사용하는 상품코드는 겟텍스트로 받기.
+			String query = "delete from product where p_num=?";
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, productCode);
+
+			// 쿼리문 실행
+			r = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return r;
+	}
 	
 	
 	

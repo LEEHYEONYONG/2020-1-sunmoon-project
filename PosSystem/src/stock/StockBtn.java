@@ -12,6 +12,7 @@ public class StockBtn extends JPanel {
 	public JButton stockIn;
 	public JButton stockSearch;
 	public JButton stockevery;
+	public JButton stockdelete;
 	
 	
 	public StockBtn() {
@@ -45,6 +46,13 @@ public class StockBtn extends JPanel {
 		stockevery.setForeground(Color.WHITE);
 		stockevery.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		stockevery.setBackground(new Color(100, 149, 237));
+		
+		stockdelete = new JButton("ªÛ«∞ªË¡¶");
+		stockdelete.setBounds(720, 28, 164, 85);
+		add(stockdelete);
+		stockdelete.setForeground(Color.WHITE);
+		stockdelete.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
+		stockdelete.setBackground(new Color(0, 0, 128));
 		
 		
 	}

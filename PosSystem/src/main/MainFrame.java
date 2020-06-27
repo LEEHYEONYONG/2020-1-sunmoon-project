@@ -271,6 +271,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// 메�
 		stockbtn.stockIn.addActionListener(this);
 		stockbtn.stockChg.addActionListener(this);
 		stockbtn.stockevery.addActionListener(this);
+		stockbtn.stockdelete.addActionListener(this);
 		
 		// 재고-검색 팝업 액션리스너
 		stockpopupsearch.sCbtn.addActionListener(this);
@@ -599,6 +600,34 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// 메�
 						return;
 					}
 		
+				} else if(ob == stockbtn.stockdelete) {
+					
+					int tmp = stockmonitor.table.convertRowIndexToModel(stockmonitor.table.getSelectedRow());
+
+					if (tmp < 0) {
+						JOptionPane.showMessageDialog(this, "삭제할 상품를 선택하세요.", "미선택 오류", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					String productCode = (String) stockmonitor.tmodel.getValueAt(tmp, 0);//상품코드
+					String tmp2 = (String) stockmonitor.tmodel.getValueAt(tmp, 1);//이름
+					String tmp3 = (String) stockmonitor.tmodel.getValueAt(tmp, 2);//수량
+					String tmp4 = (String) stockmonitor.tmodel.getValueAt(tmp, 3);//가격
+					
+					System.out.println(productCode);			
+					
+					int rrr = connect_db.stockdelete(productCode);//DB연동해서 삭제
+					if (rrr == 0) {
+						JOptionPane.showMessageDialog(this, "이미 판매하고 있는 상품은 삭제할 수 없습니다.", "삭제 오류", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+
+					//변경후 화면 띄우기
+					stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);
+					stockmonitor.showMon(connect_db.StockAll());
+					
+					
 				}
 		
 		        //통계 기능의 버튼들
