@@ -838,6 +838,114 @@ public class Connect_DB {
 	
 	
 	
+	// <일별 매출내역 select> 메소드
+	// : 년, 월, 일 입력받아 조회
+	public PosUse findDaySell(String year, String month, String day) {
+
+		// String으로 입력한 날짜를 '년월일' 합쳐서 int로 변환
+		int date =Integer.parseInt(year.concat(month).concat(day));
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+			posUse = new PosUse();
+			// 쿼리문 세팅
+			String query ="select A.aa as '월별매출', ifnull(A.ab,0) as '매출합계' , ifnull(B.bb,0) as '현금매출' ,ifnull(C.cb,0) as '카드매출', ifnull(A.ac,0) as '고객수'\r\n"+
+					      "from (select date_format(c_day,'%Y%m%d') as aa , sum(c_cost) as ab, count(distinct c_num) as ac from charge group by date_format(c_day,'%Y%m%d') order by date_format(c_day,'%Y%m%d')) as A\r\n"+
+					      "left JOIN (select c_way as ba, sum(c_cost) as bb, date_format(c_day,'%Y%m%d') as bc from charge where c_way='현금' group by date_format(c_day,'%Y%m%d'),c_way order by date_format(c_day,'%Y%m%d')) as B on A.aa=B.bc\r\n"+
+					      "left JOIN (select c_way as ca, sum(c_cost) as cb, date_format(c_day,'%Y%m%d') as cc from charge where c_way='카드' group by date_format(c_day,'%Y%m%d'),c_way order by date_format(c_day,'%Y%m%d')) as C on A.aa=C.cc\r\n"+
+					      "where A.aa=?";
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, date);
+
+			// 쿼리문 실행
+			result = pstmt.executeQuery();
+
+			// 결과 저장
+			while (result.next()) {
+				
+				posUse.setDaySellDate(result.getString(1));
+				posUse.setDayTotalPrice(result.getInt(2));
+				posUse.setDayTotalcash(result.getInt(3));
+				posUse.setDayTotalcard(result.getInt(4));
+				posUse.setDayTotalaccount(result.getInt(5));
+				
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+
+		// 결과 리턴
+		return posUse;
+	}
+	
+	
+	// <조회한 일자의 시간대별 매출값 리턴> 메소드
+	// : 시간대별 그래프용
+	public Vector<PosUse> findDayTimeSell(String year, String month, String day) {
+
+		// 쿼리문 결과 (여러 행) 담을 PosDto 객체
+		Vector<PosUse> list = new Vector<PosUse>();
+
+		// String으로 입력한 날짜를 '년월일' 합쳐서 int로 변환
+		int date = Integer.parseInt(year.concat(month).concat(day));
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+			String query ="select date_format(c_day,'%H') as '판매시간대',  sum(c_cost) as '매출합계', count(distinct c_num) as '고객수' from charge \r\n"+
+					      "where date_format(c_day,'%Y%m%d') =? group by date_format(c_day,'%H')";
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, date);
+
+			// 쿼리문 실행
+			result = pstmt.executeQuery();
+
+			// 결과 저장
+			while (result.next()) {
+				
+				posUse = new PosUse();
+				
+				posUse.setClockTime(result.getString(1).concat("시"));
+				posUse.setClockTotalPrice(result.getInt(2));
+				posUse.setClockTotalaccount(result.getInt(3));
+				System.out.println(result.getString(1).concat("시"));
+				System.out.println(result.getInt(2));
+				System.out.println(result.getInt(3));
+				
+				list.add(posUse);
+				
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// 결과 리턴
+		return list;
+
+	}
 	
 	
 	// 테이블 행 모두 지우기 (화면단에서만)
@@ -849,13 +957,6 @@ public class Connect_DB {
 		}
 	}
 	
-	
-	
 
-
-	
-	
-	
-	
 
 }

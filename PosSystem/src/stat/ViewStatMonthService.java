@@ -92,17 +92,6 @@ public class ViewStatMonthService implements ActionListener, ItemListener {
 			int size = results.size();
 
 			for (int i = 0; i < size; i++) {
-				/*
-				Vector<String> rows = new Vector<String>(); // 행
-				rows.addElement(results.get(i).getSellDate());
-				rows.addElement(Integer.toString(results.get(i).getStatTotalPrice()));
-				rows.addElement(Integer.toString(results.get(i).getTotalTax()));
-				rows.addElement(Integer.toString(results.get(i).getCashPrice()));
-				rows.addElement(Integer.toString(results.get(i).getCardPrice()));
-				rows.addElement(Integer.toString(results.get(i).getCustomerCount()));
-
-				vm.tmodel.addRow(rows);
-				*/
 				
 				Vector<String> rows = new Vector<String>();
 				

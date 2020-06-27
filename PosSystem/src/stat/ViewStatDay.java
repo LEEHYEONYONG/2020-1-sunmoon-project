@@ -115,7 +115,6 @@ public class ViewStatDay extends JPanel{
 		Vector<String> col = new Vector<String>(); // 열
 		col.add("매출날짜");
 		col.add("매출합계");
-		col.add("부가세");
 		col.add("현금매출");
 		col.add("카드매출");
 		col.add("고객수");

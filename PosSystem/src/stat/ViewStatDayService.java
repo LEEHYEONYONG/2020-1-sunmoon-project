@@ -27,12 +27,14 @@ import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.TextAnchor;
 
+import db.Connect_DB;
 import db.PosDto;
+import db.PosUse;
 
 public class ViewStatDayService implements ActionListener, ItemListener{
 
 
-	private Vector<PosDto> results; // 조회여부 판단용 전역설정 (사용은 테이블에만)
+	private Vector<PosUse> results; // 조회여부 판단용 전역설정 (사용은 테이블에만)
 
 	private String statType = "매출합계"; // 라디오버튼 값 (디폴트는 "매출합계")
 
@@ -76,7 +78,7 @@ public class ViewStatDayService implements ActionListener, ItemListener{
 	public void search() {
 
 		// 테이블 행 화면 리셋
-		//StatDao.clearRows(vd.tmodel.getRowCount(), vd.tmodel);
+		Connect_DB.clearRows(vd.tmodel.getRowCount(), vd.tmodel);
 
 		// 콤보박스의 값을 가져옴
 		// (년도, 월, 일)
@@ -87,37 +89,37 @@ public class ViewStatDayService implements ActionListener, ItemListener{
 			day = "0".concat(day);
 		}
 
-		//StatDao statDao = new StatDao(); // Dao 객체
+		Connect_DB connect_db = new Connect_DB();
 		Vector<String> rows = new Vector<String>(); // 행
 
-		results = new Vector<PosDto>(); // 그래프용 값 저장 백터
+		results = new Vector<PosUse>(); // 그래프용 값 저장 백터
 
 		// select 결과 저장
-		/*
-		PosDto result = statDao.findDaySell(year, month, day); // DB select 결과 저장 변수
+		
+		PosUse result = connect_db.findDaySell(year, month, day); // DB select 결과 저장 변수
 		results.add(result);
+		
 
-		if (result.getSellDate() == null) { // 조회 결과 없으면, 알림창 날림
+		if (result.getDaySellDate() == null) { // 조회 결과 없으면, 알림창 날림
 			JOptionPane.showMessageDialog(null, "조회할 데이터가 없습니다.");
 		} else { // 조회 결과 있으면, 결과 보이기
 
 			// 테이블 행 세팅
-			rows.addElement(result.getSellDate());
-			rows.addElement(Integer.toString(result.getStatTotalPrice()));
-			rows.addElement(Integer.toString(result.getTotalTax()));
-			rows.addElement(Integer.toString(result.getCashPrice()));
-			rows.addElement(Integer.toString(result.getCardPrice()));
-			rows.addElement(Integer.toString(result.getCustomerCount()));
+			rows.addElement(result.getDaySellDate());
+			rows.addElement(Integer.toString(result.getDayTotalPrice()));
+			rows.addElement(Integer.toString(result.getDayTotalcash()));
+			rows.addElement(Integer.toString(result.getDayTotalcard()));
+			rows.addElement(Integer.toString(result.getDayTotalaccount()));
    
 			vd.tmodel.addRow(rows);
-
+			
 			// 결과 테이블 띄우기
 			vd.spShowTable.setViewportView(vd.tableResult);
 
 			// 디폴트 그래프인 매출합계도 같이 띄워줌
 			setChart(statType);
 		}
-		*/
+		
 
 	}
 
@@ -138,14 +140,19 @@ public class ViewStatDayService implements ActionListener, ItemListener{
 			day = "0".concat(day);
 		}
 
+		System.out.println(year+month+day);
 		// 현재 콤보박스의 일자에 맞는 시간대별 매출합계, 고객수 받아오기
-		//StatDao statDao = new StatDao(); // Dao 객체
-		Vector<PosDto> resultG = new Vector<PosDto>(); // 그래프용 값 저장 백터
+		Connect_DB connect_db = new Connect_DB();
+		Vector<PosUse> resultG = new Vector<PosUse>(); // 그래프용 값 저장 백터
 
 		// select 결과 저장
 		if (results != null) { // 조회 버튼 한 번 눌렸다면, 그래프 값 세팅
-			//resultG = statDao.findDayTimeSell(year, month, day); // DB select 결과 저장 변수
+			System.out.println(year+month+day);
+			resultG = connect_db.findDayTimeSell(year, month, day); // DB select 결과 저장 변수
+			//resultG = connect_db.findDayTimeSell("2018", "01", "01");
+			
 		}
+		
 		// [데이터 세팅]
 		// type(통계 분류)에 따라 다르게 세팅됨
 		dataset = getGraphDataset(type, resultG);
@@ -223,7 +230,7 @@ public class ViewStatDayService implements ActionListener, ItemListener{
 	}
 
 	// <타입(매출합계, 고객수)에 따른 그래프 데이터셋 리턴> 메소드
-	public DefaultCategoryDataset getGraphDataset(String type, Vector<PosDto> resultG) {
+	public DefaultCategoryDataset getGraphDataset(String type, Vector<PosUse> resultG) {
 
 		DefaultCategoryDataset dataset = null;
 
@@ -239,6 +246,7 @@ public class ViewStatDayService implements ActionListener, ItemListener{
 			dataset = new DefaultCategoryDataset();
 
 			int size = resultG.size();
+			System.out.println(size);
 			boolean flag = false; // 시간대 별 값 받아옴 여부
 
 			switch (type) {
@@ -246,9 +254,9 @@ public class ViewStatDayService implements ActionListener, ItemListener{
 				for (int i = 0; i < 24; i++) {
 					for (int j = 0; j < size; j++) {
 						System.out.println(time[i]);
-						System.out.println(resultG.get(j).getSellTime());
-						if (time[i].equals(resultG.get(j).getSellTime())) {
-							dataset.addValue(resultG.get(j).getStatTotalPrice(), type, time[i]);
+						System.out.println(resultG.get(j).getClockTime());
+						if (time[i].equals(resultG.get(j).getClockTime())) {
+							dataset.addValue(resultG.get(j).getClockTotalPrice(), type, time[i]);
 							break;
 						} else {
 							dataset.addValue(0, type, time[i]);
@@ -260,9 +268,9 @@ public class ViewStatDayService implements ActionListener, ItemListener{
 				for (int i = 0; i < 24; i++) {
 					for (int j = 0; j < size; j++) {
 						System.out.println(time[i]);
-						System.out.println(resultG.get(j).getSellTime());
-						if (time[i].equals(resultG.get(j).getSellTime())) {
-							dataset.addValue(resultG.get(j).getCustomerCount(), type, time[i]);
+						System.out.println(resultG.get(j).getClockTime());
+						if (time[i].equals(resultG.get(j).getClockTime())) {
+							dataset.addValue(resultG.get(j).getClockTotalaccount(), type, time[i]);
 							break;
 						} else {
 							dataset.addValue(0, type, time[i]);

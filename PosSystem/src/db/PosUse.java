@@ -58,6 +58,16 @@ public class PosUse {
 	private int MonthTotalcash;//현금매출
 	private int MonthTotalcard;//카드매출
 	private int MonthTotalaccount;//고객수
+	//일별
+	private String DaySellDate;//월별매출
+	private int DayTotalPrice;//매출합계
+	private int DayTotalcash;//현금매출
+	private int DayTotalcard;//카드매출
+	private int DayTotalaccount;//고객수
+	
+	private String ClockTime;//판매시간대
+	private int ClockTotalPrice;//시간대별 매출합계
+	private int ClockTotalaccount;//고객수
 	
 	public int getListNum() 
 	{
@@ -245,10 +255,71 @@ public class PosUse {
 	public void setMonthTotalaccount(int monthTotalaccount) {
 		MonthTotalaccount = monthTotalaccount;
 	}
+
+	public String getDaySellDate() {
+		return DaySellDate;
+	}
+
+	public void setDaySellDate(String daySellDate) {
+		DaySellDate = daySellDate;
+	}
+
+	public int getDayTotalPrice() {
+		return DayTotalPrice;
+	}
+
+	public void setDayTotalPrice(int dayTotalPrice) {
+		DayTotalPrice = dayTotalPrice;
+	}
+
+	public int getDayTotalcash() {
+		return DayTotalcash;
+	}
+
+	public void setDayTotalcash(int dayTotalcash) {
+		DayTotalcash = dayTotalcash;
+	}
+
+	public int getDayTotalcard() {
+		return DayTotalcard;
+	}
+
+	public void setDayTotalcard(int dayTotalcard) {
+		DayTotalcard = dayTotalcard;
+	}
+
+	public int getDayTotalaccount() {
+		return DayTotalaccount;
+	}
+
+	public void setDayTotalaccount(int dayTotalaccount) {
+		DayTotalaccount = dayTotalaccount;
+	}
+
+	public String getClockTime() {
+		return ClockTime;
+	}
+
+	public void setClockTime(String clockTime) {
+		ClockTime = clockTime;
+	}
+
+	public int getClockTotalPrice() {
+		return ClockTotalPrice;
+	}
+
+	public void setClockTotalPrice(int clockTotalPrice) {
+		ClockTotalPrice = clockTotalPrice;
+	}
+
+	public int getClockTotalaccount() {
+		return ClockTotalaccount;
+	}
+
+	public void setClockTotalaccount(int clockTotalaccount) {
+		ClockTotalaccount = clockTotalaccount;
+	}
 	
 	
-
-
-
 
 }
