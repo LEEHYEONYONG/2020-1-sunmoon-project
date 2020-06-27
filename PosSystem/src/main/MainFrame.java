@@ -24,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import db.PosDto;
+import db.PosUse;
 import sale.DealCancel;
 import sale.Payment_1;
 import sale.Payment_3;
@@ -52,6 +53,7 @@ import account.ViewAccount;
 
 public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀÎÇÁ·¹ÀÓ 
 	
+	
 	StockPopupIn stockpopupin = new StockPopupIn();
 	StockPopupChange stockpopupchange = new StockPopupChange();
 	StockPopupSearch stockpopupsearch = new StockPopupSearch();
@@ -59,6 +61,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	CalcBtn calcbtn;
 	AccountBtn accountbtn;
 	ViewStatButtons statbtn;
+	
 	
 	StockMonitor stockmonitor = new StockMonitor();
 	public ViewAccount viewAccount = new ViewAccount();
@@ -284,12 +287,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		// Àç°í-»ðÀÔ ÆË¾÷ ¾×¼Ç¸®½º³Ê ( ÀÔ°í¹öÆ°)
 		stockpopupin.inOk.addActionListener(this);
 		stockpopupin.inCancel.addActionListener(this);
+		
 		stockpopupin.PcodeTf.addActionListener(this);
-		stockpopupin.IndateTf.addActionListener(this);
+		stockpopupin.InproductTf.addActionListener(this);
 		stockpopupin.PcntTf.addActionListener(this);
+		stockpopupin.PcategoryTf.addActionListener(this);
+		stockpopupin.PprovideTf.addActionListener(this);
+		
 		stockpopupin.pcodeInput.addActionListener(this);
-		stockpopupin.indateInput.addActionListener(this);
+		stockpopupin.inproductInput.addActionListener(this);
 		stockpopupin.pcntInput.addActionListener(this);
+		stockpopupin.pcategoryInput.addActionListener(this);
+		stockpopupin.pprovideInput.addActionListener(this);
 		
 		// Åë°è ±â´É¹öÆ°
 		statbtn.sBtnDay.addActionListener(this);
@@ -380,6 +389,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		} else if (ob == mBtnInven) {//Àç°í°ü¸®
 			monitor.show(pMonitor, "Stock");
 			btn.show(pFBtn, "Stockbtn");
+			//stockmonitor.showMon(connect_db.StockAll());
 		} else if (ob == mBtnAccount) {//°èÁ¤°ü¸®
 			monitor.show(pMonitor, "ViewAccount");
 			btn.show(pFBtn, "accountbtn");
@@ -412,13 +422,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		// Àç°í ÅÇÀÇ ±â´Éµé
 				else if (ob == stockbtn.stockevery) {//
 					stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);
-					//stockmonitor.showMon(stockdao.StockAll());
+					stockmonitor.showMon(connect_db.StockAll());
 				} else if (ob == stockbtn.stockSearch) {
 					stockpopupsearch.setVisible(true);
 				} else if (ob == stockbtn.stockChg) {
 					// ¼öÁ¤ÇÒ°Å °ñ¶ú´ÂÁö À¯È¿¼º°Ë»ç getSelectedRow½á¾ßµÊ
 
-					int tmp = stockmonitor.StockTable.convertRowIndexToModel(stockmonitor.StockTable.getSelectedRow());
+					int tmp = stockmonitor.table.convertRowIndexToModel(stockmonitor.table.getSelectedRow());
 
 					if (tmp < 0) {
 						JOptionPane.showMessageDialog(this, "¼öÁ¤ÇÒ Àç°í¸¦ ¼±ÅÃÇÏ¼¼¿ä.", "¹Ì¼±ÅÃ ¿À·ù", JOptionPane.ERROR_MESSAGE);
@@ -430,7 +440,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 					String tmp3 = (String) stockmonitor.tmodel.getValueAt(tmp, 2);
 					String tmp4 = (String) stockmonitor.tmodel.getValueAt(tmp, 3);
 
-					stockpopupchange.selecItem.setText("»óÇ°ÄÚµå : " + tmp1 + " ÀÔ°íÀÏ : " + tmp2 + " »óÇ°¸í : " + tmp3 + " ¼ö·® : " + tmp4);
+					stockpopupchange.selecItem.setText("»óÇ°ÄÚµå : " + tmp1 + " »óÇ°¸í : " + tmp2 + " ¼ö·® : " + tmp3 + " °¡°Ý : " + tmp4);
 					stockpopupchange.setVisible(true);
 				} else if (ob == stockbtn.stockIn) {
 					stockpopupin.setVisible(true);
@@ -480,56 +490,85 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 						JOptionPane.showMessageDialog(this, "¼ýÀÚ¸¸ ÀÔ·ÂÇØÁÖ¼¼¿ä!", "ÀÔ·Â ¿À·ù", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					int count = Integer.parseInt(stockpopupchange.ChgCountTf.getText().trim());
+					int count = Integer.parseInt(stockpopupchange.ChgCountTf.getText().trim());//º¯°æÇÒ ¼ýÀÚ ÀúÀå.
 
-					int tmp = stockmonitor.StockTable.convertRowIndexToModel(stockmonitor.StockTable.getSelectedRow());
+					int tmp = stockmonitor.table.convertRowIndexToModel(stockmonitor.table.getSelectedRow());
 					String productCode = (String) stockmonitor.tmodel.getValueAt(tmp, 0);
-					String inDate = (String) stockmonitor.tmodel.getValueAt(tmp, 1);
 
-					//stockdao.StockChange(count, productCode, inDate);
+					connect_db.StockChange(count, productCode);
 
+					//º¯°æÈÄ È­¸é ¶ç¿ì±â
 					stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);
-
-					//stockmonitor.showMon(stockdao.StockAll());
+					stockmonitor.showMon(connect_db.StockAll());
+					
 					stockpopupchange.ChgCountTf.setText("");
 					stockpopupchange.selecItem.setText("");
 					stockpopupchange.setVisible(false);
 				} else if (ob == stockpopupin.inCancel) {
 					// ÀÔ°íÃ¢ Ãë¼Ò¹öÆ° ³»¿ë¹° ÃÊ±âÈ­ÇÏ°í ²ô±â
 					stockpopupin.setVisible(false);
-					stockpopupin.IndateTf.setText("");
+					stockpopupin.InproductTf.setText("");
 					stockpopupin.PcodeTf.setText("");
 					stockpopupin.PcntTf.setText("");
+					stockpopupin.PcategoryTf.setText("");
+					stockpopupin.PprovideTf.setText("");
+					
 					stockpopupin.pcodeResult.setText("");
 					stockpopupin.pcntResult.setText("");
-					stockpopupin.indateResult.setText("");
+					stockpopupin.inproductResult.setText("");
+					stockpopupin.pcategoryResult.setText("");
+					stockpopupin.pprovideResult.setText("");
+					
 				} else if (ob == stockpopupin.PcodeTf || ob == stockpopupin.pcodeInput) {
 					// ÄÚµå ÀÔ·ÂÇÏ¸é ÀÔ·ÂÇÑÄÚµå ¿·¿¡ Ç¥½Ã
 					stockpopupin.pcodeResult.setText(stockpopupin.PcodeTf.getText());
 
-				} else if (ob == stockpopupin.IndateTf || ob == stockpopupin.indateInput) {
-					// ÀÔ°íÀÏÀÚ ÀÔ·ÂÇÏ¸é ÀÔ·ÂÇÑ³¯Â¥ Ç¥½Ã
-					stockpopupin.indateResult.setText(stockpopupin.IndateTf.getText());
+				} else if (ob == stockpopupin.InproductTf || ob == stockpopupin.inproductInput) {
+					// »óÇ° ÀÔ·ÂÇÏ¸é ÀÔ·ÂÇÑ»óÇ° Ç¥½Ã
+					stockpopupin.inproductResult.setText(stockpopupin.InproductTf.getText());
 
 				} else if (ob == stockpopupin.PcntTf || ob == stockpopupin.pcntInput) {
 					// ¼ö·® ÀÔ·ÂÇÏ¸é ÀÔ·ÂÇÑ ¼ö·® Ç¥½Ã
 					stockpopupin.pcntResult.setText(stockpopupin.PcntTf.getText());
 
+				} else if (ob == stockpopupin.PcategoryTf || ob == stockpopupin.pcategoryInput) {
+					// ¼ö·® ÀÔ·ÂÇÏ¸é ÀÔ·ÂÇÑ ¼ö·® Ç¥½Ã
+					stockpopupin.pcategoryResult.setText(stockpopupin.PcategoryTf.getText());
+
+				} else if (ob == stockpopupin.PprovideTf || ob == stockpopupin.pprovideInput) {
+					// ¼ö·® ÀÔ·ÂÇÏ¸é ÀÔ·ÂÇÑ ¼ö·® Ç¥½Ã
+					stockpopupin.pprovideResult.setText(stockpopupin.PprovideTf.getText());
+
 				} else if (ob == stockpopupin.inOk) {
-					// À§ÀÇ 3°³¿¡¼­ pcodeResult, indateResult, pcntResult·Î ÀÎÀÚ°ª ¹Þ¾Æ¼­ inÇÔ
+					// À§ÀÇ 5°³¿¡¼­ pcodeResult, inproductResult, pcntResult, pcategoryResult, pprovideResult·Î ÀÎÀÚ°ª ¹Þ¾Æ¼­ inÇÔ
 					if (isNumber(stockpopupin.pcntResult.getText())) {
 
 						if (stockpopupin.pcodeResult.getText().isEmpty() || stockpopupin.pcodeResult.getText().trim().equals("")
-								|| stockpopupin.indateResult.getText().trim().isEmpty()
-								|| stockpopupin.indateResult.getText().trim().equals("")
+								|| stockpopupin.inproductResult.getText().trim().isEmpty()
+								|| stockpopupin.inproductResult.getText().trim().equals("")
 								|| stockpopupin.pcntResult.getText().trim().isEmpty()
-								|| stockpopupin.pcntResult.getText().trim().equals("")) {
+								|| stockpopupin.pcntResult.getText().trim().equals("")
+								|| stockpopupin.pcategoryResult.getText().trim().isEmpty()
+								|| stockpopupin.pcategoryResult.getText().trim().equals("")
+								|| stockpopupin.pprovideResult.getText().trim().isEmpty()
+								|| stockpopupin.pprovideResult.getText().trim().equals("")) {
 							JOptionPane.showMessageDialog(this, "ºóÄ­ÀÌ ÀÖ½À´Ï´Ù!", "µî·Ï ¿À·ù", JOptionPane.ERROR_MESSAGE);
 							return;
 						} else {
-							String pcode = stockpopupin.pcodeResult.getText().trim();
-							String indt = stockpopupin.indateResult.getText().trim();
-							int pcnt = Integer.parseInt(stockpopupin.pcntResult.getText().trim());
+							String pcode = stockpopupin.pcodeResult.getText().trim();//»óÇ°ÄÚµå
+							String indt = stockpopupin.inproductResult.getText().trim();//»óÇ°¸í
+							int pcnt = Integer.parseInt(stockpopupin.pcntResult.getText().trim());//°¡°Ý
+							String pcategory = stockpopupin.pcategoryResult.getText().trim();//Á¾·ù
+							String pprovide = stockpopupin.pprovideResult.getText().trim();//Á¦Á¶»ç
+							
+							
+							
+							int rr=connect_db.StockIn(pcode,indt,pcnt,pcategory,pprovide);//mysql¿¬µ¿(»óÇ°Å×ÀÌºí¿¡ °ª³Ö±â)
+							if (rr == 0) {
+								JOptionPane.showMessageDialog(this, "ÀÌ¹Ì µî·ÏµÈ »óÇ°ÀÌ ÀÖ½À´Ï´Ù.", "µî·Ï ¿À·ù", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+							
 							/*
 
 							int rr = stockdao.StockIn(pcode, indt, pcnt);
@@ -539,19 +578,24 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 							}
                             */
 							stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);
-
-							//stockmonitor.showMon(stockdao.StockAll());
-							stockpopupin.IndateTf.setText("");
+							stockmonitor.showMon(connect_db.StockAll());
+							
+							stockpopupin.InproductTf.setText("");
 							stockpopupin.PcodeTf.setText("");
 							stockpopupin.PcntTf.setText("");
+							stockpopupin.PcategoryTf.setText("");
+							stockpopupin.PprovideTf.setText("");
+							
 							stockpopupin.pcodeResult.setText("");
 							stockpopupin.pcntResult.setText("");
-							stockpopupin.indateResult.setText("");
+							stockpopupin.inproductResult.setText("");
+							stockpopupin.pcategoryResult.setText("");
+							stockpopupin.pprovideResult.setText("");
 							stockpopupin.setVisible(false);
 						}
 
 					} else {
-						JOptionPane.showMessageDialog(this, "¼ö·®Àº ¼ýÀÚ·Î ½áÁÖ¼¼¿ä!", "µî·Ï ¿À·ù", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(this, "°¡°ÝÀº ¼ýÀÚ·Î ½áÁÖ¼¼¿ä!", "µî·Ï ¿À·ù", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 		

@@ -9,63 +9,115 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
+import db.Connect_DB;
+import db.PosUse;
 import main.MainFrame;
 import java.awt.Color;
 
 public class StockMonitor extends JPanel{
 	public JScrollPane stockScrollPane = new JScrollPane();
-	public Vector col = getColum();
-	public DefaultTableModel tmodel = new DefaultTableModel(col, 0);
-	public JTable StockTable = new JTable(tmodel);
-	//StockDao dao = new StockDao();
-	//public Vector<PosDto> mon = new Vector<PosDto>();
+	public Vector col=null;
+	//public DefaultTableModel tmodel = new DefaultTableModel(col, 0);
+	public DefaultTableModel tmodel=null;
+	public JTable table=null;
+	Connect_DB connect_db = new Connect_DB();
+	public Vector<PosUse> mon = new Vector<PosUse>();
 	
+	String header[]= {"상품코드","상품명","수량","가격","종류","제조사"};
+	String contents[][]= {
+			
+	};
 	
+
 	public StockMonitor() {
 		setBackground(Color.WHITE);
-//		col = getColum();
-
 		setLayout(null);
-		stockScrollPane.setBounds(12, 10, 1133, 532);
-		add(stockScrollPane);
-		StockTable.setBackground(Color.WHITE);
-
-//		tmodel = new DefaultTableModel(col, 0);
+		
+		JPanel backgroundpanel = new JPanel();
+		backgroundpanel.setBounds(0, 0, 1144, 535);
+		add(backgroundpanel);
+		backgroundpanel.setLayout(null);
 		
 		
-
-//		StockTable = new JTable(tmodel);
-		StockTable.setRowMargin(10);
-		StockTable.setRowHeight(30);
+		/*
+		tmodel=new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+					"상품코드", "상품명", "수량", "가격", "종류", "제조사"
+				}
+			)
+        */
+		
+	    tmodel = new DefaultTableModel(contents,header) {
+	    	@Override
+			public boolean isCellEditable(int row,int column) {
+				if (column == 1) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+	    };
+		
+		table = new JTable(tmodel);
+		
+		table.setFillsViewportHeight(true);
+		table.setRowMargin(10);
+		table.setRowHeight(30);
 		// 테이블 값 가운데 정렬
-		//MainFrame.tableCellCenter(StockTable);
+		MainFrame.tableCellCenter(table);
+		
+		table.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		stockScrollPane.setBounds(0, 0, 1133, 532);
+	    backgroundpanel.add(stockScrollPane);
+				
+						
+		showMon(connect_db.StockAll());
+						
+		stockScrollPane.setViewportView(table);
+		table.setBackground(Color.WHITE);
 
-		StockTable.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-		StockTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+		/*
+		tmodel = new DefaultTableModel(contents, header) {
+			@Override
+			public boolean isCellEditable(int row,int column) {
+				if (column == 1) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		};
 		
-		//showMon(dao.StockAll());
 		
-		stockScrollPane.setViewportView(StockTable);
-		
+		table = new JTable(tmodel);
+		*/
 
 
 		
 	}
 	
-	
-	
-	
-	private Vector getColum() {
-		col = new Vector();
-		col.add("상품코드");
-		col.add("입고일자");
-		col.add("상품명");
-		col.add("수량");
-		col.add("가격");
-		col.add("유통기한");
+	public void showMon(Vector<PosUse> mon) {
+		
+		int size = mon.size();		
+		this.mon = new Vector<PosUse>();
+		this.mon=mon;
+		
+		for (int i = 0; i < size; i++) {
+			Vector<String> rows = new Vector<String>();
+			rows.addElement(mon.get(i).getp_num());
+			rows.addElement(mon.get(i).getp_name());
+			rows.addElement(Integer.toString(mon.get(i).getp_amount()));
+			rows.addElement(Integer.toString(mon.get(i).getp_cost()));
+			rows.addElement(mon.get(i).getp_category());
+			rows.addElement(mon.get(i).getp_provide());
 
-		return col;
+			tmodel.addRow(rows);
+		}
+
+		stockScrollPane.setViewportView(table);
 	}
 	
 	

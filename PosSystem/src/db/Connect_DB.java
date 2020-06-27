@@ -9,6 +9,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
 import sale.SalesInputService;
+import stock.StockMonitor;
 
 public class Connect_DB {
 	
@@ -26,6 +27,7 @@ public class Connect_DB {
 	PosUse posUse = null;
 	SalesInputService salesInputService;
 	
+	boolean flag;
 	
 	public int i = 1;
 	
@@ -946,6 +948,137 @@ public class Connect_DB {
 		return list;
 
 	}
+	
+	
+	////////////////////////////////재고관련 메소드//////////////////////////////////////////
+	
+	// 모든재고표시
+	public Vector<PosUse> StockAll() {
+
+		// 쿼리문 결과 (여러 행) 담을 PosDto 객체
+		Vector<PosUse> list = new Vector<PosUse>();
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+            String query = "select p_num, p_name, p_cost, p_category, p_provide, p_amount from product";
+
+			// 쿼리문 실행
+            stmt = con.prepareStatement(query);
+			result = stmt.executeQuery(query);
+
+			// 결과 저장
+			while (result.next()) {
+				
+				posUse = new PosUse();
+				
+				posUse.setp_num(result.getString(1));
+				posUse.setp_name(result.getString(2));
+				posUse.setp_cost(result.getInt(3));
+				posUse.setp_category(result.getString(4));
+				posUse.setp_provide(result.getString(5));
+				posUse.setp_amount(result.getInt(6));
+				
+				list.add(posUse);
+				flag=true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		flag=false;
+		// 결과 리턴
+		return list;
+
+	}
+	
+	
+	//////////////// 재고수정
+	// 테이블에서 선택한 행의 정보 표시 후 수량만 수정하기
+	// 수량만 자유자재로 바꿀수있음.
+	public void StockChange(int volume, String productCode) {
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅, 조건으로사용하는 상품코드는 겟텍스트로 받기.
+			String query = "UPDATE product SET p_amount = ? WHERE p_num = ?";
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, volume);
+			pstmt.setString(2, productCode);
+
+			// 쿼리문 실행
+			int r = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	
+	
+         ////////////입고
+         // 인자값 5개만 받아서 입력하기 상품코드 상품명 가격 종류 제조사
+           // 나머지 5개 데이터는 product테이블 참조해서 채워넣기 가능?
+
+	public int StockIn(String productCode, String product, int volume, String category, String provide) {
+		int r = 0;
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+			String query ="INSERT INTO product (p_num, p_name, p_cost, p_category, p_provide) VALUES (?, ?, ?, ?, ?);";
+			
+			pstmt= con.prepareStatement(query);
+			pstmt.setString(1, productCode);
+			pstmt.setString(2, product);
+			pstmt.setInt(3, volume);
+			pstmt.setString(4, category);
+			pstmt.setString(5, provide);
+
+			// 쿼리문 실행
+			r = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				//result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return r;
+	}
+	
+	
+	
+	
 	
 	
 	// 테이블 행 모두 지우기 (화면단에서만)

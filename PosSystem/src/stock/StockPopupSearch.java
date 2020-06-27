@@ -47,7 +47,7 @@ public class StockPopupSearch extends JFrame{
 	public StockPopupSearch() {
 		
 		setTitle("재고 관리");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

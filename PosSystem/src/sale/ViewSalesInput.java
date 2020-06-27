@@ -48,11 +48,11 @@ public class ViewSalesInput extends JPanel{//상품목록표시 GUI
 		model = new DefaultTableModel(contents, header) {
 			@Override
 			public boolean isCellEditable(int row,int column) {
-//				if (column == 1) {
-//					return true;
-//				} else {
+				if (column == 1) {
+					return true;
+				} else {
 					return false;
-//				}
+				}
 			}
 		};
 		

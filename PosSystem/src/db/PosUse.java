@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class PosUse {
 	
-	//상품 테이블
+	//상품 테이블(재고)
 	private String p_num;//상품번호
 	private String p_name;//상품명
 	private int p_amount;//상품 개수

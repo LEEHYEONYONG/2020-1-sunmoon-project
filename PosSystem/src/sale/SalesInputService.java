@@ -72,9 +72,11 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 		if(item.equals("Ä«µå")) {
 			mainframe.payment_3.tfP3CashP.setEnabled(false);
 			mainframe.payment_3.tfP3CardP.setEnabled(true);
+			mainframe.payment_3.tfP3CashP.setText("");
 		} else {
 			mainframe.payment_3.tfP3CashP.setEnabled(true);
 			mainframe.payment_3.tfP3CardP.setEnabled(false);
+			mainframe.payment_3.tfP3CardP.setText("");
 		}
 		
 		}
