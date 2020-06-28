@@ -49,11 +49,16 @@ import calc.Recepit;
 import db.Connect_DB;
 
 import account.AccountBtn;
+import account.SignUp;
+import account.SignUpChange;
 import account.ViewAccount;
 
 public class MainFrame extends JFrame implements ActionListener, Runnable{// 메인프레임 
 	
 	
+
+	SignUp signUp = new SignUp();//회원가입
+	SignUpChange signUpChange = new SignUpChange();//회원수정
 	StockPopupIn stockpopupin = new StockPopupIn();
 	StockPopupChange stockpopupchange = new StockPopupChange();
 	StockPopupSearch stockpopupsearch = new StockPopupSearch();
@@ -128,9 +133,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// 메�
 		statbtn = new ViewStatButtons();
 		accountbtn = new AccountBtn();
 		
+		
 		setFont(new Font("맑은 고딕",Font.BOLD,20));
 		setTitle("pos");
-		setVisible(true);
+		//setVisible(true);
 		setResizable(false);
 		//setAlwaysOnTop(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -266,6 +272,34 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// 메�
 		
 		
 		
+		//계정기능버튼(계정 기능 리스너)
+		accountbtn.AccountSignUp.addActionListener(this);
+		accountbtn.AccountChange.addActionListener(this);
+		accountbtn.AccountDelete.addActionListener(this);
+		
+		
+		//계정-회원등록
+		signUp.name.addActionListener(this);
+		signUp.id.addActionListener(this);
+		signUp.email.addActionListener(this);
+		signUp.passwordField.addActionListener(this);
+		signUp.passwordField_Check.addActionListener(this);
+		signUp.btnIdCheckButton.addActionListener(this);
+		signUp.No.addActionListener(this);
+		signUp.txtIDCheck.addActionListener(this);
+		signUp.Yes.addActionListener(this);
+		
+		//계정-회원수정
+		signUpChange.name.addActionListener(this);
+		//signUpChange.id.addActionListener(this);
+		signUpChange.email.addActionListener(this);
+		signUpChange.passwordField.addActionListener(this);
+		signUpChange.passwordField_Check.addActionListener(this);
+		//signUpChange.btnIdCheckButton.addActionListener(this);
+		signUpChange.No.addActionListener(this);
+		signUpChange.txtIDCheck.addActionListener(this);
+		signUpChange.Yes.addActionListener(this);
+		
 		// 재고 기능버튼
 		stockbtn.stockSearch.addActionListener(this);
 		stockbtn.stockIn.addActionListener(this);
@@ -319,11 +353,10 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// 메�
 		calcbtn.cBtnCalc.addActionListener(this);
 		//calcbtn.cBtnCalc.addActionListener(this);
 		
-		//계정 기능 리스너
-		accountbtn.AccountSearch.addActionListener(this);
-		accountbtn.AccountChg.addActionListener(this);
-		accountbtn.Accountevery.addActionListener(this);
-		accountbtn.AccountIn.addActionListener(this);
+		
+		
+
+
 		
 		
 		
@@ -392,11 +425,24 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// 메�
 			btn.show(pFBtn, "Stockbtn");
 			//stockmonitor.showMon(connect_db.StockAll());
 		} else if (ob == mBtnAccount) {//계정관리
-			monitor.show(pMonitor, "ViewAccount");
-			btn.show(pFBtn, "accountbtn");
+			
+			if(connect_db.rank.equals("점장")) {
+				monitor.show(pMonitor, "ViewAccount");
+				btn.show(pFBtn, "accountbtn");
+			}
+			else {
+				JOptionPane.showMessageDialog(this, "관리자만 접근할 수 있습니다.", "접근오류", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			//JOptionPane.showMessageDialog(this, "삭제할 상품를 선택하세요.", "미선택 오류", JOptionPane.ERROR_MESSAGE);
+			//return;	
+		    
+
 		} else if (ob == logout) {
-			Login drawing= new Login();
-			dispose();
+			Login login= new Login();
+			//dispose();
+			this.setVisible(false);
+			login.setVisible(true);
 		}
 		/*
 		else if (ob == mBtnCalc) {//정산
@@ -407,6 +453,139 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// 메�
 
 		
 		//세부기능들
+		
+		
+		//계정관리의 기능들
+		
+		else if(ob==accountbtn.AccountSignUp) {//계정추가
+			signUp.setVisible(true);
+		}else if(ob==accountbtn.AccountChange) {//계정수정
+				
+			/*
+			int tmp = stockmonitor.table.convertRowIndexToModel(stockmonitor.table.getSelectedRow());
+
+			if (tmp < 0) {
+				JOptionPane.showMessageDialog(this, "수정할 재고를 선택하세요.", "미선택 오류", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			String tmp1 = (String) stockmonitor.tmodel.getValueAt(tmp, 0);
+			String tmp2 = (String) stockmonitor.tmodel.getValueAt(tmp, 1);
+			String tmp3 = (String) stockmonitor.tmodel.getValueAt(tmp, 2);
+			String tmp4 = (String) stockmonitor.tmodel.getValueAt(tmp, 3);
+			*/
+			int tmp = viewAccount.table.convertRowIndexToModel(viewAccount.table.getSelectedRow());
+
+			if (tmp < 0) {
+				JOptionPane.showMessageDialog(this, "수정할 계정를 선택하세요.", "미선택 오류", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			//선택한 값 추출
+			String tmp1 = (String) viewAccount.model.getValueAt(tmp, 0);//이름
+			String tmp2 = (String) viewAccount.model.getValueAt(tmp, 1);//아이디
+			String tmp3 = (String) viewAccount.model.getValueAt(tmp, 2);//비밀번호
+			String tmp4 = (String) viewAccount.model.getValueAt(tmp, 3);//이메일
+			String tmp5 = (String) viewAccount.model.getValueAt(tmp, 4);//직급			
+			
+			//계정수정보이기
+			signUpChange.setVisible(true);
+			//계정수정값넣기
+			signUpChange.name.setText(tmp1);//이름
+			signUpChange.txtIDCheck.setText(tmp2);//아이디
+			signUpChange.passwordField.setText(tmp3);//비밀번호
+			signUpChange.email.setText(tmp4);//이메일
+			
+		}else if(ob==accountbtn.AccountDelete) {//계정삭제
+			
+			int tmp = viewAccount.table.convertRowIndexToModel(viewAccount.table.getSelectedRow());
+
+			if (tmp < 0) {
+				JOptionPane.showMessageDialog(this, "수정할 계정를 선택하세요.", "미선택 오류", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			//선택한 값 추출
+			String tmp1 = (String) viewAccount.model.getValueAt(tmp, 0);//이름
+			String tmp2 = (String) viewAccount.model.getValueAt(tmp, 1);//아이디
+			String tmp3 = (String) viewAccount.model.getValueAt(tmp, 2);//비밀번호
+			String tmp4 = (String) viewAccount.model.getValueAt(tmp, 3);//이메일
+			String tmp5 = (String) viewAccount.model.getValueAt(tmp, 4);//직급
+			/*
+			System.out.println(productCode);
+			int rrr;
+			int rrrr =1;
+			if (JOptionPane.showConfirmDialog(this, "선택한 상품을 삭제하시겠습니까?", "삭제확인",
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+				rrr = connect_db.stockdelete(productCode);//DB연동해서 삭제
+				rrrr=rrr;
+			}
+			
+			if (rrrr == 0) {
+				JOptionPane.showMessageDialog(this, "이미 판매하고 있는 상품은 삭제할 수 없습니다.", "삭제 오류", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			*/
+			int rrr;
+			int rrrr =1;
+			if (JOptionPane.showConfirmDialog(this, "선택한 계정을 삭제하시겠습니까?", "삭제확인",
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+				rrr = connect_db.accountdelete(tmp2);//DB연동해서 삭제
+				rrrr=rrr;
+			}
+			
+			if (rrrr == 0) {
+				JOptionPane.showMessageDialog(this, "판매를 했거나 정산을 한 계정은 삭제할 수 없습니다.", "삭제 오류", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+	        //변경후 화면 띄우기
+	        viewAccount.clearRows(viewAccount.model.getRowCount(), viewAccount.model);
+	        viewAccount.showMon(connect_db.AccountAll());
+			
+			
+			
+		}
+		
+		else if(ob==signUp.btnIdCheckButton) {//중복확인 눌렀을때
+			
+			Vector<PosUse> results;
+			PosUse result = connect_db.OverlapId(signUp.id.getText().trim());
+			results = new Vector<PosUse>();
+			results.add(result);
+			
+			
+			//if(result.getCheckID().trim().isEmpty() || result.getCheckID().trim().equals("")) {
+			if(result.getCheckID()==null)
+			{
+				signUp.txtIDCheck.setText(signUp.id.getText());
+			}
+			else {
+				JOptionPane.showMessageDialog(signUp, "이미 등록된 아이디가 있습니다.", "중복 오류", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+		}
+		else if(ob==signUp.No) {//계정-취소버튼 눌렀을때
+			signUpclear();
+			signUp.setVisible(false);
+		}
+		else if(ob==signUp.Yes) {//계정-회원가입버튼 눌렀을때
+			signupProcess();//회원가입절차진행
+		}
+		
+		
+		else if(ob==signUpChange.No) {//계정수정-취소버튼 눌렀을때
+			signUpclear();
+			signUpChange.setVisible(false);
+		}
+		else if(ob==signUpChange.Yes) {//계정수정-회원수정버튼 눌렀을때
+			signupChangeProcess();
+
+		}
+		
+		
+
 		
 		//판매관리의 기능들
 		else if(ob == salebtn.sBtnCancel) {//환불
@@ -733,6 +912,109 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// 메�
 //	         dateLabel.setText(str);
 		}
 		
+	}
+	
+	
+	public void signupProcess(){//회원가입절차
+		/*
+		|| stockpopupin.inproductResult.getText().trim().isEmpty()
+		|| stockpopupin.inproductResult.getText().trim().equals("")
+		*/
+		if (signUp.name.getText().trim().equals("") || /*signUp.id.getText().trim().equals("") || */
+			signUp.email.getText().trim().equals("") || String.valueOf(signUp.passwordField.getPassword()).trim().equals("") || 
+			String.valueOf(signUp.passwordField_Check.getPassword()).trim().equals("") ||
+			signUp.name.getText().trim().isEmpty() || /*signUp.id.getText().trim().isEmpty() || */
+			signUp.email.getText().trim().isEmpty() || String.valueOf(signUp.passwordField.getPassword()).trim().isEmpty() || 
+			String.valueOf(signUp.passwordField_Check.getPassword()).trim().isEmpty()
+			) {
+			JOptionPane.showMessageDialog(signUp, "빈칸을 입력해주세요.", "입력 오류", JOptionPane.ERROR_MESSAGE);
+			return;
+		    }
+		else if(signUp.txtIDCheck.getText().trim().equals("") || signUp.txtIDCheck.getText().trim().isEmpty()) {
+			JOptionPane.showMessageDialog(signUp, "중복확인 버튼을 눌러주세요.", "입력 오류", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		else if(String.valueOf(signUp.passwordField.getPassword()).trim().equals(String.valueOf(signUp.passwordField_Check.getPassword()).trim() )==false) {
+			JOptionPane.showMessageDialog(signUp, "비밀번호와 비밀번호 확인이 일치하지 않습니다.", "입력 오류", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		else {
+			
+			connect_db.AccountIn(signUp.txtIDCheck.getText().trim(), String.valueOf(signUp.passwordField.getPassword()).trim(), signUp.name.getText().trim(), signUp.email.getText().trim() , "점원");
+			
+			//변경후 화면 띄우기
+			viewAccount.clearRows(viewAccount.model.getRowCount(), viewAccount.model);
+			viewAccount.showMon(connect_db.AccountAll());
+			
+			/*
+			//변경후 화면 띄우기
+			stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);
+			stockmonitor.showMon(connect_db.StockAll());
+			*/
+
+			signUpclear();
+			signUp.setVisible(false);
+			
+			
+			
+		}
+		
+		
+		
+		
+	}
+	
+	public void signupChangeProcess() {
+		
+		    if (signUpChange.name.getText().trim().equals("") || /*signUpChange.id.getText().trim().equals("") || */
+				signUpChange.email.getText().trim().equals("") || String.valueOf(signUpChange.passwordField.getPassword()).trim().equals("") || 
+				String.valueOf(signUpChange.passwordField_Check.getPassword()).trim().equals("") ||
+				signUpChange.name.getText().trim().isEmpty() || /*signUpChange.id.getText().trim().isEmpty() || */
+				signUpChange.email.getText().trim().isEmpty() || String.valueOf(signUpChange.passwordField.getPassword()).trim().isEmpty() || 
+				String.valueOf(signUpChange.passwordField_Check.getPassword()).trim().isEmpty()
+				) {
+				JOptionPane.showMessageDialog(signUpChange, "빈칸을 입력해주세요.", "입력 오류", JOptionPane.ERROR_MESSAGE);
+				return;
+			    }
+			else if(String.valueOf(signUpChange.passwordField.getPassword()).trim().equals(String.valueOf(signUpChange.passwordField_Check.getPassword()).trim() )==false) {
+				JOptionPane.showMessageDialog(signUpChange, "비밀번호와 비밀번호 확인이 일치하지 않습니다.", "입력 오류", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			else {
+				String ID=signUpChange.txtIDCheck.getText().trim();
+				String PW=String.valueOf(signUpChange.passwordField.getPassword()).trim();
+				String user_name=signUpChange.name.getText().trim();
+				String user_email=signUpChange.email.getText().trim();
+				//String.valueOf(signUp.passwordField.getPassword()).trim()
+				connect_db.dbsignUpChange(ID, PW, user_name, user_email);
+				
+				
+		
+		        //변경후 화면 띄우기
+		        viewAccount.clearRows(viewAccount.model.getRowCount(), viewAccount.model);
+		        viewAccount.showMon(connect_db.AccountAll());
+		
+		        signUpchangeclear();
+		        signUpChange.setVisible(false);
+			}
+	}
+	
+
+	public void signUpclear() {//회원가입창클리어
+		signUp.name.setText(null);
+		signUp.id.setText(null);
+		signUp.email.setText(null);
+		signUp.txtIDCheck.setText(null);
+		signUp.passwordField.setText(null);
+		signUp.passwordField_Check.setText(null);
+	}
+	
+	public void signUpchangeclear() {
+		signUpChange.name.setText(null);
+		signUpChange.email.setText(null);
+		signUpChange.txtIDCheck.setText(null);
+		signUpChange.passwordField.setText(null);
+		signUpChange.passwordField_Check.setText(null);
 	}
 
 }

@@ -74,7 +74,7 @@ public class StockMonitor extends JPanel{
 	    backgroundpanel.add(stockScrollPane);
 				
 						
-		showMon(connect_db.StockAll());
+		
 						
 		stockScrollPane.setViewportView(table);
 		table.setBackground(Color.WHITE);
@@ -94,12 +94,12 @@ public class StockMonitor extends JPanel{
 		
 		table = new JTable(tmodel);
 		*/
-
-
 		
+		showMon(connect_db.StockAll());//계정테이블 화면에 보이기
+
 	}
 	
-	public void showMon(Vector<PosUse> mon) {
+	public void showMon(Vector<PosUse> mon) {//계정테이블 화면에 보이기
 		
 		int size = mon.size();		
 		this.mon = new Vector<PosUse>();

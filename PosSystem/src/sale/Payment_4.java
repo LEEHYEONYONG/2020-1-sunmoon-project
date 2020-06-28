@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JScrollPane;
 
 public class Payment_4 extends JFrame{//영수증 출력 GUI
 	
@@ -16,6 +17,7 @@ public class Payment_4 extends JFrame{//영수증 출력 GUI
 	public JButton btnP4Payment;
 	public JButton btnP4PrintReceipt;
 	public JTextArea taP4details;
+	public JScrollPane scrollPane;
 	
 	/*
 	public static void main(String[] args) {
@@ -55,10 +57,15 @@ public class Payment_4 extends JFrame{//영수증 출력 GUI
 		
 		taP4details = new JTextArea();
 		taP4details.setBounds(50, 10, 300, 360);
-		Payment_4.add(taP4details);
+		//Payment_4.add(taP4details);
+		
+		
+		scrollPane = new JScrollPane(taP4details);
+		scrollPane.setBounds(50,10,300,360);
+		Payment_4.add(scrollPane);
+		
+		
 		
 		
 	}
-
-
 }

@@ -31,6 +31,22 @@ public class Connect_DB {
 	
 	public int i = 1;
 	
+	//로그인 저장
+	public static String ID=null;
+	public static String PW=null;
+	public static String user_name=null;
+	public static String user_email=null;
+	public static String rank=null;
+	/*
+	posUse.setID(result.getString(1));
+	posUse.setPW(result.getString(2));
+	posUse.setUser_name(result.getString(3));
+	posUse.setUser_email(result.getString(4));
+	posUse.setRank(result.getString(5));
+	*/
+	
+	
+	
 	public Connect_DB()
 	{
 		
@@ -1040,7 +1056,6 @@ public class Connect_DB {
          ////////////입고(상품등록)
          // 인자값 5개만 받아서 입력하기 상품코드 상품명 가격 종류 제조사
            // 나머지 5개 데이터는 product테이블 참조해서 채워넣기 가능?
-
 	public int StockIn(String productCode, String product, int volume, String category, String provide) {
 		int r = 0;
 
@@ -1049,7 +1064,7 @@ public class Connect_DB {
 			con = DriverManager.getConnection(url,user,passwd);
 
 			// 쿼리문 세팅
-			String query ="INSERT INTO product (p_num, p_name, p_cost, p_category, p_provide) VALUES (?, ?, ?, ?, ?);";
+			String query ="INSERT INTO product (p_num, p_name, p_cost, p_category, p_provide) VALUES (?, ?, ?, ?, ?)";
 			
 			pstmt= con.prepareStatement(query);
 			pstmt.setString(1, productCode);
@@ -1210,12 +1225,259 @@ public class Connect_DB {
 		return list;
 	}
 	
+	///////////////////////
+	//////////////////////////////////계정관리DB////////////////////////
 	
 	
+	// 로그인(대상 검색)
+	public boolean loginpass(String id, String pw) {
+		
+		boolean flag = false;
+		
+
+		try {
+
+			con = DriverManager.getConnection(url,user,passwd);
+			
+			String select = "select * from user_account where ID=? and pw=?";
+			pstmt = con.prepareStatement(select);
+
+			pstmt.setString(1, id);
+			pstmt.setString(2, pw);
+	
+			result = pstmt.executeQuery();
+
+			while (result.next()) {
+			
+				
+				posUse = new PosUse();
+				
+				posUse.setID(result.getString(1));
+				posUse.setPW(result.getString(2));
+				posUse.setUser_name(result.getString(3));
+				posUse.setUser_email(result.getString(4));
+				posUse.setRank(result.getString(5));
+				
+				flag = true;
+			}
+			
+			ID=posUse.getID();
+			PW=posUse.getPW();
+			user_name=posUse.getUser_name();
+			user_email=posUse.getUser_email();
+			rank=posUse.getRank();
+			System.out.println(ID);
+			System.out.println(rank);
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				result.close();
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return flag;
+	}
 	
 	
+	//계정관리 화면 띄우기
+	
+	// 모든계정표시
+	public Vector<PosUse> AccountAll() {
+
+		// 쿼리문 결과 (여러 행) 담을 PosDto 객체
+		Vector<PosUse> list = new Vector<PosUse>();
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+            String query = "select ID,PW,user_name,user_email,rankname from user_account";
+
+			// 쿼리문 실행
+            stmt = con.prepareStatement(query);
+			result = stmt.executeQuery(query);
+
+			// 결과 저장
+			while (result.next()) {
+				
+				posUse = new PosUse();
+				
+				posUse.setID(result.getString(1));
+				posUse.setPW(result.getString(2));
+				posUse.setUser_name(result.getString(3));
+				posUse.setUser_email(result.getString(4));
+				posUse.setRank(result.getString(5));
+				
+				list.add(posUse);
+				flag=true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		flag=false;
+		// 결과 리턴
+		return list;
+
+	}
 	
 	
+	//계정등록
+	public int AccountIn(String ID, String PW, String user_name, String user_email, String rankname) {
+		int r = 0;
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+			String query ="INSERT INTO user_account (ID, PW, user_name, user_email, rankname) VALUES (?, ?, ?, ?, ?)";
+			
+			pstmt= con.prepareStatement(query);
+			pstmt.setString(1, ID);
+			pstmt.setString(2, PW);
+			pstmt.setString(3, user_name);
+			pstmt.setString(4, user_email);
+			pstmt.setString(5, rankname);
+
+			// 쿼리문 실행
+			r = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				//result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return r;
+	}
+	
+	//중복확인
+	public PosUse OverlapId(String Id) {
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+			posUse = new PosUse();
+			// 쿼리문 세팅
+			String query ="select ID from user_account where ID=?";
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, Id);
+
+			// 쿼리문 실행
+			result = pstmt.executeQuery();
+
+			// 결과 저장
+			while (result.next()) {
+				posUse.setCheckID(result.getString(1));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+
+		// 결과 리턴
+		return posUse;
+	}
+
+	//계정수정
+	
+	public void dbsignUpChange(String ID, String PW, String user_name, String user_email) {
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅, 조건으로사용하는 상품코드는 겟텍스트로 받기.
+			String query = "UPDATE user_account SET PW = ?, user_name = ?, user_email = ? WHERE ID = ?";
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, PW);
+			pstmt.setString(2, user_name);
+			pstmt.setString(3, user_email);
+			pstmt.setString(4, ID);
+
+			// 쿼리문 실행
+			int r = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	///계정삭제
+	public int accountdelete(String ID) {
+		int r=0;
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅, 조건으로사용하는 아이디는 겟텍스트로 받기.
+		    //String query = "delete from product where p_num=?";
+			String query = "DELETE FROM user_account WHERE ID = ?";
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, ID);
+
+			// 쿼리문 실행
+			r = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return r;
+	}
 	
 	
 	

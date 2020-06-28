@@ -41,6 +41,7 @@ public class PosUse {
 	private String user_email;//사용자 이메일
 	private String rank;//사용자 직급
 	private int listNum; // 상품등록창에서 행번호@@@@
+	private String checkID;//중복확인용
 	
 	//통계 테이블
 	//상품별
@@ -318,6 +319,54 @@ public class PosUse {
 
 	public void setClockTotalaccount(int clockTotalaccount) {
 		ClockTotalaccount = clockTotalaccount;
+	}
+
+	public String getID() {
+		return ID;
+	}
+
+	public void setID(String iD) {
+		ID = iD;
+	}
+
+	public String getPW() {
+		return PW;
+	}
+
+	public void setPW(String pW) {
+		PW = pW;
+	}
+
+	public String getUser_name() {
+		return user_name;
+	}
+
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+
+	public String getUser_email() {
+		return user_email;
+	}
+
+	public void setUser_email(String user_email) {
+		this.user_email = user_email;
+	}
+
+	public String getRank() {
+		return rank;
+	}
+
+	public void setRank(String rank) {
+		this.rank = rank;
+	}
+
+	public String getCheckID() {
+		return checkID;
+	}
+
+	public void setCheckID(String checkID) {
+		this.checkID = checkID;
 	}
 	
 	

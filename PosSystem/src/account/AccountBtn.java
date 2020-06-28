@@ -2,49 +2,49 @@ package account;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class AccountBtn extends JPanel {
-	
-	public JButton AccountChg;
-	public JButton AccountIn;
-	public JButton AccountSearch;
-	public JButton Accountevery;
+	public JButton AccountDelete;
+	public JButton AccountSignUp;
+	public JButton AccountChange;
 	
 	public AccountBtn() {
 		setBackground(Color.WHITE);
 		setLayout(null);
 		
-		AccountSearch = new JButton("∞¸∏Æ¿⁄∫Ø∞Ê");
-		AccountSearch.setBounds(0,28, 164, 85);
-		add(AccountSearch);
-		AccountSearch.setForeground(Color.WHITE);
-		AccountSearch.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
-		AccountSearch.setBackground(new Color(0, 0, 128));
+		AccountSignUp = new JButton("∞Ë¡§√ﬂ∞°");
+		AccountSignUp.setBounds(0,28, 164, 85);
+		add(AccountSignUp);
+		AccountSignUp.setForeground(Color.WHITE);
+		AccountSignUp.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
+		AccountSignUp.setBackground(new Color(0, 0, 128));
+		/*
+		AccountSignUp.addActionListener( new ActionListener() {
+			
+            public void actionPerformed(ActionEvent e) {
+            	SignUp f3 = new SignUp();
+            }
+		});
+		*/
 		
-		AccountIn = new JButton("∞Ë¡§ªË¡¶");
-		AccountIn.setBounds(176, 28, 164, 85);
-		add(AccountIn);
-		AccountIn.setForeground(Color.WHITE);
-		AccountIn.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
-		AccountIn.setBackground(new Color(100, 149, 237));
+		AccountDelete = new JButton("∞Ë¡§ªË¡¶");
+		AccountDelete.setBounds(176, 28, 164, 85);
+		add(AccountDelete);
+		AccountDelete.setForeground(Color.WHITE);
+		AccountDelete.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
+		AccountDelete.setBackground(new Color(100, 149, 237));
 		
-		AccountChg = new JButton("∞Ë¡§√ﬂ∞°");
-		AccountChg.setBounds(359, 28, 164, 85);
-		add(AccountChg);
-		AccountChg.setForeground(Color.WHITE);
-		AccountChg.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
-		AccountChg.setBackground(new Color(0, 0, 128));
-		
-		Accountevery = new JButton("∞Ë¡§∫Ø∞Ê");
-		Accountevery.setBounds(547, 28, 164, 85);
-		add(Accountevery);
-		Accountevery.setForeground(Color.WHITE);
-		Accountevery.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
-		Accountevery.setBackground(new Color(100, 149, 237));
-		
+		AccountChange = new JButton("∞Ë¡§∫Ø∞Ê");
+		AccountChange.setBounds(350, 28, 164, 85);
+		add(AccountChange);
+		AccountChange.setForeground(Color.WHITE);
+		AccountChange.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
+		AccountChange.setBackground(new Color(100, 149, 237));
 		
 	}
 
