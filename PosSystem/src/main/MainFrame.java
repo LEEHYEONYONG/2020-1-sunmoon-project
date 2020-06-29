@@ -95,7 +95,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	public JButton mBtnStat;//Åë°è¹öÆ°
 	public JButton mBtnAccount;//°èÁ¤¹öÆ°
 	public JPanel pFBtn;
-	
+	public JButton mBtnexit;//ÇÁ·Î±×·¥Á¾·á¹öÆ°
 	
 	ViewStatProduct v1 = new ViewStatProduct(); // »óÇ°º° ÆÐ³Î
 	ViewStatYear v2 = new ViewStatYear(); // ¿¬µµº° ÆÐ³Î
@@ -220,6 +220,13 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		logout.setForeground(Color.WHITE);
 		logout.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
 		
+		mBtnexit = new JButton("Á¾·á");
+		mBtnexit.setForeground(Color.WHITE);
+		mBtnexit.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		mBtnexit.setBackground(Color.RED);
+		mBtnexit.setBounds(0, 539, 163, 90);
+		pMainBtn.add(mBtnexit);
+		
 		pMonitor = new JPanel();
 		pMonitor.setBackground(new Color(255, 255, 255));
 		pMonitor.setBounds(0, 50, 1157, 552);
@@ -270,6 +277,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		mBtnStat.addActionListener(this);
 		mBtnAccount.addActionListener(this);
 		logout.addActionListener(this);
+		mBtnexit.addActionListener(this);
 		
 		
 		
@@ -465,6 +473,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 			//dispose();
 			this.setVisible(false);
 			login.setVisible(true);
+		} else if (ob == mBtnexit) {
+			System.exit(0);
 		}
 		/*
 		else if (ob == mBtnCalc) {//Á¤»ê
@@ -1038,5 +1048,4 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		signUpChange.passwordField.setText(null);
 		signUpChange.passwordField_Check.setText(null);
 	}
-
 }
