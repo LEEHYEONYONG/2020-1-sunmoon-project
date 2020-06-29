@@ -16,7 +16,7 @@ public class PosUse {
 	private int p_costsellCount;//총 가격(상품 개수 X 단가)
 	
 	//결제 데이블
-	private int c_num;//결제 번호
+	private String c_num;//결제 번호
 	private String c_name;//결제 상품 이름
 	private int c_amount;//결제 수량
 	private String c_way;//결제 방법
@@ -160,6 +160,79 @@ public class PosUse {
 	{
 		this.p_sellCount = p_sellCount;
 	}
+	
+		//결제 관련 메소드
+		public String getc_num()
+		{
+			return c_num;
+		}
+		
+		public void setc_num(String c_num)
+		{
+			this.c_num = c_num;
+		}
+		
+		public String getc_name()
+		{
+			return c_name;
+		}
+		
+		public void setc_name(String c_name)
+		{
+			this.c_name = c_name;
+		}
+		
+		public int getc_amount()
+		{
+			return c_amount;
+		}
+		
+		public void setc_amount(int c_amount)
+		{
+			this.c_amount = c_amount;
+		}
+		
+		public String getc_way()
+		{
+			return c_way;
+		}
+		
+		public void setc_way(String c_way)
+		{
+			this.c_way = c_way;
+		}
+		
+		public int getc_cost()
+		{
+			return c_cost;
+		}
+		
+		public void setc_cost(int c_cost)
+		{
+			this.c_cost = c_cost;
+		}
+		
+		public String getc_day()
+		{
+			return c_day;
+		}
+		
+		public void setc_day(String c_day)
+		{
+			this.c_day = c_day;
+		}
+		
+		public String getc_assistant()
+		{
+			return c_assistant;
+		}
+		
+		public void setc_assistant(String c_assistant)
+		{
+			this.c_assistant = c_assistant;
+		}
+	
+	
 	
 	public int getTotalamount() {
 		return totalamount;

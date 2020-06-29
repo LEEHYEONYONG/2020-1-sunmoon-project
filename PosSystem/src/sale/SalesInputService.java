@@ -121,12 +121,29 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 				String cnt = JOptionPane.showInputDialog(mainframe, "변경할 수량을 입력하세요.", "수량변경",
 						JOptionPane.QUESTION_MESSAGE);
 
-				if (cnt == null || !isNumber(cnt) || cnt.isEmpty() || cnt.trim().equals("")) {
+				if (cnt == null || !isNumber(cnt) || cnt.isEmpty() || cnt.trim().equals("")) 
+				{
 					return;
-				} else {
-					int price = Integer.parseInt(String.valueOf(mainframe.viewSalesInput.model.getValueAt(row, 4)));//가격 4번
-					mainframe.viewSalesInput.model.setValueAt(Integer.parseInt(cnt), row, 3);//수량 3번
-					mainframe.viewSalesInput.model.setValueAt(price * Integer.parseInt(cnt), row, 7);//총 금액 7번
+				} 
+				else  //재고 수량 초과 여부 확인
+				{
+					Object find_num = mainframe.viewSalesInput.table.getValueAt(row,1);
+					int amount = connect_db.amount_value(String.valueOf(find_num));
+					
+					if(Integer.parseInt(cnt) <= 0)
+					{
+						JOptionPane.showMessageDialog(mainframe, "수량은 0이하로 설정할 수 없습니다", "상품 수정 오류", JOptionPane.WARNING_MESSAGE);
+					}
+					else if(Integer.parseInt(cnt) > amount)
+					{
+						JOptionPane.showMessageDialog(mainframe, "재고 수량을 초과하였습니다", "상품 수정 오류", JOptionPane.WARNING_MESSAGE);
+					}
+					else
+					{
+						int price = Integer.parseInt(String.valueOf(mainframe.viewSalesInput.model.getValueAt(row, 4)));//가격 4번
+						mainframe.viewSalesInput.model.setValueAt(Integer.parseInt(cnt), row, 3);//수량 3번
+						mainframe.viewSalesInput.model.setValueAt(price * Integer.parseInt(cnt), row, 7);//총 금액 7번
+					}
 				}
 			} else {
 				JOptionPane.showMessageDialog(mainframe, "수정할 상품을 선택해주세요", "선택오류", JOptionPane.ERROR_MESSAGE);
@@ -203,8 +220,13 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			}
 		} else if (ob == mainframe.salebtn.sBtnPay) {// 결제클릭시
 			if (mainframe.viewSalesInput.model.getRowCount() > 0) {
-				mainframe.payment_1.setVisible(true);// 할인창부터열기
-				mainframe.payment_1.tfP1BeforePrice.setText(mainframe.viewSalesInput.total_price_input.getText());
+				
+				mainframe.payment_3.setVisible(true);//결제 gui열기
+				mainframe.payment_3.lbP3PaymentView.setText(mainframe.viewSalesInput.total_price_input.getText());
+				mainframe.payment_3.lbP3FinalPayView.setText("0");
+				
+				//mainframe.payment_1.setVisible(true);// 할인창부터열기
+				//mainframe.payment_1.tfP1BeforePrice.setText(mainframe.viewSalesInput.total_price_input.getText());
 				// String item =
 				// String.valueOf(mainframe.payment_1.cbP1Cooperation.getSelectedItem());
 				// cooperDCProcess(item);
@@ -212,14 +234,17 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			} else {
 				JOptionPane.showMessageDialog(mainframe, "선택한 상품이 없습니다.", "상품미선정", JOptionPane.ERROR_MESSAGE);
 			}
-		} else if (ob == mainframe.payment_1.btnP1Apply) {
-			cpCalc();
+			
+//-------------------할인 적용 제거 부분-------------------------------------------------------------------------
+			
+		/*} else if (ob == mainframe.payment_1.btnP1Apply) {//할인 적용 버튼
+			//cpCalc();
 
-		} else if (ob == mainframe.payment_1.btnP1Before) {
-			mainframe.payment_1.setVisible(false);
-			mainframe.payment_4.setVisible(false);
-			mainframe.payment_3.setVisible(false);
-		} else if (ob == mainframe.payment_1.btnP1Next) {
+		} else if (ob == mainframe.payment_1.btnP1Before) {//할인 이전으로 버튼
+			//mainframe.payment_1.setVisible(false);
+			//mainframe.payment_4.setVisible(false);
+			//mainframe.payment_3.setVisible(false);
+		} else if (ob == mainframe.payment_1.btnP1Next) {//할인 다음으로 버튼
 			if (mainframe.payment_1.tfP1Afterprice.getText().equals(""))
 				JOptionPane.showMessageDialog(mainframe.payment_1, "할인을 적용하시오.", "할인미적용", JOptionPane.ERROR_MESSAGE);
 			else {
@@ -229,19 +254,23 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 				mainframe.payment_3.lbP3FinalPayView.setText("0");
 			}
 		} else if (ob == mainframe.payment_3.JcomboBoxPay) {
-			/*
-			String item = String.valueOf(mainframe.payment_3.JcomboBoxPay.getToolkit());
 			
-			if(item.equals("카드")) {
-				mainframe.payment_3.tfP3CashP.setEnabled(false);
-				mainframe.payment_3.tfP3CardP.setEnabled(true);
-			} else {
-				mainframe.payment_3.tfP3CashP.setEnabled(true);
-				mainframe.payment_3.tfP3CardP.setEnabled(false);
-			}
+			//itemStateChanged 메소드로 전환
+			 
+			//String item = String.valueOf(mainframe.payment_3.JcomboBoxPay.getToolkit());
+			
+			//if(item.equals("카드")) {
+				//mainframe.payment_3.tfP3CashP.setEnabled(false);
+				//mainframe.payment_3.tfP3CardP.setEnabled(true);
+			//} else {
+				//mainframe.payment_3.tfP3CashP.setEnabled(true);
+				//mainframe.payment_3.tfP3CardP.setEnabled(false);
+			//}
+			
 			*/
+//-------------------할인 적용 제거 부분-------------------------------------------------------------------------
 			
-		} else if (ob == mainframe.payment_3.btnP3Input) {
+		} else if (ob == mainframe.payment_3.btnP3Input) {//결제gui 입력완료 버튼
 			
 			int card = 0;
 			int cash = 0;
@@ -287,18 +316,22 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			
 //--------------------------------------------------------------------------------------------
 
-		} else if (ob == mainframe.payment_3.btnP3Before) {
-			mainframe.payment_1.setVisible(true);
+		} else if (ob == mainframe.payment_3.btnP3Before) {//결제gui 이전으로 버튼
+			//mainframe.payment_1.setVisible(true);
 			mainframe.payment_3.setVisible(false);
 
-		} else if (ob == mainframe.payment_3.btnP3Cancel) {
+		} else if (ob == mainframe.payment_3.btnP3Cancel) {//결제gui 거래취소 버튼
 			mainframe.payment_3.setVisible(false);
-		} else if (ob == mainframe.payment_3.btnP3Next) {
+		} else if (ob == mainframe.payment_3.btnP3Next) {//결제gui 결제 버튼
 			
 
 			if (!mainframe.payment_3.tfP3SM.getText().equals("")) {
 				if (JOptionPane.showConfirmDialog(mainframe.payment_3, "결제하시겠습니까?", "결제확인",
 						JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+					
+					//결제 테이블에 결제 내용 추가 메소드
+					make_list();
+					
 					// paymentProcess();
 					JOptionPane.showMessageDialog(mainframe.payment_3, "결제가완료되었습니다.", "결제완료",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -306,6 +339,15 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 					mainframe.payment_3.setVisible(false);
 					mainframe.payment_4.setVisible(true);
 
+					//영수증 텍스트에리어 내용 추가
+					payNPrint();
+					
+					
+					//결제 종료 후 테이블 비우기
+					int row = mainframe.viewSalesInput.table.getRowCount();
+					connect_db.removeListNum(mainframe.viewSalesInput.table.getRowCount());
+					setblank();
+					
 					// salesInputDao.SellIdDate();
 					// payNPrint();
 
@@ -390,6 +432,87 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 		return image;
 		
 	}
+	
+	
+	//결제 목록 DB로 보내기
+		public void make_list()
+		{
+			int size = mainframe.viewSalesInput.table.getRowCount();
+			connect_db.posUse = new PosUse();
+			/*
+			SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMdd");
+			Calendar time = Calendar.getInstance();
+			String time1 = format1.format(time.getTime());
+			connect_db.posUse.setc_num(time1+String.format("%04d",buyCount));*/
+			
+			//결제 테이블 기본키 중복 없이 생성
+			connect_db.duplicate_key();
+			//수정랄 상품 갯수
+			int amount_revise;
+			for(int i=0;i<size;i++)
+			{
+				
+				connect_db.posUse.setc_name(mainframe.viewSalesInput.table.getValueAt(i, 1).toString());//결제 상품 번호
+				connect_db.posUse.setc_amount(Integer.parseInt(mainframe.viewSalesInput.table.getValueAt(i, 3).toString()));//결제 상품 수량
+				connect_db.posUse.setc_way(mainframe.payment_3.JcomboBoxPay.getSelectedItem().toString());//결제 방법
+				connect_db.posUse.setc_cost(Integer.parseInt(mainframe.viewSalesInput.table.getValueAt(i, 7).toString()));//상품 가격
+				connect_db.posUse.setc_assistant("admin");//결제 점원 posUse.getid()
+				
+				//상품 테이블 상품 갯수 수정
+				amount_revise = connect_db.amount_revise1();
+				if(amount_revise<=-1)
+				{
+					System.out.println("상품 갯수 가져오기 실패");
+					continue;
+				}
+				else if(amount_revise >= 0)
+				{
+					connect_db.amount_revise2(amount_revise);
+					System.out.println("상품 테이블 상품 갯수 수정 완료");
+					
+					connect_db.registerHistory();
+				}
+				
+				
+				
+			}
+			//buyCount++;
+		}
+		
+		//영수증 텍스트 에리어 내용 추가
+		private void payNPrint()
+		{
+			int size = mainframe.viewSalesInput.table.getRowCount();
+			String num = connect_db.posUse.getc_num();
+			mainframe.payment_4.taP4details.setText("결제 코드: "+num+"\n");
+			mainframe.payment_4.taP4details.append("상품명 \t 단가 \t 수량 \t 금액\n");
+			for(int i=0;i<size;i++)
+			{
+				String name = mainframe.viewSalesInput.table.getValueAt(i, 2).toString();//상품명
+				String one_cost = mainframe.viewSalesInput.table.getValueAt(i, 4).toString();//단가
+				String amount = mainframe.viewSalesInput.table.getValueAt(i, 3).toString();//수향
+				String plus_cost = mainframe.viewSalesInput.table.getValueAt(i, 7).toString();//금액
+				
+				mainframe.payment_4.taP4details.append(name+" \t "+one_cost+" \t "+amount+" \t "+plus_cost+"\n");
+			}
+			
+			String all_cost = mainframe.viewSalesInput.total_price_input.getText();//총 결제 금액
+			mainframe.payment_4.taP4details.append("\n합계 금액: "+ all_cost);
+			
+			String card = mainframe.payment_3.tfP3CardP.getText();
+			String cash = mainframe.payment_3.tfP3CashP.getText();
+			if(card.equals(""))
+			{
+				card = "0";
+			}
+			else if(cash.equals(""))
+			{
+				cash = "0";
+			}
+			mainframe.payment_4.taP4details.append("\n\n결제 유형\n");
+			mainframe.payment_4.taP4details.append("카드: "+card+"원\n");
+			mainframe.payment_4.taP4details.append("현금: "+cash+"원\n");
+		}
 
 	/*
 	 
@@ -560,49 +683,96 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 
 		if (mainframe.viewSalesInput.code_input.getText().trim().length() > 0) {
 
+			//상품 갯수 확인
+			int amount = connect_db.amount_value(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase());
 			if (checkOverlap(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase(), 1)) {
 				key = true;
 				System.out.println(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase());
 				System.out.println("코드로검색" + mainframe.viewSalesInput.code_input.getText().length());
-				
-				//김무현이 만든 connect_db.searchBy 메소드
-				listAdd(connect_db.searchBy(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase()));
-
+				if(amount <= 0)
+				{
+					//다이얼 로그 띄우기
+					JOptionPane.showMessageDialog(mainframe, "상품의 재고가 부족합니다", "상품 수량 부족", JOptionPane.WARNING_MESSAGE);
+					
+				}
+				else
+				{
+					//김무현이 만든 connect_db.searchBy 메소드
+					listAdd(connect_db.searchBy(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase()));
+				}
 			} else {
 				// 수량 변경
 				System.out.println("코드중복 발생");
-				mainframe.viewSalesInput.model.setValueAt(
-						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3))) + 1,
-						overlapRow, 3);// 4로 되어있던 부분 3으로 변경(3번이 수량)
-				// 단가 * 수량
-				mainframe.viewSalesInput.model.setValueAt(
-						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3)))//수량
-								* Integer.valueOf(
-										String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 4))),//가격
-						overlapRow, 7);//5로 되어있던 부분 7으로 변경(7번 총 금액)
+				
+				//수량 부족 시 변경하지 않음
+				if(amount == Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3))))
+				{
+					//다이얼 로그 띄우기
+					JOptionPane.showMessageDialog(mainframe, "상품의 재고가 부족합니다", "상품 수량 부족", JOptionPane.WARNING_MESSAGE);
+				}
+				else
+				{
+					// 수량 변경
+					mainframe.viewSalesInput.model.setValueAt(
+							Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3))) + 1,
+							overlapRow, 3);// 4로 되어있던 부분 3으로 변경(3번이 수량)
+					
+					// 단가 * 수량
+					mainframe.viewSalesInput.model.setValueAt(
+							Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3)))//수량
+									* Integer.valueOf(
+											String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 4))),//가격
+							overlapRow, 7);//5로 되어있던 부분 7으로 변경(7번 총 금액)
+				}
+			
 			}
 			mainframe.viewSalesInput.product_name_input.setText("");
 		} else if (mainframe.viewSalesInput.product_name_input.getText().trim().length() > 0) {
 
+			//상품 갯수 확인
+			int amount = connect_db.amount_value(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase());
+			
 			if (checkOverlap(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase(), 2)) {
 				key = false;
 				System.out.println("이름으로검색" + mainframe.viewSalesInput.product_name_input.getText().length());
-				//김무현이 만든 connect_db.searchBy 메소드
-				listAdd(connect_db
-						.searchBy(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase()));
+				
+				if(amount <= 0)
+				{
+					//다이얼 로그 띄우기
+					JOptionPane.showMessageDialog(mainframe, "상품의 재고가 부족합니다", "상품 수량 부족", JOptionPane.WARNING_MESSAGE);
+					
+				}
+				else
+				{
+					//김무현이 만든 connect_db.searchBy 메소드
+					listAdd(connect_db
+							.searchBy(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase()));
+				}
 
 			} else {
 				System.out.println("이름중복 발생");
-				// 수량만증가
-				mainframe.viewSalesInput.model.setValueAt(
-						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3))) + 1,
-						overlapRow, 3);//4로 되어있던 부분 3으로 변경
-				// 단가 * 수량 적용
-				mainframe.viewSalesInput.model.setValueAt(
-						Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3)))//수량
-								* Integer.valueOf(
-										String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 4))),//가격
-						overlapRow, 7);//5로 되어있던 부분 7으로 변경
+				
+				//수량 부족 시 변경하지 않음
+				if(amount == Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3))))
+				{
+					//다이얼 로그 띄우기
+					JOptionPane.showMessageDialog(mainframe, "상품의 재고가 부족합니다", "상품 수량 부족", JOptionPane.WARNING_MESSAGE);
+				}
+				else
+				{
+					// 수량만증가
+					mainframe.viewSalesInput.model.setValueAt(
+							Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3))) + 1,
+							overlapRow, 3);//4로 되어있던 부분 3으로 변경
+					// 단가 * 수량 적용
+					mainframe.viewSalesInput.model.setValueAt(
+							Integer.valueOf(String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 3)))//수량
+									* Integer.valueOf(
+											String.valueOf(mainframe.viewSalesInput.model.getValueAt(overlapRow, 4))),//가격
+							overlapRow, 7);//5로 되어있던 부분 7으로 변경
+				}
+			
+			
 			}
 
 		} else {

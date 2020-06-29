@@ -1,6 +1,8 @@
 package db;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
@@ -24,7 +26,7 @@ public class Connect_DB {
 	ResultSet result = null;
 
 	PosDto posDto = null;
-	PosUse posUse = null;
+	public PosUse posUse = null;
 	SalesInputService salesInputService;
 	
 	boolean flag;
@@ -606,6 +608,281 @@ public class Connect_DB {
 	}
 	
 	
+	//결제 테이블 기본키 중복없이 생성
+		public void duplicate_key()
+		{
+			try
+			{
+				con = DriverManager.getConnection(url,user,passwd);
+				stmt = con.createStatement();
+				/*
+				SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMdd");
+				Calendar time = Calendar.getInstance();
+				String time1 = format1.format(time.getTime());
+				posUse.setc_num(time1+String.format("%04d",buyCount));
+				*/
+				
+				//기본키 중복 확인
+				//String Duplicate = "select c_num, c_name from charge";
+				
+				//기본키 중복되지 않게 생성
+				String Duplicate = "select count(distinct c_num) from charge " + 
+						"where date_format(c_day,'%Y%m%d')=date_format(now(),'%Y%m%d')";
+				result = stmt.executeQuery(Duplicate);
+				
+				result.next();
+				String num = result.getString("count(distinct c_num)");
+				System.out.println("count(distinct c_num) : "+num);
+				int buyCount = Integer.parseInt(num)+1;
+				
+				SimpleDateFormat format1 = new SimpleDateFormat ( "yyyyMMdd");
+				Calendar time = Calendar.getInstance();
+				String time1 = format1.format(time.getTime());
+				posUse.setc_num(time1+String.format("%04d",buyCount));
+				/*
+				while(result.next())
+				{
+					String num = result.getString("c_num");
+					
+					String name = result.getString("c_name");
+					if(num.equals(posUse.getc_num()) && name.equals(posUse.getc_name()))
+					{
+						System.out.println("c_num : "+num);
+						System.out.println("c_name : "+name);
+						buyCount++;
+					}
+					
+				}
+				*/
+				
+				/*
+				//기본키 중복 확인
+				String Duplicate = "select c_num from charge";
+				result = stmt.executeQuery(Duplicate);
+				while(result.next())
+				{
+					String num = result.getString("c_num");
+				
+					if(num.equals(posUse.getc_num()))
+					{
+						System.out.println("c_num : "+num);
+						
+						buyCount++;
+					}
+				}*/
+				/*
+				System.out.println(time1);
+				System.out.println(buyCount);
+				System.out.println(String.format("%04d",buyCount));
+				posUse.setc_num(time1+String.format("%04d",buyCount));*/
+				
+				System.out.println(posUse.getc_num());
+				
+				stmt.close();
+				con.close();
+				
+				
+			}
+			catch (SQLException e) 
+			{
+				// TODO Auto-generated catch block
+				//e.printStackTrace(System.out);
+				e.printStackTrace();
+			} 
+		}
+	
+		
+		//결제 기능
+		public void registerHistory() {
+			//conn = DBManager.getConnection();
+
+			try {
+				
+				//Class.forName("com.mysql.cj.jdbc.Driver");
+				con = DriverManager.getConnection(url,user,passwd);
+				stmt = con.createStatement();
+				
+				
+				String query = "insert into charge(c_num, c_name, c_amount, c_way, c_cost, c_day, c_assistant) "
+						+ "values(?, ?, ?, ?, ?, now(), ?)";
+				
+				pstmt = con.prepareStatement(query);
+				pstmt.setString(1, posUse.getc_num());
+				pstmt.setString(2, posUse.getc_name());
+				pstmt.setString(3, String.valueOf(posUse.getc_amount()));
+				pstmt.setString(4, posUse.getc_way());
+				pstmt.setString(5, String.valueOf(posUse.getc_cost()));
+				pstmt.setString(6, posUse.getc_assistant());
+
+				int r = pstmt.executeUpdate();
+				
+//				System.out.println("변경된 row : " + r);
+
+			} 
+			catch (SQLException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			finally 
+			{
+				try {
+					//DBManager.dbClose(rs, ps, conn);
+					pstmt.close();
+					con.close();
+					result.close();
+				} 
+				catch (SQLException e) 
+				{
+					e.printStackTrace();
+				}
+
+			}
+
+		}
+		
+		//수정할 상품 갯수 가져오기
+		public int amount_revise1()
+		{
+			try
+			{
+				con = DriverManager.getConnection(url,user,passwd);
+				stmt = con.createStatement();
+				
+				//상품 테이블 상품 갯수 가져오기
+				String query ="select p_amount from product where p_num = ?";
+				pstmt = con.prepareStatement(query);
+				pstmt.setString(1, posUse.getc_name());
+				
+				result = pstmt.executeQuery();
+				result.next();
+				int amount = result.getInt("p_amount");
+				System.out.println(posUse.getc_name()+"번 상품 갯수 : "+amount);
+				return amount - posUse.getc_amount();//수정할 갯수
+			}
+			catch(SQLException e)
+			{
+				e.printStackTrace();
+			}
+			finally 
+			{
+				try {
+					//DBManager.dbClose(rs, ps, conn);
+					pstmt.close();
+					con.close();
+					result.close();
+				} 
+				catch (SQLException e) 
+				{
+					e.printStackTrace();
+				}
+
+			}
+			return -1;
+		}
+		
+		//상품 테이블 상품 갯수 수정
+		public void amount_revise2(int amount)
+		{
+			try
+			{
+				con = DriverManager.getConnection(url,user,passwd);
+				stmt = con.createStatement();
+				
+				//상품 테이블 상품 갯수 수정
+				String query ="UPDATE product SET p_amount = ? WHERE p_num = ?";
+				pstmt = con.prepareStatement(query);
+				pstmt.setString(1, String.valueOf(amount));
+				pstmt.setString(2, posUse.getc_name());
+				
+				System.out.println(posUse.getc_name()+"번 상품의 수정 갯수: "+amount);
+				//System.out.println("수정할 갯수: "+String.valueOf(amount-posUse.getc_amount()));
+				
+				int r = pstmt.executeUpdate();
+			}
+			catch(SQLException e)
+			{
+				e.printStackTrace();
+			}
+			finally 
+			{
+				try {
+					//DBManager.dbClose(rs, ps, conn);
+					pstmt.close();
+					con.close();
+					result.close();
+				} 
+				catch (SQLException e) 
+				{
+					e.printStackTrace();
+				}
+
+			}
+		}
+	
+		//검색한 상품의 갯수 확인하기
+		public int amount_value(String identifier)
+		{
+			int amount=0;
+			try
+			{
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				con = DriverManager.getConnection(url,user,passwd);
+				stmt = con.createStatement();
+				String query = "";
+				
+				System.out.println(SalesInputService.key);
+				
+				if (SalesInputService.key == true) 
+				{
+					query = "select p_amount from product where p_num = ?";
+					System.out.println("code");
+				} 
+				else if (SalesInputService.key == false) 
+				{
+					query = "select p_amount from product where p_name = ?";
+					System.out.println("name");
+				}
+				
+				System.out.println(query);
+				
+				pstmt = con.prepareStatement(query);
+				pstmt.setString(1, identifier);
+				result = pstmt.executeQuery();
+				
+				
+				while(result.next()) {
+				System.out.println("amount:"+result.getInt("p_amount"));
+				amount = result.getInt("p_amount");
+				//int amount = result.getInt(1);
+				}
+				System.out.println("상품개수:" + amount);
+				
+				return amount;
+				
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					result.close();
+					pstmt.close();
+					con.close();
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			return -1;
+		}
+		
+		
 	//로그인 기능
 	//계정 삭제 기능 추가
 	//관리자 변경 기능 추가
