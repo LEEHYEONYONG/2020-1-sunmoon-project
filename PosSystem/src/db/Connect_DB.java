@@ -1,17 +1,20 @@
 package db;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.general.DefaultPieDataset;
-
+import main.Login;
 import sale.SalesInputService;
-import stock.StockMonitor;
 
 public class Connect_DB {
 	
@@ -19,7 +22,8 @@ public class Connect_DB {
 	Statement stmt = null;
 	PreparedStatement pstmt = null;
 	//String url = "jdbc:mysql://211.111.101.56/pos_system?serverTimezone=Asia/Seoul";
-	String url = "jdbc:mysql://localhost/pos_system?serverTimezone=Asia/Seoul";
+	//String url = "jdbc:mysql://localhost/pos_system?serverTimezone=Asia/Seoul";
+	String url = "jdbc:mysql://112.186.64.92/pos_system?serverTimezone=Asia/Seoul";
 	String user = "POS_user";
 	String passwd = "pos project";
 	
@@ -28,6 +32,7 @@ public class Connect_DB {
 	PosDto posDto = null;
 	public PosUse posUse = null;
 	SalesInputService salesInputService;
+	int rf_index = 0;//환불 행
 	
 	boolean flag;
 	
@@ -311,6 +316,8 @@ public class Connect_DB {
 		}
 		return null;
 	}
+	
+	
 	
 	
 	//결제 메소드
@@ -703,8 +710,8 @@ public class Connect_DB {
 				stmt = con.createStatement();
 				
 				
-				String query = "insert into charge(c_num, c_name, c_amount, c_way, c_cost, c_day, c_assistant) "
-						+ "values(?, ?, ?, ?, ?, now(), ?)";
+				String query = "insert into charge(c_num, c_name, c_amount, c_way, c_cost, c_day, c_assistant,c_state) "
+						+ "values(?, ?, ?, ?, ?, now(), ?, ?)";
 				
 				pstmt = con.prepareStatement(query);
 				pstmt.setString(1, posUse.getc_num());
@@ -712,9 +719,21 @@ public class Connect_DB {
 				pstmt.setString(3, String.valueOf(posUse.getc_amount()));
 				pstmt.setString(4, posUse.getc_way());
 				pstmt.setString(5, String.valueOf(posUse.getc_cost()));
-				pstmt.setString(6, posUse.getc_assistant());
+				pstmt.setString(6, Connect_DB.ID);
+				
+				if(SalesInputService.key==true)
+				{
+					pstmt.setString(7, "구매");
+				}
+				else if(SalesInputService.key==false)
+				{
+					pstmt.setString(7, "환불");
+				}
 
+				
 				int r = pstmt.executeUpdate();
+				
+				//posUse.getc_assistant()
 				
 //				System.out.println("변경된 row : " + r);
 
@@ -744,6 +763,7 @@ public class Connect_DB {
 		//수정할 상품 갯수 가져오기
 		public int amount_revise1()
 		{
+			int amount = 0;
 			try
 			{
 				con = DriverManager.getConnection(url,user,passwd);
@@ -755,10 +775,23 @@ public class Connect_DB {
 				pstmt.setString(1, posUse.getc_name());
 				
 				result = pstmt.executeQuery();
-				result.next();
-				int amount = result.getInt("p_amount");
+				
+				if(result.next())
+				{
+					amount = result.getInt("p_amount");
+				}
+				
 				System.out.println(posUse.getc_name()+"번 상품 갯수 : "+amount);
-				return amount - posUse.getc_amount();//수정할 갯수
+				if(SalesInputService.key==true)
+				{
+					System.out.println("구매");
+					return amount - posUse.getc_amount();//수정할 갯수
+				}
+				else if(SalesInputService.key == false)
+				{
+					System.out.println("환불");
+					return amount + posUse.getc_amount();//수정할 갯수
+				}
 			}
 			catch(SQLException e)
 			{
@@ -851,10 +884,11 @@ public class Connect_DB {
 				result = pstmt.executeQuery();
 				
 				
-				while(result.next()) {
-				System.out.println("amount:"+result.getInt("p_amount"));
-				amount = result.getInt("p_amount");
-				//int amount = result.getInt(1);
+				if(result.next())
+				{
+					System.out.println("amount:"+result.getInt("p_amount"));
+					amount = result.getInt("p_amount");
+					//int amount = result.getInt(1);
 				}
 				System.out.println("상품개수:" + amount);
 				
@@ -881,6 +915,132 @@ public class Connect_DB {
 			
 			return -1;
 		}
+		
+		
+		//환불 관련 메소드
+		public Vector<PosUse> refundc_num(String sellId)
+		{
+			Vector<PosUse> salesList = new Vector<PosUse>();
+			try
+			{
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				con = DriverManager.getConnection(url,user,passwd);
+				stmt = con.createStatement();
+				
+				String query = "select c_name, c_amount, c_way, c_cost, c_state from charge where c_num = ?";
+				pstmt = con.prepareStatement(query);
+				pstmt.setString(1, sellId);
+				System.out.println(pstmt);
+				result = pstmt.executeQuery();
+				
+				result.last();
+				rf_index = result.getRow();
+				result.beforeFirst();
+				posUse = new PosUse();
+				posUse.setting_index(rf_index);
+				
+				//DB에서 값을 받을 배열
+				String[] rf_name = new String[rf_index];
+				int[] rf_amount = new int[rf_index];
+				String[] rf_way = new String[rf_index];
+				int[] rf_cost = new int[rf_index];
+				String[] rf_state = new String[rf_index];
+				
+				int i=0;
+				
+				while(result.next())
+				{
+					rf_name[i] = result.getString("c_name");
+					System.out.println("환불 상품 명: "+rf_name[i]);
+					rf_amount[i] = Integer.parseInt(result.getString("c_amount"));
+					rf_way[i] = result.getString("c_way");
+					rf_cost[i] = Integer.parseInt(result.getString("c_cost"));
+					rf_state[i] = result.getString("c_state");
+					
+					i++;
+					//System.out.println(result.getString("c_name"));
+					/*
+					posUse.setrf_name(result.getString("c_name"));
+					posUse.setrf_amount(Integer.parseInt(result.getString("c_amount")));
+					posUse.setrf_way(result.getString("c_way"));
+					posUse.setrf_cost(Integer.parseInt(result.getString("c_cost")));*/
+				}
+				posUse.setrf_name(rf_name);
+				posUse.setrf_amount(rf_amount);
+				posUse.setrf_way(rf_way);
+				posUse.setrf_cost(rf_cost);
+				posUse.setrf_state(rf_state);
+				
+				salesList.add(posUse);
+				
+				return salesList;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					pstmt.close();
+					con.close();
+					result.close();
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			return null;
+		}
+		
+		public int getrf_index()
+		{
+			return rf_index;
+		}
+		
+		
+		public void change_state(String c_num)
+		{
+			try
+			{
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				con = DriverManager.getConnection(url,user,passwd);
+				stmt = con.createStatement();
+				
+				String query ="UPDATE charge SET c_state = ? WHERE c_num = ?";
+				
+				pstmt = con.prepareStatement(query);
+				pstmt.setString(1, "환불");
+				pstmt.setString(2, c_num);
+				System.out.println(pstmt);
+				
+				int r = pstmt.executeUpdate();
+				
+				System.out.println("환불로 상태변경 환료");
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					pstmt.close();
+					con.close();
+					result.close();
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		
 		
 		
 	//로그인 기능
@@ -1547,6 +1707,10 @@ public class Connect_DB {
 			System.out.println(rank);
 			
 			
+		} catch (NullPointerException e) {
+			//Login login = null; /*= new Login();*/
+			//JOptionPane.showMessageDialog(login.p, "아이디 또는 비밀번호가 일치하지 않습니다.", "로그인 오류", JOptionPane.WARNING_MESSAGE);
+			return flag;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -1755,6 +1919,142 @@ public class Connect_DB {
 		
 		return r;
 	}
+	
+	
+	/////////////////////정산///////////////////////
+	
+	//정산하루현금매출 확인하기
+	public int CalDayCash()
+	{
+		int amount=0;
+		try
+		{
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection(url,user,passwd);
+			stmt = con.createStatement();
+			String query = "select c_cost from charge where date_format(c_day,'%Y%m%d') = date_format(now(),'%Y%m%d') and c_way='현금'";
+		
+			pstmt = con.prepareStatement(query);
+			result = pstmt.executeQuery();
+			
+			
+			while(result.next()) {
+			amount = result.getInt(1);
+			//int amount = result.getInt(1);
+			}
+			System.out.println("상품개수:" + amount);
+			
+			return amount;
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				result.close();
+				pstmt.close();
+				con.close();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return amount;
+	}
+	
+	
+	
+	
+	//정산등록
+	public int CalcIn(String admin, int state, int check, int result) {
+		int r = 0;
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+			String query ="INSERT INTO balance (b_day, b_reserve_fund, b_total_amount, b_difference_pay, b_admin) VALUES (now(), ?, ?, ?, ?)";
+			
+			pstmt= con.prepareStatement(query);
+			pstmt.setInt(1, state);
+			pstmt.setInt(2, check);
+			pstmt.setInt(3, result);
+			pstmt.setString(4, admin);
+
+			// 쿼리문 실행
+			r = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				//result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return r;
+	}
+	
+	/*
+	//모든정산내역보이기
+	public Vector<PosUse> CalcAll() {
+
+		// 쿼리문 결과 (여러 행) 담을 PosDto 객체
+		Vector<PosUse> list = new Vector<PosUse>();
+
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+            String query = "select b_day,b_reserve_fund,b_total_amount,b_difference_pay,b_admin from balance";
+
+			// 쿼리문 실행
+            stmt = con.prepareStatement(query);
+			result = stmt.executeQuery(query);
+
+			// 결과 저장
+			while (result.next()) {
+				
+				posUse = new PosUse();
+				
+				posUse.setB_day(result.getString(1));
+				posUse.setB_reserve_fund(result.getInt(2));
+				posUse.setB_total_amount(result.getInt(3));
+				posUse.setB_difference_pay(result.getInt(4));
+				posUse.setB_admin(result.getString(5));
+				
+				list.add(posUse);
+				flag=true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		flag=false;
+		// 결과 리턴
+		return list;
+
+	}
+	*/
 	
 	
 	

@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import main.MainFrame;
@@ -22,11 +23,27 @@ import javax.swing.JButton;
 
 public class Recepit extends JFrame {
 	
-	private JPanel contentPane;
-
+	public JPanel contentPane;
+	public JLabel Date;
+	public JLabel Admin;
+	public JLabel Cash;
+	public JLabel lbCashChec;
+	public JLabel lbCashRes;
+	public JTextField Date_1;//날짜
+	public JTextField Admin_1;//관리자
+	public JTextField Cash_1;//현금매출
+	public JTextField lbCashChec_1;//금고전체금액
+	public JTextField lbCashRes_1;//차이금액
+	public JButton printRec;//정산버튼
+	public JButton Calc;//취소
+	
+    /*
 	/**
 	 * Launch the application.
 	 */
+	
+	
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -38,46 +55,47 @@ public class Recepit extends JFrame {
 				}
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Create the frame.
 	 */
 	public Recepit() {
+		setResizable(false);
 		setTitle("정산영수증");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 462, 688);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 500, 688);
 		contentPane = new JPanel();
 		contentPane.setBackground(SystemColor.window);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel Date = new JLabel("날짜");
+		Date = new JLabel("날짜");
 		Date.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		Date.setBackground(new Color(224, 255, 255));
 		Date.setOpaque(true);
 		Date.setHorizontalAlignment(SwingConstants.CENTER);
-		Date.setBounds(54, 78, 140, 45);
+		Date.setBounds(80, 78, 90, 45);
 		contentPane.add(Date);
 		
-		JLabel Admin = new JLabel("관리자");
+		Admin = new JLabel("관리자");
 		Admin.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		Admin.setBackground(new Color(224, 255, 255));
 		Admin.setOpaque(true);
 		Admin.setHorizontalAlignment(SwingConstants.CENTER);
-		Admin.setBounds(54, 158, 140, 45);
+		Admin.setBounds(83, 158, 90, 45);
 		contentPane.add(Admin);
 		
-		JLabel Cash = new JLabel("\uD604\uAE08\uB9E4\uCD9C");
+		Cash = new JLabel("\uD604\uAE08\uB9E4\uCD9C");
 		Cash.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		Cash.setBackground(new Color(224, 255, 255));
 		Cash.setOpaque(true);
 		Cash.setHorizontalAlignment(SwingConstants.CENTER);
-		Cash.setBounds(54, 238, 140, 45);
+		Cash.setBounds(80, 238, 90, 45);
 		contentPane.add(Cash);
 		
-		JLabel lbCashChec = new JLabel("금고전체금액");
+		lbCashChec = new JLabel("금고전체금액");
 		lbCashChec.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		lbCashChec.setBackground(new Color(224, 255, 255));
 		lbCashChec.setOpaque(true);
@@ -85,7 +103,7 @@ public class Recepit extends JFrame {
 		lbCashChec.setBounds(54, 318, 140, 45);
 		contentPane.add(lbCashChec);
 		
-		JLabel lbCashRes = new JLabel("차이금액");
+		lbCashRes = new JLabel("차이금액");
 		lbCashRes.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		lbCashRes.setBackground(new Color(224, 255, 255));
 		lbCashRes.setOpaque(true);
@@ -93,50 +111,56 @@ public class Recepit extends JFrame {
 		lbCashRes.setBounds(54, 398, 140, 45);
 		contentPane.add(lbCashRes);
 		
-		JLabel Date_1 = new JLabel("");
+		Date_1 = new JTextField("");
+		Date_1.setEditable(false);
 		Date_1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		Date_1.setBackground(new Color(224, 255, 255));
 		Date_1.setOpaque(true);
 		Date_1.setHorizontalAlignment(SwingConstants.CENTER);
-		Date_1.setBounds(248, 78, 140, 45);
+		Date_1.setBounds(206, 80, 252, 45);
 		contentPane.add(Date_1);
 		
-		JLabel Admin_1 = new JLabel("");
+		Admin_1 = new JTextField("");
+		Admin_1.setEditable(false);
 		Admin_1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		Admin_1.setBackground(new Color(224, 255, 255));
 		Admin_1.setOpaque(true);
 		Admin_1.setHorizontalAlignment(SwingConstants.CENTER);
-		Admin_1.setBounds(248, 158, 140, 45);
+		Admin_1.setBounds(206, 160, 252, 45);
 		contentPane.add(Admin_1);
 		
-		JLabel Cash_1 = new JLabel("");
+		Cash_1 = new JTextField("");
+		Cash_1.setEditable(false);
 		Cash_1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		Cash_1.setBackground(new Color(224, 255, 255));
 		Cash_1.setOpaque(true);
 		Cash_1.setHorizontalAlignment(SwingConstants.CENTER);
-		Cash_1.setBounds(248, 238, 140, 45);
+		Cash_1.setBounds(206, 240, 252, 45);
 		contentPane.add(Cash_1);
 		
-		JLabel lbCashChec_1 = new JLabel("");
+		lbCashChec_1 = new JTextField("");
+		lbCashChec_1.setEditable(false);
 		lbCashChec_1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		lbCashChec_1.setBackground(new Color(224, 255, 255));
 		lbCashChec_1.setOpaque(true);
 		lbCashChec_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lbCashChec_1.setBounds(248, 318, 140, 45);
+		lbCashChec_1.setBounds(206, 318, 252, 45);
 		contentPane.add(lbCashChec_1);
 		
-		JLabel lbCashRes_1 = new JLabel("");
+		lbCashRes_1 = new JTextField("");
+		lbCashRes_1.setEditable(false);
 		lbCashRes_1.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		lbCashRes_1.setBackground(new Color(224, 255, 255));
 		lbCashRes_1.setOpaque(true);
 		lbCashRes_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lbCashRes_1.setBounds(248, 398, 140, 45);
+		lbCashRes_1.setBounds(206, 398, 252, 45);
 		contentPane.add(lbCashRes_1);
 		
-		JButton printRec = new JButton("정산영수증 출력");
+		printRec = new JButton("정산영수증 출력");
 		printRec.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		printRec.setBackground(SystemColor.window);
 		printRec.setBounds(44, 503, 160, 50);
+		/*
 		printRec.addActionListener(new ActionListener() {
 			
 			@Override
@@ -148,12 +172,14 @@ public class Recepit extends JFrame {
 				dispose();
 			}
 		});
+		*/
 		contentPane.add(printRec);
 		
-		JButton Calc = new JButton("정산");
+		Calc = new JButton("확인");
 		Calc.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		Calc.setBackground(SystemColor.window);
-		Calc.setBounds(241, 503, 160, 50);
+		Calc.setBounds(298, 503, 160, 50);
+		/*
 		Calc.addActionListener(new ActionListener() {
 			
 			@Override
@@ -166,6 +192,7 @@ public class Recepit extends JFrame {
 				dispose();
 			}
 		});
+		*/
 		contentPane.add(Calc);
 		
 		

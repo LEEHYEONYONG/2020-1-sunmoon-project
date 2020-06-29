@@ -127,6 +127,7 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 				} 
 				else  //재고 수량 초과 여부 확인
 				{
+					key = true;
 					Object find_num = mainframe.viewSalesInput.table.getValueAt(row,1);
 					int amount = connect_db.amount_value(String.valueOf(find_num));
 					
@@ -375,16 +376,30 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			mainframe.payment_4.taP4details.setText("");
 
 		}
+		else if(ob == mainframe.salebtn.sBtnCancel) {//환불
+			mainframe.dealCancel.setVisible(true);
+		} 
+		else if (ob == mainframe.dealCancel.btnRefund) 
+		{
+			int choose = JOptionPane.showConfirmDialog(mainframe.dealCancel, "환불 절차를 진행하시겠습니까?", "환불",
+					JOptionPane.OK_CANCEL_OPTION);
+			if (choose == 0) {
+				refundProcess();
+			}
+			mainframe.dealCancel.Sell_id.setText("");
+		}
 
 	}
+
+
 	
 	
 	public void PrintProcess() {//영수증출력
 		BufferedImage img =getScreenShot(mainframe.payment_4.taP4details);
 		
 		FileDialog dialog = new FileDialog(mainframe.payment_4, "저장", FileDialog.SAVE);
-		dialog.setDirectory(".");
-		dialog.setFile("*.jpg");
+		dialog.setDirectory(".\\chargesave");
+		dialog.setFile(connect_db.posUse.getc_num()+".jpg");
 		/*
 		JFileChooser chooser = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -437,6 +452,7 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 	//결제 목록 DB로 보내기
 		public void make_list()
 		{
+			key = true;
 			int size = mainframe.viewSalesInput.table.getRowCount();
 			connect_db.posUse = new PosUse();
 			/*
@@ -456,7 +472,7 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 				connect_db.posUse.setc_amount(Integer.parseInt(mainframe.viewSalesInput.table.getValueAt(i, 3).toString()));//결제 상품 수량
 				connect_db.posUse.setc_way(mainframe.payment_3.JcomboBoxPay.getSelectedItem().toString());//결제 방법
 				connect_db.posUse.setc_cost(Integer.parseInt(mainframe.viewSalesInput.table.getValueAt(i, 7).toString()));//상품 가격
-				connect_db.posUse.setc_assistant("admin");//결제 점원 posUse.getid()
+				//connect_db.posUse.setc_assistant("admin");//결제 점원 posUse.getid()
 				
 				//상품 테이블 상품 갯수 수정
 				amount_revise = connect_db.amount_revise1();
@@ -514,6 +530,117 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			mainframe.payment_4.taP4details.append("현금: "+cash+"원\n");
 		}
 
+		
+		//환불 메소드
+		private void refundProcess() {
+			key = false;
+			String sellId = null;
+			sellId = mainframe.dealCancel.Sell_id.getText().trim();
+			System.out.println("sellId: "+sellId);
+			
+			//Vector<String> refund_list = new Vector<String>();
+			
+			salesList = connect_db.refundc_num(sellId);
+			int index = connect_db.getrf_index();
+			String [] rf_state = new String[index];
+			
+			rf_state = salesList.get(0).getrf_state();
+			
+			if (sellId.contentEquals("")) {
+				JOptionPane.showMessageDialog(mainframe.dealCancel, "거래 번호를 입력해주세요.", "환불 조회 오류", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			else if(salesList.isEmpty())
+			{
+				JOptionPane.showMessageDialog(mainframe.dealCancel, "거래 번호가 올바르지 않습니다.", "환불 조회 오류", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			else if(rf_state[0].equals("환불"))
+			{
+				JOptionPane.showMessageDialog(mainframe.dealCancel, "환불할 수 없는 거래 번호 입니다.", "환불 조회 오류", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			else
+			{
+				//상품 테이블 상태 전환
+				connect_db.change_state(sellId);
+				
+				String[] rf_name = new String[index];
+				int[] rf_amount = new int[index];
+				String[] rf_way = new String[index];
+				int[] rf_cost = new int[index];
+				
+				
+				rf_name = salesList.get(0).getrf_name();
+				rf_amount = salesList.get(0).getrf_amount();
+				rf_way = salesList.get(0).getrf_way();
+				rf_cost = salesList.get(0).getrf_cost();
+				
+				//c_num 중복되지 않게 설정
+				connect_db.duplicate_key();
+				//수정랄 상품 갯수
+				int amount_revise;
+				
+				for(int i=0; i<index;i++)
+				{
+					connect_db.posUse.setc_name(rf_name[i]);
+					connect_db.posUse.setc_amount(rf_amount[i]);
+					connect_db.posUse.setc_way(rf_way[i]);
+					connect_db.posUse.setc_cost(rf_cost[i]-(rf_cost[i]*2));
+					//connect_db.posUse.setc_assistant("admin");//결제 점원 posUse.getid()
+					
+					//상품 테이블 상품 갯수 수정
+					amount_revise = connect_db.amount_revise1();
+					if(amount_revise<=-1)
+					{
+						System.out.println("상품 갯수 가져오기 실패");
+						continue;
+					}
+					else if(amount_revise >= 0)
+					{
+						connect_db.amount_revise2(amount_revise);
+						System.out.println("상품 테이블 상품 갯수 수정 완료");
+						
+						connect_db.registerHistory();
+					}
+				}
+				
+				//refund_list.addElement(salesList.get(0).getc_name());
+				//refund_list.addElement(String.valueOf(salesList.get(0).getc_amount()));
+				//refund_list.addElement(salesList.get(0).getc_way());
+				//refund_list.addElement(String.valueOf(salesList.get(0).getc_cost()));
+				
+				//for(int i=0;i<refund_list.size();i++)
+				//{
+				//	System.out.println(refund_list.get(i));
+				//}
+				
+			}
+
+//			receipt.setVisible(true);
+//			receipt.refundDetail.append("취소영수증/n" + "판매코드 : \t" );
+
+			//Vector<PosDto> list = new Vector<PosDto>();
+			//list = salesDao.selectUpdateStock(sellId);
+
+			//System.out.println(list.toString());
+
+			//if (list.isEmpty()) {
+				//JOptionPane.showMessageDialog(mainframe.dealCancel, "거래 번호가 올바르지 않습니다.", "환불 조회 오류", JOptionPane.WARNING_MESSAGE);
+				//return;
+			//}
+			
+			/*
+			salesDao.updateMembership(sellId); // 멤버십 : 멤버십 포인트 빼기
+			salesDao.updateMoney(sellId); // 정산 update : 현금 결재액만큼 빼기
+			salesDao.updateStock(list); // 재고 update : 구매 수량만큼 재고 수량에 더하기
+			salesDao.deletehistory_d(sellId);
+			salesDao.deletehisotry(sellId);
+			*/
+
+			JOptionPane.showMessageDialog(mainframe.dealCancel, "환불 처리가 완료되었습니다.", "환불 완료", JOptionPane.INFORMATION_MESSAGE);
+			mainframe.dealCancel.dispose();
+		}
 	/*
 	 
 	
@@ -684,9 +811,10 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 		if (mainframe.viewSalesInput.code_input.getText().trim().length() > 0) {
 
 			//상품 갯수 확인
+			key = true;
 			int amount = connect_db.amount_value(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase());
 			if (checkOverlap(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase(), 1)) {
-				key = true;
+				
 				System.out.println(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase());
 				System.out.println("코드로검색" + mainframe.viewSalesInput.code_input.getText().length());
 				if(amount <= 0)
@@ -700,7 +828,8 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 					//김무현이 만든 connect_db.searchBy 메소드
 					listAdd(connect_db.searchBy(mainframe.viewSalesInput.code_input.getText().trim().toUpperCase()));
 				}
-			} else {
+			} else 
+			{
 				// 수량 변경
 				System.out.println("코드중복 발생");
 				
@@ -730,10 +859,12 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 		} else if (mainframe.viewSalesInput.product_name_input.getText().trim().length() > 0) {
 
 			//상품 갯수 확인
+			key = false;
 			int amount = connect_db.amount_value(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase());
 			
 			if (checkOverlap(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase(), 2)) {
-				key = false;
+				
+				System.out.println(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase());
 				System.out.println("이름으로검색" + mainframe.viewSalesInput.product_name_input.getText().length());
 				
 				if(amount <= 0)
@@ -749,7 +880,9 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 							.searchBy(mainframe.viewSalesInput.product_name_input.getText().trim().toUpperCase()));
 				}
 
-			} else {
+			} 
+			else 
+			{
 				System.out.println("이름중복 발생");
 				
 				//수량 부족 시 변경하지 않음

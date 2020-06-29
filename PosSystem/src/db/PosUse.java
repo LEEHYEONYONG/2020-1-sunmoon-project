@@ -24,14 +24,19 @@ public class PosUse {
 	private String c_day;//결제 날짜
 	private String c_assistant;//담당 점원
 	
-	
+	//환불관련 필드
+		private String [] rf_name = null;
+		private int [] rf_amount = null;
+		private String [] rf_way = null;
+		private int [] rf_cost = null;
+		private String[] rf_state = null;
+		
 	//정산 테이블
-	private int b_num;//정산번호
 	private String b_day;//정산 날짜
-	private String b_admin;//관리자(정산한 점원 이름)
-	private int b_reserve_fund;//준비금+현금결제금액
-	private int b_total_amount;//합계금액(당일금고에들어있는 금액)
+	private int b_reserve_fund;//준비금+현금결제금액 또는 준비금액
+	private int b_total_amount;//합계금액(당일금고에들어있는 금액) 금고금액
 	private int b_difference_pay;//차이금액
+	private String b_admin;//관리자(정산한 점원 이름)
 	
 	
 	//계정 데이블
@@ -232,7 +237,66 @@ public class PosUse {
 			this.c_assistant = c_assistant;
 		}
 	
-	
+		//환불관련 메소드
+		
+		public void setting_index(int index)
+		{
+			rf_name = new String[index];
+			rf_amount = new int[index];
+			rf_way = new String[index];
+			rf_cost = new int[index];
+			rf_state = new String[index];
+		}
+		
+		public String[] getrf_name()
+		{
+			return rf_name;
+		}
+		
+		public void setrf_name(String[] rf_name)
+		{
+			this.rf_name = rf_name;
+		}
+		
+		public int[] getrf_amount()
+		{
+			return rf_amount;
+		}
+		
+		public void setrf_amount(int[] rf_amount)
+		{
+			this.rf_amount = rf_amount;
+		}
+		
+		public String[] getrf_way()
+		{
+			return rf_way;
+		}
+		
+		public void setrf_way(String[] rf_way)
+		{
+			this.rf_way = rf_way;
+		}
+		
+		public int[] getrf_cost()
+		{
+			return rf_cost;
+		}
+		
+		public void setrf_cost(int[] rf_cost)
+		{
+			this.rf_cost = rf_cost;
+		}
+		
+		public String[] getrf_state()
+		{
+			return rf_state;
+		}
+		
+		public void setrf_state(String[] rf_state)
+		{
+			this.rf_state = rf_state;
+		}
 	
 	public int getTotalamount() {
 		return totalamount;
@@ -440,6 +504,46 @@ public class PosUse {
 
 	public void setCheckID(String checkID) {
 		this.checkID = checkID;
+	}
+
+	public String getB_day() {
+		return b_day;
+	}
+
+	public void setB_day(String b_day) {
+		this.b_day = b_day;
+	}
+
+	public int getB_reserve_fund() {
+		return b_reserve_fund;
+	}
+
+	public void setB_reserve_fund(int b_reserve_fund) {
+		this.b_reserve_fund = b_reserve_fund;
+	}
+
+	public int getB_total_amount() {
+		return b_total_amount;
+	}
+
+	public void setB_total_amount(int b_total_amount) {
+		this.b_total_amount = b_total_amount;
+	}
+
+	public int getB_difference_pay() {
+		return b_difference_pay;
+	}
+
+	public void setB_difference_pay(int b_difference_pay) {
+		this.b_difference_pay = b_difference_pay;
+	}
+
+	public String getB_admin() {
+		return b_admin;
+	}
+
+	public void setB_admin(String b_admin) {
+		this.b_admin = b_admin;
 	}
 	
 	

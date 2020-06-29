@@ -56,6 +56,7 @@ import account.ViewAccount;
 public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀÎÇÁ·¹ÀÓ 
 	
 	
+	
 
 	SignUp signUp = new SignUp();//È¸¿ø°¡ÀÔ
 	SignUpChange signUpChange = new SignUpChange();//È¸¿ø¼öÁ¤
@@ -63,7 +64,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	StockPopupChange stockpopupchange = new StockPopupChange();
 	StockPopupSearch stockpopupsearch = new StockPopupSearch();
 	StockBtn stockbtn;
-	CalcBtn calcbtn;
+	public CalcBtn calcbtn;
 	AccountBtn accountbtn;
 	ViewStatButtons statbtn;
 	
@@ -71,8 +72,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	StockMonitor stockmonitor = new StockMonitor();
 	public ViewAccount viewAccount = new ViewAccount();
 	//public Recepit recepit = new Recepit();
-	public PCalc pcalc = new PCalc();
- 
+	public PCalc pCalc = new PCalc();
+	public Recepit recepit = new Recepit();//Á¤»ê¿µ¼öÁõ
 	
 	//Stat stat;
 	public CardLayout monitor;
@@ -129,9 +130,9 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		monitor = new CardLayout();
 		btn = new CardLayout();
 		stockbtn = new StockBtn();
-		calcbtn = new CalcBtn();
 		statbtn = new ViewStatButtons();
 		accountbtn = new AccountBtn();
+		calcbtn= new CalcBtn();
 		
 		
 		setFont(new Font("¸¼Àº °íµñ",Font.BOLD,20));
@@ -231,7 +232,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		pMonitor.add("ViewSalesInput", viewSalesInput);
 		pMonitor.add(stockmonitor, "Stock");
 		pMonitor.add("ViewAccount", viewAccount);
-		pMonitor.add("PCalc",pcalc);
+		pMonitor.add("PCalc",pCalc);
 
 		viewAccount.setLayout(null);
 		//pMonitor.add(stat,"stat");
@@ -343,21 +344,42 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 		
 		//ÆÇ¸Å ±â´É ¸®½º³Ê
-		salebtn.sBtnCancel.addActionListener(this);
+		salebtn.sBtnCancel.addActionListener(salesInputService);
 		salebtn.sBtnPay.addActionListener(salesInputService);
 		salebtn.sBtnAcancel.addActionListener(salesInputService);
 		salebtn.sBtnPdChange.addActionListener(salesInputService);
 		salebtn.sBtnPdCancel.addActionListener(salesInputService);
 		
 		//Á¤»ê¸®½º³Ê
-		calcbtn.cBtnCalc.addActionListener(this);
-		//calcbtn.cBtnCalc.addActionListener(this);
+		calcbtn.cBtnCalc.addActionListener(calcService);
+		
+		
+		//Á¤»ê±â´É¹öÆ°¸®½º³Ê
+		pCalc.btnCalc_0.addActionListener(calcService);
+		pCalc.btnCalc_1.addActionListener(calcService);
+		pCalc.btnCalc_2.addActionListener(calcService);
+		pCalc.btnCalc_3.addActionListener(calcService);
+		pCalc.btnCalc_4.addActionListener(calcService);
+		pCalc.btnCalc_5.addActionListener(calcService);
+		pCalc.btnCalc_6.addActionListener(calcService);
+		pCalc.btnCalc_7.addActionListener(calcService);
+		pCalc.btnCalc_8.addActionListener(calcService);
+		pCalc.btnCalc_9.addActionListener(calcService);
+		pCalc.btnCalc_00.addActionListener(calcService);
+		pCalc.btnCalc_del.addActionListener(calcService);
+		pCalc.btnCalc_C.addActionListener(calcService);
+		//pCalc.btnCalc_Apply.addActionListener(calcService);
 		
 		
 		
-
-
-		
+		//Á¤»ê¿µ¼öÁõ¸®½º³Ê
+		recepit.printRec.addActionListener(calcService);
+		recepit.Calc.addActionListener(calcService);
+		recepit.Date_1.addActionListener(calcService);
+		recepit.Admin_1.addActionListener(calcService);
+		recepit.Cash_1.addActionListener(calcService);
+		recepit.lbCashChec_1.addActionListener(calcService);
+		recepit.lbCashRes_1.addActionListener(calcService);
 		
 		
 //		°áÁ¦1 ÀÌº¥Æ® µî·Ï
@@ -380,7 +402,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		payment_4.btnP4PrintReceipt.addActionListener(salesInputService);
 		payment_4.btnP4Payment.addActionListener(salesInputService);
 
-		dealCancel.btnRefund.addActionListener(this);
+		dealCancel.btnRefund.addActionListener(salesInputService);
 
 		viewSalesInput.code_input.addKeyListener(salesInputService);
 		viewSalesInput.product_name_input.addKeyListener(salesInputService);
@@ -586,7 +608,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 		
 
-		
+		/*
 		//ÆÇ¸Å°ü¸®ÀÇ ±â´Éµé
 		else if(ob == salebtn.sBtnCancel) {//È¯ºÒ
 			dealCancel.setVisible(true);
@@ -597,7 +619,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 				refundProcess();
 			}
 			dealCancel.Sell_id.setText("");
-		}	
+		}*/	
 		
 		// Àç°í ÅÇÀÇ ±â´Éµé
 				else if (ob == stockbtn.stockevery) {//
@@ -831,7 +853,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 		
 	}
-	
+	/*
 	private void refundProcess() {
 		String sellId = null;
 		sellId = dealCancel.Sell_id.getText().trim();
@@ -854,17 +876,17 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 			return;
 		}
 		
-		/*
-		salesDao.updateMembership(sellId); // ¸â¹ö½Ê : ¸â¹ö½Ê Æ÷ÀÎÆ® »©±â
-		salesDao.updateMoney(sellId); // Á¤»ê update : Çö±Ý °áÀç¾×¸¸Å­ »©±â
-		salesDao.updateStock(list); // Àç°í update : ±¸¸Å ¼ö·®¸¸Å­ Àç°í ¼ö·®¿¡ ´õÇÏ±â
-		salesDao.deletehistory_d(sellId);
-		salesDao.deletehisotry(sellId);
-		*/
+		
+		//salesDao.updateMembership(sellId); // ¸â¹ö½Ê : ¸â¹ö½Ê Æ÷ÀÎÆ® »©±â
+		//salesDao.updateMoney(sellId); // Á¤»ê update : Çö±Ý °áÀç¾×¸¸Å­ »©±â
+		//salesDao.updateStock(list); // Àç°í update : ±¸¸Å ¼ö·®¸¸Å­ Àç°í ¼ö·®¿¡ ´õÇÏ±â
+		//salesDao.deletehistory_d(sellId);
+		//salesDao.deletehisotry(sellId);
+		
 
 		JOptionPane.showMessageDialog(dealCancel, "È¯ºÒ Ã³¸®°¡ ¿Ï·áµÇ¾ú½À´Ï´Ù.", "È¯ºÒ ¿Ï·á", JOptionPane.INFORMATION_MESSAGE);
 		dealCancel.dispose();
-	}
+	}*/
 	
 	// <Å×ÀÌºí ³»¿ë °¡¿îµ¥ Á¤·Ä> ¸Þ¼Òµå
 	public static void tableCellCenter(JTable t) {

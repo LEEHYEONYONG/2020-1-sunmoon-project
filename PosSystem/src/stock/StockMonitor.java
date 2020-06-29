@@ -95,11 +95,11 @@ public class StockMonitor extends JPanel{
 		table = new JTable(tmodel);
 		*/
 		
-		showMon(connect_db.StockAll());//계정테이블 화면에 보이기
+		showMon(connect_db.StockAll());//재고테이블 화면에 보이기
 
 	}
 	
-	public void showMon(Vector<PosUse> mon) {//계정테이블 화면에 보이기
+	public void showMon(Vector<PosUse> mon) {//재고테이블 화면에 보이기
 		
 		int size = mon.size();		
 		this.mon = new Vector<PosUse>();

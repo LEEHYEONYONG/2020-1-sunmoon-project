@@ -16,9 +16,12 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
+import db.Connect_DB;
 import main.MainFrame;
 
 public class PCalc extends JPanel {
+	
+	Connect_DB connect_db = new Connect_DB(); 
 	
 	public DefaultTableModel model;
 
@@ -61,11 +64,11 @@ public PCalc() {
 		
 		data = new String[][] { {"50000","0","0"},{"10000","0","0"},
 			{"5000","0","0"},{"1000","0","0"},{"500","0","0"},{"100","0","0"},
-			{"50","0","0"},{"10","0","0"},{"ÇÕ°è","0","0"}};
+			{"50","0","0"},{"10","0","0"}};
 			
 			setLayout(null);
 			JPanel pCashstate = new JPanel();
-			pCashstate.setBounds(30,10,500,455);
+			pCashstate.setBounds(30,10,500,408);
 			add(pCashstate);
 			
 			model = new DefaultTableModel(data, header) {
@@ -84,10 +87,12 @@ public PCalc() {
 			spTable.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 			spTable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 			pCashstate.add(spTable);
+			
+			
 			cashTable = new JTable(model);
 			cashTable.setForeground(new Color(0, 0, 0));
 			cashTable.setRowHeight(47);
-			cashTable.setPreferredScrollableViewportSize(new Dimension(500, 425));
+			cashTable.setPreferredScrollableViewportSize(new Dimension(490, 425));
 			cashTable.setAutoscrolls(false);
 			
 			cashTable.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 18));
@@ -100,7 +105,7 @@ public PCalc() {
 			
 			pcalcmain = new JPanel();
 			pcalcmain.setBackground(Color.WHITE);
-			pcalcmain.setBounds(577, 10, 575, 502);
+			pcalcmain.setBounds(582, 10, 575, 502);
 			add(pcalcmain);
 			pcalcmain.setLayout(null);
 			
@@ -206,7 +211,7 @@ public PCalc() {
 			pcalc_btns.add(btnCalc_C);
 			
 			JPanel pcalcState = new JPanel();
-			pcalcState.setBounds(23,335,371,157);
+			pcalcState.setBounds(0,335,394,157);
 			pcalcmain.add(pcalcState);
 			pcalcState.setLayout(new BorderLayout(20,0));
 			
@@ -240,11 +245,13 @@ public PCalc() {
 			panel_2.add(tfCashState);
 			tfCashState.setColumns(10);
 			
+			tfCashState.setText(Integer.toString(connect_db.CalDayCash()));
+			
 			tfCashCheck = new JTextField();
+			panel_2.add(tfCashCheck);
 			tfCashCheck.setEditable(false);
 			tfCashCheck.setForeground(Color.BLACK);
 			tfCashCheck.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
-			panel_2.add(tfCashCheck);
 			tfCashCheck.setColumns(10);
 			
 			tfCalcResult = new JTextField();

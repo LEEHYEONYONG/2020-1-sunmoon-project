@@ -169,7 +169,7 @@ public class Login extends JFrame implements ActionListener{
 		
 		if(ob==BtnLogin) {
 			
-			boolean checklogin=connect_db.loginpass(Id_T.getText(), Password_T.getText());
+			//boolean checklogin=connect_db.loginpass(Id_T.getText(), Password_T.getText());
 			
 			
 			if(Id_T.getText().trim().isEmpty() || Password_T.getText().trim().isEmpty()) {
@@ -177,6 +177,14 @@ public class Login extends JFrame implements ActionListener{
 				return;
 			}
 			
+			try {
+				
+			}catch(NullPointerException e1) {
+				JOptionPane.showMessageDialog(p, "아이디 또는 비밀번호가 일치하지 않습니다.", "로그인 오류", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+			boolean checklogin=connect_db.loginpass(Id_T.getText(), Password_T.getText());
 			
 			if(checklogin==false) {
 				JOptionPane.showMessageDialog(p, "아이디 또는 비밀번호가 일치하지 않습니다.", "로그인 오류", JOptionPane.WARNING_MESSAGE);

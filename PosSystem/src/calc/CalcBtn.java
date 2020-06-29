@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 public class CalcBtn extends JPanel{
 	
 	public JButton cBtnCalc;//Á¤»ê
-	public JButton cBtnCalcHistory;//Á¤»ê³»¿ª
 	
 	
 	public CalcBtn() {
@@ -22,13 +21,6 @@ public class CalcBtn extends JPanel{
 		cBtnCalc.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
 		cBtnCalc.setBounds(0, 28, 164, 85);
 		add(cBtnCalc);
-		
-		cBtnCalcHistory = new JButton("Á¤»ê³»¿ª");
-		cBtnCalcHistory.setBackground(new Color(100, 149, 237));
-		cBtnCalcHistory.setForeground(new Color(255, 255, 255));
-		cBtnCalcHistory.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
-		cBtnCalcHistory.setBounds(176, 28, 164, 85);
-		add(cBtnCalcHistory);
 		
 		
 		
