@@ -81,10 +81,17 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			mainframe.payment_3.tfP3CashP.setEnabled(false);
 			mainframe.payment_3.tfP3CardP.setEnabled(true);
 			mainframe.payment_3.tfP3CashP.setText("");
+			
+			mainframe.payment_3.tfP3SM.setText("");
+			mainframe.payment_3.lbP3FinalPayView.setText("0");
+			
 		} else {
 			mainframe.payment_3.tfP3CashP.setEnabled(true);
 			mainframe.payment_3.tfP3CardP.setEnabled(false);
 			mainframe.payment_3.tfP3CardP.setText("");
+			
+			mainframe.payment_3.tfP3SM.setText("");
+			mainframe.payment_3.lbP3FinalPayView.setText("0");
 		}
 		
 		}
@@ -362,11 +369,14 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 //				} else if (JOptionPane.showMessageDialog(mainframe.payment_3, "결제조건이 충족되지 않았습니다.", "조건부족",
 //						JOptionPane.ERROR_MESSAGE)) {
 //					return;
-				} else {
+				} /*else {
 					JOptionPane.showMessageDialog(mainframe.payment_3, "결제조건이 충족되지 않았습니다.", "조건부족",
 							JOptionPane.ERROR_MESSAGE);
-				}
+				}*/
 
+			} else {
+				JOptionPane.showMessageDialog(mainframe.payment_3, "결제조건이 충족되지 않았습니다.", "조건부족",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			
 			
@@ -421,7 +431,7 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 		BufferedImage img =getScreenShot(mainframe.payment_4.taP4details);
 		
 		FileDialog dialog = new FileDialog(mainframe.payment_4, "저장", FileDialog.SAVE);
-		dialog.setDirectory(".\\chargesave");
+		dialog.setDirectory("C:\\chargesave");
 		dialog.setFile(connect_db.posUse.getc_num()+".jpg");
 		/*
 		JFileChooser chooser = new JFileChooser();

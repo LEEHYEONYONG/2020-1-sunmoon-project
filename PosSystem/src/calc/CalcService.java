@@ -216,7 +216,7 @@ public class CalcService implements ActionListener {
 		BufferedImage img =getScreenShot(mainframe.recepit.panelCheck);
 		
 		FileDialog dialog = new FileDialog(mainframe.recepit, "¿˙¿Â", FileDialog.SAVE);
-		dialog.setDirectory(".\\balancesave");
+		dialog.setDirectory("C:\\balancesave");
 		dialog.setFile(mainframe.recepit.Date_1.getText()+".jpg");
 		/*
 		JFileChooser chooser = new JFileChooser();
