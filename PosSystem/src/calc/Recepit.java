@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JButton;
+import java.awt.GridLayout;
 
 public class Recepit extends JFrame {
 	
@@ -36,6 +37,7 @@ public class Recepit extends JFrame {
 	public JTextField lbCashRes_1;//Â÷ÀÌ±Ý¾×
 	public JButton printRec;//Á¤»ê¹öÆ°
 	public JButton Calc;//Ãë¼Ò
+	public JPanel panelCheck;
 	
     /*
 	/**
@@ -70,91 +72,6 @@ public class Recepit extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		Date = new JLabel("³¯Â¥");
-		Date.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		Date.setBackground(new Color(224, 255, 255));
-		Date.setOpaque(true);
-		Date.setHorizontalAlignment(SwingConstants.CENTER);
-		Date.setBounds(80, 78, 90, 45);
-		contentPane.add(Date);
-		
-		Admin = new JLabel("°ü¸®ÀÚ");
-		Admin.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		Admin.setBackground(new Color(224, 255, 255));
-		Admin.setOpaque(true);
-		Admin.setHorizontalAlignment(SwingConstants.CENTER);
-		Admin.setBounds(83, 158, 90, 45);
-		contentPane.add(Admin);
-		
-		Cash = new JLabel("\uD604\uAE08\uB9E4\uCD9C");
-		Cash.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		Cash.setBackground(new Color(224, 255, 255));
-		Cash.setOpaque(true);
-		Cash.setHorizontalAlignment(SwingConstants.CENTER);
-		Cash.setBounds(80, 238, 90, 45);
-		contentPane.add(Cash);
-		
-		lbCashChec = new JLabel("±Ý°íÀüÃ¼±Ý¾×");
-		lbCashChec.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		lbCashChec.setBackground(new Color(224, 255, 255));
-		lbCashChec.setOpaque(true);
-		lbCashChec.setHorizontalAlignment(SwingConstants.CENTER);
-		lbCashChec.setBounds(54, 318, 140, 45);
-		contentPane.add(lbCashChec);
-		
-		lbCashRes = new JLabel("Â÷ÀÌ±Ý¾×");
-		lbCashRes.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
-		lbCashRes.setBackground(new Color(224, 255, 255));
-		lbCashRes.setOpaque(true);
-		lbCashRes.setHorizontalAlignment(SwingConstants.CENTER);
-		lbCashRes.setBounds(54, 398, 140, 45);
-		contentPane.add(lbCashRes);
-		
-		Date_1 = new JTextField("");
-		Date_1.setEditable(false);
-		Date_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
-		Date_1.setBackground(new Color(224, 255, 255));
-		Date_1.setOpaque(true);
-		Date_1.setHorizontalAlignment(SwingConstants.CENTER);
-		Date_1.setBounds(206, 80, 252, 45);
-		contentPane.add(Date_1);
-		
-		Admin_1 = new JTextField("");
-		Admin_1.setEditable(false);
-		Admin_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
-		Admin_1.setBackground(new Color(224, 255, 255));
-		Admin_1.setOpaque(true);
-		Admin_1.setHorizontalAlignment(SwingConstants.CENTER);
-		Admin_1.setBounds(206, 160, 252, 45);
-		contentPane.add(Admin_1);
-		
-		Cash_1 = new JTextField("");
-		Cash_1.setEditable(false);
-		Cash_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
-		Cash_1.setBackground(new Color(224, 255, 255));
-		Cash_1.setOpaque(true);
-		Cash_1.setHorizontalAlignment(SwingConstants.CENTER);
-		Cash_1.setBounds(206, 240, 252, 45);
-		contentPane.add(Cash_1);
-		
-		lbCashChec_1 = new JTextField("");
-		lbCashChec_1.setEditable(false);
-		lbCashChec_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
-		lbCashChec_1.setBackground(new Color(224, 255, 255));
-		lbCashChec_1.setOpaque(true);
-		lbCashChec_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lbCashChec_1.setBounds(206, 318, 252, 45);
-		contentPane.add(lbCashChec_1);
-		
-		lbCashRes_1 = new JTextField("");
-		lbCashRes_1.setEditable(false);
-		lbCashRes_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
-		lbCashRes_1.setBackground(new Color(224, 255, 255));
-		lbCashRes_1.setOpaque(true);
-		lbCashRes_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lbCashRes_1.setBounds(206, 398, 252, 45);
-		contentPane.add(lbCashRes_1);
 		
 		printRec = new JButton("Á¤»ê¿µ¼öÁõ Ãâ·Â");
 		printRec.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
@@ -196,7 +113,97 @@ public class Recepit extends JFrame {
 		contentPane.add(Calc);
 		
 		
+		panelCheck = new JPanel();
+		panelCheck.setBackground(Color.WHITE);
+		panelCheck.setBounds(12, 10, 470, 459);
+		contentPane.add(panelCheck);
+		panelCheck.setLayout(null);
+		
+		Date = new JLabel("³¯Â¥");
+		Date.setBounds(26, 52, 140, 43);
+		panelCheck.add(Date);
+		Date.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
+		Date.setBackground(new Color(224, 255, 255));
+		Date.setOpaque(true);
+		Date.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		Date_1 = new JTextField("");
+		Date_1.setBounds(206, 53, 252, 45);
+		panelCheck.add(Date_1);
+		Date_1.setEditable(false);
+		Date_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
+		Date_1.setBackground(new Color(224, 255, 255));
+		Date_1.setOpaque(true);
+		Date_1.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		Admin = new JLabel("°ü¸®ÀÚ");
+		Admin.setBounds(26, 120, 140, 45);
+		panelCheck.add(Admin);
+		Admin.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
+		Admin.setBackground(new Color(224, 255, 255));
+		Admin.setOpaque(true);
+		Admin.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		Admin_1 = new JTextField("");
+		Admin_1.setBounds(206, 122, 252, 45);
+		panelCheck.add(Admin_1);
+		Admin_1.setEditable(false);
+		Admin_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
+		Admin_1.setBackground(new Color(224, 255, 255));
+		Admin_1.setOpaque(true);
+		Admin_1.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		Cash = new JLabel("\uD604\uAE08\uB9E4\uCD9C");
+		Cash.setBounds(26, 193, 140, 45);
+		panelCheck.add(Cash);
+		Cash.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
+		Cash.setBackground(new Color(224, 255, 255));
+		Cash.setOpaque(true);
+		Cash.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		Cash_1 = new JTextField("");
+		Cash_1.setBounds(206, 195, 252, 45);
+		panelCheck.add(Cash_1);
+		Cash_1.setEditable(false);
+		Cash_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
+		Cash_1.setBackground(new Color(224, 255, 255));
+		Cash_1.setOpaque(true);
+		Cash_1.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		lbCashChec = new JLabel("±Ý°íÀüÃ¼±Ý¾×");
+		lbCashChec.setBounds(26, 269, 140, 45);
+		panelCheck.add(lbCashChec);
+		lbCashChec.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
+		lbCashChec.setBackground(new Color(224, 255, 255));
+		lbCashChec.setOpaque(true);
+		lbCashChec.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		lbCashChec_1 = new JTextField("");
+		lbCashChec_1.setBounds(206, 269, 252, 45);
+		panelCheck.add(lbCashChec_1);
+		lbCashChec_1.setEditable(false);
+		lbCashChec_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
+		lbCashChec_1.setBackground(new Color(224, 255, 255));
+		lbCashChec_1.setOpaque(true);
+		lbCashChec_1.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		lbCashRes = new JLabel("Â÷ÀÌ±Ý¾×");
+		lbCashRes.setBounds(26, 343, 140, 45);
+		panelCheck.add(lbCashRes);
+		lbCashRes.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 22));
+		lbCashRes.setBackground(new Color(224, 255, 255));
+		lbCashRes.setOpaque(true);
+		lbCashRes.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		lbCashRes_1 = new JTextField("");
+		lbCashRes_1.setBounds(206, 345, 252, 45);
+		panelCheck.add(lbCashRes_1);
+		lbCashRes_1.setEditable(false);
+		lbCashRes_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 16));
+		lbCashRes_1.setBackground(new Color(224, 255, 255));
+		lbCashRes_1.setOpaque(true);
+		lbCashRes_1.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		
 	}
-
-
 }

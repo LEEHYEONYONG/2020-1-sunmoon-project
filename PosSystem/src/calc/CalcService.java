@@ -76,6 +76,7 @@ public class CalcService implements ActionListener {
 			mainframe.btn.show(mainframe.pFBtn, "Calcbtn");
 			mainframe.monitor.show(mainframe.pMonitor, "PCalc");
 			//pMonitor.add("PCalc",pcalc);
+			mainframe.pCalc.tfCashState.setText(Integer.toString(mainframe.connect_db.CalDayCash()));
 			
 		}
 		//if()
@@ -211,9 +212,10 @@ public class CalcService implements ActionListener {
 	
 	
 	public void PrintProcess() {//영수증출력
-		BufferedImage img =getScreenShot(mainframe.payment_4.taP4details);
+		//BufferedImage img =getScreenShot(mainframe.payment_4.taP4details);
+		BufferedImage img =getScreenShot(mainframe.recepit.panelCheck);
 		
-		FileDialog dialog = new FileDialog(mainframe.payment_4, "저장", FileDialog.SAVE);
+		FileDialog dialog = new FileDialog(mainframe.recepit, "저장", FileDialog.SAVE);
 		dialog.setDirectory(".\\balancesave");
 		dialog.setFile(mainframe.recepit.Date_1.getText()+".jpg");
 		/*

@@ -1077,7 +1077,7 @@ public class Connect_DB {
 			posDto = new PosDto();
 			//쿼리문 세팅
 			String query = "SELECT P.P_NUM AS '상품코드', P.P_CATEGORY AS '상품분류', P.P_NAME AS '상품명', P.P_COST AS '가격', V.SC AS '판매수량', P.P_COST * V.SC AS '매출합계', P.P_PROVIDE AS '제조사'\r\n"+
-					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE where date_format(c_day,'%Y%m')=? group by C_NAME) V\r\n"+
+					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE where date_format(c_day,'%Y%m')=? and c_state='구매' group by C_NAME) V\r\n"+
 					"WHERE P.P_NUM = V.C_NAME and p.p_category =?\r\n"+
 					"order by P.P_COST * V.SC desc";
 			
@@ -1136,7 +1136,7 @@ public class Connect_DB {
 
 			// 쿼리문 세팅
 			String query = "SELECT P.P_NUM AS '상품코드', P.P_CATEGORY AS '상품분류', P.P_NAME AS '상품명', P.P_COST AS '가격', V.SC AS '판매수량', P.P_COST * V.SC AS '매출합계', P.P_PROVIDE AS '제조사'\r\n"+
-					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE where date_format(c_day,'%Y%m')=? group by C_NAME) V\r\n"+
+					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE where date_format(c_day,'%Y%m')=? and c_state='구매' group by C_NAME) V\r\n"+
 					"WHERE P.P_NUM = V.C_NAME and p.p_category =?\r\n"+
 					"order by P.P_COST * V.SC desc limit 5";
 			pstmt = con.prepareStatement(query);
@@ -1195,9 +1195,10 @@ public class Connect_DB {
 
 			// 쿼리문 세팅
 			String query = "select A.aa as '매출년도', A.ab as '매출합계' , B.bb as '현금매출' ,C.cb as '카드매출', A.ac as '고객수'\r\n"+
-					       "from (select date_format(c_day,'%Y') as aa , sum(c_cost) as ab, count(distinct c_num) as ac from charge group by date_format(c_day,'%Y')) A , (select c_way as ba,sum(c_cost) as bb,date_format(c_day,'%Y') as bc from charge where c_way='현금' group by date_format(c_day,'%Y'),c_way) B , (select c_way as ca, sum(c_cost) as cb, date_format(c_day,'%Y') as cc from charge where c_way='카드' group by date_format(c_day,'%Y'),c_way) C\r\n"+
-					       "where A.aa=b.bc and A.aa=c.cc and A.aa between ? and ?\r\n"+
-					       "order by A.aa";
+					       "from (select date_format(c_day,'%Y') as aa , sum(c_cost) as ab, count(distinct c_num) as ac from charge where c_state='구매' group by date_format(c_day,'%Y')) A\r\n"+ 
+					       "left join (select c_way as ba, sum(c_cost) as bb, date_format(c_day,'%Y') as bc from charge where c_way='현금' and c_state='구매' group by date_format(c_day,'%Y'),c_way) B on A.aa=b.bc\r\n"+
+					       "left join (select c_way as ca, sum(c_cost) as cb, date_format(c_day,'%Y') as cc from charge where c_way='카드' and c_state='구매' group by date_format(c_day,'%Y'),c_way) C on A.aa=c.cc\r\n"+
+					       "where A.aa between ? and ? order by A.aa";
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, startYear);
 			pstmt.setInt(2, endYear);
@@ -1249,9 +1250,9 @@ public class Connect_DB {
 
 			// 쿼리문 세팅
 			String query ="select A.aa as '월별매출', ifnull(A.ab,0) as '매출합계' , ifnull(B.bb,0) as '현금매출' ,ifnull(C.cb,0) as '카드매출', ifnull(A.ac,0) as '고객수'\r\n"+
-					      "from (select date_format(c_day,'%Y')as zz,date_format(c_day,'%Y%m') as aa , sum(c_cost) as ab, count(distinct c_num) as ac from charge group by date_format(c_day,'%Y%m') order by date_format(c_day,'%Y%m')) as A\r\n"+ 
-					      "left JOIN (select c_way as ba, sum(c_cost) as bb, date_format(c_day,'%Y%m') as bc from charge where c_way='현금' group by date_format(c_day,'%Y%m'),c_way order by date_format(c_day,'%Y%m')) as B on A.aa=B.bc \r\n"+
-					      "left JOIN (select c_way as ca, sum(c_cost) as cb, date_format(c_day,'%Y%m') as cc from charge where c_way='카드' group by date_format(c_day,'%Y%m'),c_way order by date_format(c_day,'%Y%m')) as C on A.aa=C.cc\r\n"+
+					      "from (select date_format(c_day,'%Y')as zz,date_format(c_day,'%Y%m') as aa , sum(c_cost) as ab, count(distinct c_num) as ac from charge where c_state='구매' group by date_format(c_day,'%Y%m') order by date_format(c_day,'%Y%m')) as A\r\n"+ 
+					      "left JOIN (select c_way as ba, sum(c_cost) as bb, date_format(c_day,'%Y%m') as bc from charge where c_way='현금' and c_state='구매' group by date_format(c_day,'%Y%m'),c_way order by date_format(c_day,'%Y%m')) as B on A.aa=B.bc \r\n"+
+					      "left JOIN (select c_way as ca, sum(c_cost) as cb, date_format(c_day,'%Y%m') as cc from charge where c_way='카드' and c_state='구매' group by date_format(c_day,'%Y%m'),c_way order by date_format(c_day,'%Y%m')) as C on A.aa=C.cc\r\n"+
 					      "where A.zz=? order by A.aa";
 			
 			pstmt = con.prepareStatement(query);
@@ -1305,9 +1306,9 @@ public class Connect_DB {
 			posUse = new PosUse();
 			// 쿼리문 세팅
 			String query ="select A.aa as '월별매출', ifnull(A.ab,0) as '매출합계' , ifnull(B.bb,0) as '현금매출' ,ifnull(C.cb,0) as '카드매출', ifnull(A.ac,0) as '고객수'\r\n"+
-					      "from (select date_format(c_day,'%Y%m%d') as aa , sum(c_cost) as ab, count(distinct c_num) as ac from charge group by date_format(c_day,'%Y%m%d') order by date_format(c_day,'%Y%m%d')) as A\r\n"+
-					      "left JOIN (select c_way as ba, sum(c_cost) as bb, date_format(c_day,'%Y%m%d') as bc from charge where c_way='현금' group by date_format(c_day,'%Y%m%d'),c_way order by date_format(c_day,'%Y%m%d')) as B on A.aa=B.bc\r\n"+
-					      "left JOIN (select c_way as ca, sum(c_cost) as cb, date_format(c_day,'%Y%m%d') as cc from charge where c_way='카드' group by date_format(c_day,'%Y%m%d'),c_way order by date_format(c_day,'%Y%m%d')) as C on A.aa=C.cc\r\n"+
+					      "from (select date_format(c_day,'%Y%m%d') as aa , sum(c_cost) as ab, count(distinct c_num) as ac from charge where c_state='구매' group by date_format(c_day,'%Y%m%d') order by date_format(c_day,'%Y%m%d')) as A\r\n"+
+					      "left JOIN (select c_way as ba, sum(c_cost) as bb, date_format(c_day,'%Y%m%d') as bc from charge where c_way='현금' and c_state='구매' group by date_format(c_day,'%Y%m%d'),c_way order by date_format(c_day,'%Y%m%d')) as B on A.aa=B.bc\r\n"+
+					      "left JOIN (select c_way as ca, sum(c_cost) as cb, date_format(c_day,'%Y%m%d') as cc from charge where c_way='카드' and c_state='구매' group by date_format(c_day,'%Y%m%d'),c_way order by date_format(c_day,'%Y%m%d')) as C on A.aa=C.cc\r\n"+
 					      "where A.aa=?";
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, date);
@@ -1361,7 +1362,7 @@ public class Connect_DB {
 
 			// 쿼리문 세팅
 			String query ="select date_format(c_day,'%H') as '판매시간대',  sum(c_cost) as '매출합계', count(distinct c_num) as '고객수' from charge \r\n"+
-					      "where date_format(c_day,'%Y%m%d') =? group by date_format(c_day,'%H')";
+					      "where date_format(c_day,'%Y%m%d') =? and c_state='구매' group by date_format(c_day,'%H')";
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, date);
 
@@ -1932,7 +1933,7 @@ public class Connect_DB {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			con = DriverManager.getConnection(url,user,passwd);
 			stmt = con.createStatement();
-			String query = "select c_cost from charge where date_format(c_day,'%Y%m%d') = date_format(now(),'%Y%m%d') and c_way='현금'";
+			String query = "select sum(c_cost) from charge where date_format(c_day,'%Y%m%d') = date_format(now(),'%Y%m%d') and c_way='현금'";
 		
 			pstmt = con.prepareStatement(query);
 			result = pstmt.executeQuery();
