@@ -219,7 +219,7 @@ public PCalc() {
 			pcalcState.add(panel, BorderLayout.WEST);
 			panel.setLayout(new GridLayout(0, 1, 0, 10));
 			
-			JLabel lbCashState = new JLabel("Çö±Ý ¸ÅÃâ");
+			JLabel lbCashState = new JLabel("\uD604\uAE08\uB9E4\uCD9C");
 			lbCashState.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 12));
 			lbCashState.setHorizontalAlignment(SwingConstants.CENTER);
 			panel.add(lbCashState);			

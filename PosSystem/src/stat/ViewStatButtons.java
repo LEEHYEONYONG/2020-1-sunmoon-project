@@ -26,21 +26,21 @@ public class ViewStatButtons extends JPanel{
 		sBtnProduct.setBackground(new Color(0, 0, 128));
 		
 		sBtnYear = new JButton("¿¬µµº°");
-		sBtnYear.setBounds(176, 28, 164, 85);
+		sBtnYear.setBounds(170, 28, 164, 85);
 		add(sBtnYear);
 		sBtnYear.setForeground(Color.WHITE);
 		sBtnYear.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
 		sBtnYear.setBackground(new Color(100, 149, 237));
 		
 		sBtnMonth = new JButton("¿ùº°");
-		sBtnMonth.setBounds(359, 28, 164, 85);
+		sBtnMonth.setBounds(340, 28, 164, 85);
 		add(sBtnMonth);
 		sBtnMonth.setForeground(Color.WHITE);
 		sBtnMonth.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
 		sBtnMonth.setBackground(new Color(0, 0, 128));
 		
 		sBtnDay = new JButton("ÀÏº°");
-		sBtnDay.setBounds(547, 28, 164, 85);
+		sBtnDay.setBounds(510, 28, 164, 85);
 		add(sBtnDay);
 		sBtnDay.setForeground(Color.WHITE);
 		sBtnDay.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));

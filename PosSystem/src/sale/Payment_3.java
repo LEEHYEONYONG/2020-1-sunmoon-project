@@ -33,9 +33,6 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 	public JLabel lblCash;
 	public JComboBox JcomboBoxPay;
 	public JLabel lblPayCheck;
-	
-
-	public JButton btnP3Before;
 	public JButton btnP3Next;
 	public JButton btnP3Cancel;
 	public JButton btnP3Input;
@@ -58,6 +55,7 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 	
 	
 	public Payment_3() {
+		setResizable(false);
 		setTitle("결제 금액 확인");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
@@ -84,18 +82,14 @@ public class Payment_3 extends JFrame {//결제화면 GUI
 		payment_3.add(tfP3CardP);
 		tfP3CardP.setColumns(10);
 		
-		btnP3Before = new JButton("이전으로");
-		btnP3Before.setBounds(12, 341, 150, 50);
-		payment_3.add(btnP3Before);
-		
 		btnP3Next = new JButton("결 제");
 		btnP3Next.setForeground(Color.RED);
 		btnP3Next.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-		btnP3Next.setBounds(412, 341, 150, 50);
+		btnP3Next.setBounds(300, 341, 150, 50);
 		payment_3.add(btnP3Next);
 		
 		btnP3Cancel = new JButton("거래취소");
-		btnP3Cancel.setBounds(212, 341, 150, 50);
+		btnP3Cancel.setBounds(107, 341, 150, 50);
 		payment_3.add(btnP3Cancel);
 		
 		lbP3FinalPay = new JLabel("\uCD1D \uBC1B\uC740 \uAE08\uC561");

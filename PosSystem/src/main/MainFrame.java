@@ -57,7 +57,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 	
 	
 	
-
 	SignUp signUp = new SignUp();//È¸¿ø°¡ÀÔ
 	SignUpChange signUpChange = new SignUpChange();//È¸¿ø¼öÁ¤
 	StockPopupIn stockpopupin = new StockPopupIn();
@@ -193,14 +192,14 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		mBtnInven.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
 		
 		mBtnCalc = new JButton("Á¤»ê");
-		mBtnCalc.setBackground(new Color(28, 94, 94));
+		mBtnCalc.setBackground(new Color(99, 166, 166));
 		mBtnCalc.setForeground(new Color(255, 255, 255));
 		mBtnCalc.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
 		mBtnCalc.setBounds(0, 180, 163, 90);
 		pMainBtn.add(mBtnCalc);
 		
 		mBtnStat = new JButton("Åë°è");
-		mBtnStat.setBackground(new Color(99, 166, 166));
+		mBtnStat.setBackground(new Color(28, 94, 94));
 		mBtnStat.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
 		mBtnStat.setForeground(new Color(255, 255, 255));
 		mBtnStat.setBounds(0, 270, 163, 90);
@@ -254,9 +253,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		pFBtn.setBounds(0, 601, 1157, 123);
 		contentPane.add(pFBtn);
 		pFBtn.setLayout(btn);
-		salebtn.sBtnAcancel.setLocation(352, 28);
-		salebtn.sBtnPay.setLocation(528, 28);
-		salebtn.sBtnCancel.setLocation(704, 28);
 		
 		
         //////////////////////////////////
@@ -398,7 +394,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		
 		
 //		°áÁ¦3 ÀÌº¥Æ® µî·Ï
-		payment_3.btnP3Before.addActionListener(salesInputService);
+		//payment_3.btnP3Before.addActionListener(salesInputService);
 		payment_3.btnP3Cancel.addActionListener(salesInputService);
 		payment_3.btnP3Input.addActionListener(salesInputService);
 		payment_3.btnP3Next.addActionListener(salesInputService);
@@ -453,7 +449,8 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		} else if (ob == mBtnInven) {//Àç°í°ü¸®
 			monitor.show(pMonitor, "Stock");
 			btn.show(pFBtn, "Stockbtn");
-			//stockmonitor.showMon(connect_db.StockAll());
+			stockmonitor.clearRows(stockmonitor.tmodel.getRowCount(), stockmonitor.tmodel);
+			stockmonitor.showMon(connect_db.StockAll());
 		} else if (ob == mBtnAccount) {//°èÁ¤°ü¸®
 			
 			if(connect_db.rank.equals("Á¡Àå")) {
@@ -461,7 +458,7 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 				btn.show(pFBtn, "accountbtn");
 			}
 			else {
-				JOptionPane.showMessageDialog(this, "°ü¸®ÀÚ¸¸ Á¢±ÙÇÒ ¼ö ÀÖ½À´Ï´Ù.", "Á¢±Ù¿À·ù", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Á¡Àå¸¸ Á¢±ÙÇÒ ¼ö ÀÖ½À´Ï´Ù.", "Á¢±Ù¿À·ù", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			//JOptionPane.showMessageDialog(this, "»èÁ¦ÇÒ »óÇ°¸¦ ¼±ÅÃÇÏ¼¼¿ä.", "¹Ì¼±ÅÃ ¿À·ù", JOptionPane.ERROR_MESSAGE);
@@ -469,12 +466,18 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		    
 
 		} else if (ob == logout) {
-			Login login= new Login();
-			//dispose();
-			this.setVisible(false);
-			login.setVisible(true);
+			if (JOptionPane.showConfirmDialog(this, "·Î±×¾Æ¿ôÇÏ½Ã°Ú½À´Ï±î?", "·Î±×¾Æ¿ô",
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+				Login login= new Login();
+				//dispose();
+				this.setVisible(false);
+				login.setVisible(true);
+			}
 		} else if (ob == mBtnexit) {
-			System.exit(0);
+			if (JOptionPane.showConfirmDialog(this, "ÇÁ·Î±×·¥À» Á¾·áÇÏ½Ã°Ú½À´Ï±î?", "ÇÁ·Î±×·¥Á¾·á",
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+				System.exit(0);
+			}
 		}
 		/*
 		else if (ob == mBtnCalc) {//Á¤»ê
@@ -531,18 +534,25 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 		}else if(ob==accountbtn.AccountDelete) {//°èÁ¤»èÁ¦
 			
 			int tmp = viewAccount.table.convertRowIndexToModel(viewAccount.table.getSelectedRow());
-
-			if (tmp < 0) {
-				JOptionPane.showMessageDialog(this, "¼öÁ¤ÇÒ °èÁ¤¸¦ ¼±ÅÃÇÏ¼¼¿ä.", "¹Ì¼±ÅÃ ¿À·ù", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
+			
 			//¼±ÅÃÇÑ °ª ÃßÃâ
 			String tmp1 = (String) viewAccount.model.getValueAt(tmp, 0);//ÀÌ¸§
 			String tmp2 = (String) viewAccount.model.getValueAt(tmp, 1);//¾ÆÀÌµð
 			String tmp3 = (String) viewAccount.model.getValueAt(tmp, 2);//ºñ¹Ð¹øÈ£
 			String tmp4 = (String) viewAccount.model.getValueAt(tmp, 3);//ÀÌ¸ÞÀÏ
 			String tmp5 = (String) viewAccount.model.getValueAt(tmp, 4);//Á÷±Þ
+			
+			if(tmp5.equals("Á¡Àå")) {
+				JOptionPane.showMessageDialog(this, "Á¡ÀåÀº »èÁ¦ÇÒ ¼ö ¾ø½À´Ï´Ù.", "»èÁ¦¿À·ù", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			if (tmp < 0) {
+				JOptionPane.showMessageDialog(this, "¼öÁ¤ÇÒ °èÁ¤¸¦ ¼±ÅÃÇÏ¼¼¿ä.", "¹Ì¼±ÅÃ ¿À·ù", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+
 			/*
 			System.out.println(productCode);
 			int rrr;
@@ -774,12 +784,41 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 							String pprovide = stockpopupin.pprovideResult.getText().trim();//Á¦Á¶»ç
 							
 							
+
+							boolean namecheck = connect_db.stockname(indt);
+							if(namecheck==true) {
+								JOptionPane.showMessageDialog(this, "???ÀÌ¹Ì µî·ÏµÈ »óÇ°ÀÌ ÀÖ½À´Ï´Ù.", "µî·Ï ¿À·ù", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+							
+							
 							
 							int rr=connect_db.StockIn(pcode,indt,pcnt,pcategory,pprovide);//mysql¿¬µ¿(»óÇ°Å×ÀÌºí¿¡ °ª³Ö±â)
 							if (rr == 0) {
-								JOptionPane.showMessageDialog(this, "ÀÌ¹Ì µî·ÏµÈ »óÇ°ÀÌ ÀÖ½À´Ï´Ù.", "µî·Ï ¿À·ù", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(this, "ÀÌ¸§°ãÄ§ÀÌ¹Ì µî·ÏµÈ »óÇ°ÀÌ ÀÖ½À´Ï´Ù.", "µî·Ï ¿À·ù", JOptionPane.ERROR_MESSAGE);
 								return;
 							}
+							
+							
+
+							
+							/*
+							if(connect_db.stockname(indt)==true) {
+								JOptionPane.showMessageDialog(this, "???ÀÌ¹Ì µî·ÏµÈ »óÇ°ÀÌ ÀÖ½À´Ï´Ù.", "µî·Ï ¿À·ù", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+							*/
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
 							
 							/*
 
@@ -856,10 +895,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// ¸ÞÀ
 				} else if (ob == statbtn.sBtnDay) {
 					monitor.show(pMonitor, "viewStatDay");
 				}
-		
-		
-		
-		
 		
 		
 	}

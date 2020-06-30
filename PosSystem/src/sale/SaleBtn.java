@@ -31,25 +31,25 @@ public class SaleBtn extends JPanel {
 		sBtnPdCancel.setBackground(new Color(100, 149, 237));
 		sBtnPdCancel.setForeground(new Color(255, 255, 255));
 		sBtnPdCancel.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
-		sBtnPdCancel.setBounds(176, 28, 164, 85);
+		sBtnPdCancel.setBounds(170, 28, 164, 85);
 		add(sBtnPdCancel);
 		
 		sBtnAcancel = new JButton("∞≈∑°√Îº“");
 		sBtnAcancel.setForeground(Color.WHITE);
 		sBtnAcancel.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		sBtnAcancel.setBackground(new Color(255, 51, 0));
-		sBtnAcancel.setBounds(547, 28, 164, 85);
+		sBtnAcancel.setBounds(340, 28, 164, 85);
 		add(sBtnAcancel);
 		
 		sBtnPay = new JButton("∞·¡¶");
 		sBtnPay.setForeground(Color.WHITE);
 		sBtnPay.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		sBtnPay.setBackground(new Color(153, 0, 0));
-		sBtnPay.setBounds(723, 28, 164, 85);
+		sBtnPay.setBounds(510, 28, 164, 85);
 		add(sBtnPay);
 		
 		sBtnCancel = new JButton("»Ø∫“");
-		sBtnCancel.setBounds(899, 28, 164, 85);
+		sBtnCancel.setBounds(680, 28, 164, 85);
 		sBtnCancel.setForeground(Color.WHITE);
 		sBtnCancel.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		sBtnCancel.setBackground(new Color(153, 0, 0));

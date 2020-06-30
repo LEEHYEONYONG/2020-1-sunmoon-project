@@ -26,29 +26,29 @@ public class StockBtn extends JPanel {
 		stockSearch.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		stockSearch.setBackground(new Color(0, 0, 128));
 		
-		stockIn = new JButton("¿‘∞Ì");
-		stockIn.setBounds(176, 28, 164, 85);
+		stockIn = new JButton("ªÛ«∞µÓ∑œ");
+		stockIn.setBounds(170, 28, 164, 85);
 		add(stockIn);
 		stockIn.setForeground(Color.WHITE);
 		stockIn.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		stockIn.setBackground(new Color(100, 149, 237));
 		
 		stockChg = new JButton("¿Á∞Ìºˆ¡§");
-		stockChg.setBounds(359, 28, 164, 85);
+		stockChg.setBounds(340, 28, 164, 85);
 		add(stockChg);
 		stockChg.setForeground(Color.WHITE);
 		stockChg.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		stockChg.setBackground(new Color(0, 0, 128));
 		
 		stockevery = new JButton("∏µÁ¿Á∞Ì");
-		stockevery.setBounds(547, 28, 164, 85);
+		stockevery.setBounds(510, 28, 164, 85);
 		add(stockevery);
 		stockevery.setForeground(Color.WHITE);
 		stockevery.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		stockevery.setBackground(new Color(100, 149, 237));
 		
 		stockdelete = new JButton("ªÛ«∞ªË¡¶");
-		stockdelete.setBounds(720, 28, 164, 85);
+		stockdelete.setBounds(680, 28, 164, 85);
 		add(stockdelete);
 		stockdelete.setForeground(Color.WHITE);
 		stockdelete.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));

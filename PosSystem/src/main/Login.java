@@ -204,7 +204,12 @@ public class Login extends JFrame implements ActionListener{
 			
 			
 		}else if(ob==btnExit) {
-			System.exit(0);
+			
+			if (JOptionPane.showConfirmDialog(this, "프로그램을 종료하시겠습니까?", "프로그램종료",
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+				System.exit(0);
+			}
+			
 		}
 		
 		

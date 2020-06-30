@@ -45,6 +45,14 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 	int overlapRow;
 	boolean memshipcheck = false;
 
+	//환불 상품 정보
+	int index = 0;
+	String [] rf_state = null;
+	String[] rf_name = null;
+	int[] rf_amount = null;
+	String[] rf_way = null;
+	int[] rf_cost = null;
+	
 	//데이터베이스 필드 추가
 	Connect_DB connect_db;
 	
@@ -317,10 +325,6 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			
 //--------------------------------------------------------------------------------------------
 
-		} else if (ob == mainframe.payment_3.btnP3Before) {//결제gui 이전으로 버튼
-			//mainframe.payment_1.setVisible(true);
-			mainframe.payment_3.setVisible(false);
-
 		} else if (ob == mainframe.payment_3.btnP3Cancel) {//결제gui 거래취소 버튼
 			mainframe.payment_3.setVisible(false);
 		} else if (ob == mainframe.payment_3.btnP3Next) {//결제gui 결제 버튼
@@ -385,6 +389,25 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 					JOptionPane.OK_CANCEL_OPTION);
 			if (choose == 0) {
 				refundProcess();
+				mainframe.dealCancel.setVisible(false);
+				
+				if(index <= 0 || salesList.isEmpty())
+				{
+					
+				}
+				else
+				{
+					mainframe.payment_4.setVisible(true);//영수증 gui
+					mainframe.payment_4.setTitle("환불 영수증");
+				}
+				
+				
+				//환불 영수증
+				key = false;
+				
+				//영수증 텍스트에리어 내용 추가
+				payNPrint();
+				
 			}
 			mainframe.dealCancel.Sell_id.setText("");
 		}
@@ -498,36 +521,77 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 		//영수증 텍스트 에리어 내용 추가
 		private void payNPrint()
 		{
-			int size = mainframe.viewSalesInput.table.getRowCount();
-			String num = connect_db.posUse.getc_num();
-			mainframe.payment_4.taP4details.setText("결제 코드: "+num+"\n");
-			mainframe.payment_4.taP4details.append("상품명 \t 단가 \t 수량 \t 금액\n");
-			for(int i=0;i<size;i++)
+			if(key == true)//결제 영수증
 			{
-				String name = mainframe.viewSalesInput.table.getValueAt(i, 2).toString();//상품명
-				String one_cost = mainframe.viewSalesInput.table.getValueAt(i, 4).toString();//단가
-				String amount = mainframe.viewSalesInput.table.getValueAt(i, 3).toString();//수향
-				String plus_cost = mainframe.viewSalesInput.table.getValueAt(i, 7).toString();//금액
+				int size = mainframe.viewSalesInput.table.getRowCount();
+				String num = connect_db.posUse.getc_num();
+				mainframe.payment_4.taP4details.setText("결제 코드: "+num+"\n");
+				mainframe.payment_4.taP4details.append("상품명 \t 단가 \t 수량 \t 금액\n");
+				for(int i=0;i<size;i++)
+				{
+					String name = mainframe.viewSalesInput.table.getValueAt(i, 2).toString();//상품명
+					String one_cost = mainframe.viewSalesInput.table.getValueAt(i, 4).toString();//단가
+					String amount = mainframe.viewSalesInput.table.getValueAt(i, 3).toString();//수향
+					String plus_cost = mainframe.viewSalesInput.table.getValueAt(i, 7).toString();//금액
+					
+					mainframe.payment_4.taP4details.append(name+" \t "+one_cost+" \t "+amount+" \t "+plus_cost+"\n");
+				}
 				
-				mainframe.payment_4.taP4details.append(name+" \t "+one_cost+" \t "+amount+" \t "+plus_cost+"\n");
+				String all_cost = mainframe.viewSalesInput.total_price_input.getText();//총 결제 금액
+				mainframe.payment_4.taP4details.append("\n합계 금액: "+ all_cost);
+				
+				String card = mainframe.payment_3.tfP3CardP.getText();
+				String cash = mainframe.payment_3.tfP3CashP.getText();
+				if(card.equals(""))
+				{
+					card = "0";
+				}
+				else if(cash.equals(""))
+				{
+					cash = "0";
+				}
+				mainframe.payment_4.taP4details.append("\n\n결제 유형\n");
+				mainframe.payment_4.taP4details.append("카드: "+card+"원\n");
+				mainframe.payment_4.taP4details.append("현금: "+cash+"원\n");
 			}
-			
-			String all_cost = mainframe.viewSalesInput.total_price_input.getText();//총 결제 금액
-			mainframe.payment_4.taP4details.append("\n합계 금액: "+ all_cost);
-			
-			String card = mainframe.payment_3.tfP3CardP.getText();
-			String cash = mainframe.payment_3.tfP3CashP.getText();
-			if(card.equals(""))
+			else if(index <= 0 || salesList.isEmpty())
 			{
-				card = "0";
+				return;
 			}
-			else if(cash.equals(""))
+			else if(key == false)//환불 영수증
 			{
-				cash = "0";
+				String num = connect_db.posUse.getc_num();//환불 코드 가져오기
+				mainframe.payment_4.taP4details.setText("환불 코드: "+num+"\n");
+				mainframe.payment_4.taP4details.append("상품명 \t 단가 \t 수량 \t 금액\n");
+				
+				
+				int total_price = 0;
+				for(int i = 0; i<index;i++)
+				{
+					int cost = rf_cost[i]/rf_amount[i];
+					
+					//상품명 가져오기
+					String p_name = connect_db.refund_getp_name(rf_name[i]);
+					
+					mainframe.payment_4.taP4details.append(
+							p_name+" \t "+(cost-(cost*2))+" \t "+rf_amount[i]+" \t "+(rf_cost[i]-(rf_cost[i]*2))+"\n");
+					total_price += (rf_cost[i]-(rf_cost[i]*2));
+				}
+				mainframe.payment_4.taP4details.append("\n합계 금액: "+ total_price);
+				
+				mainframe.payment_4.taP4details.append("\n\n환불 유형\n");
+				if(rf_way[0].equals("카드"))
+				{
+					mainframe.payment_4.taP4details.append("카드: "+total_price+"원\n");
+					mainframe.payment_4.taP4details.append("현금: 0원\n");
+				}
+				else if(rf_way[0].equals("현금"))
+				{
+					mainframe.payment_4.taP4details.append("카드: 0원\n");
+					mainframe.payment_4.taP4details.append("현금: "+total_price+"원\n");
+				}
+				
 			}
-			mainframe.payment_4.taP4details.append("\n\n결제 유형\n");
-			mainframe.payment_4.taP4details.append("카드: "+card+"원\n");
-			mainframe.payment_4.taP4details.append("현금: "+cash+"원\n");
 		}
 
 		
@@ -541,8 +605,12 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			//Vector<String> refund_list = new Vector<String>();
 			
 			salesList = connect_db.refundc_num(sellId);
-			int index = connect_db.getrf_index();
-			String [] rf_state = new String[index];
+			index = connect_db.getrf_index();
+			System.out.println("index 값 보기 : "+index);
+			rf_state = new String[index];
+			
+			System.out.println("salesList.size 출력: "+salesList.size());
+			System.out.println("salesList.isEmpty() 실행 결과 :"+salesList.isEmpty());
 			
 			rf_state = salesList.get(0).getrf_state();
 			
@@ -550,7 +618,7 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 				JOptionPane.showMessageDialog(mainframe.dealCancel, "거래 번호를 입력해주세요.", "환불 조회 오류", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			else if(salesList.isEmpty())
+			else if(salesList.isEmpty() || index <= 0)
 			{
 				JOptionPane.showMessageDialog(mainframe.dealCancel, "거래 번호가 올바르지 않습니다.", "환불 조회 오류", JOptionPane.WARNING_MESSAGE);
 				return;
@@ -562,13 +630,13 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 			}
 			else
 			{
-				//상품 테이블 상태 전환
+				
 				connect_db.change_state(sellId);
 				
-				String[] rf_name = new String[index];
-				int[] rf_amount = new int[index];
-				String[] rf_way = new String[index];
-				int[] rf_cost = new int[index];
+				rf_name = new String[index];
+				rf_amount = new int[index];
+				rf_way = new String[index];
+				rf_cost = new int[index];
 				
 				
 				rf_name = salesList.get(0).getrf_name();
@@ -587,7 +655,7 @@ public class SalesInputService implements KeyListener, ActionListener, ItemListe
 					connect_db.posUse.setc_amount(rf_amount[i]);
 					connect_db.posUse.setc_way(rf_way[i]);
 					connect_db.posUse.setc_cost(rf_cost[i]-(rf_cost[i]*2));
-					//connect_db.posUse.setc_assistant("admin");//결제 점원 posUse.getid()
+					connect_db.posUse.setc_assistant("admin");//결제 점원 posUse.getid()
 					
 					//상품 테이블 상품 갯수 수정
 					amount_revise = connect_db.amount_revise1();

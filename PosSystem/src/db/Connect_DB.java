@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import main.Login;
+import main.MainFrame;
 import sale.SalesInputService;
 
 public class Connect_DB {
@@ -1042,6 +1043,48 @@ public class Connect_DB {
 		}
 		
 		
+		public String refund_getp_name(String c_name)
+		{
+			try
+			{
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				con = DriverManager.getConnection(url,user,passwd);
+				stmt = con.createStatement();
+				
+				String query = "select p_name from product where p_num = ?";
+				pstmt = con.prepareStatement(query);
+				pstmt.setString(1, c_name);
+				System.out.println(pstmt);
+				result = pstmt.executeQuery();
+				
+				String p_name="";
+				if(result.next())
+				{
+					p_name = result.getString("p_name");
+				}
+				return p_name;
+				
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					pstmt.close();
+					con.close();
+					result.close();
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			return null;
+		}
+		
 		
 	//로그인 기능
 	//계정 삭제 기능 추가
@@ -1511,11 +1554,15 @@ public class Connect_DB {
 			pstmt.setString(4, category);
 			pstmt.setString(5, provide);
 
+			// 
+			
 			// 쿼리문 실행
 			r = pstmt.executeUpdate();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.println(e+"id겹침");
+			
 		} finally {
 			try {
 				// DB 연결 종료
@@ -1528,6 +1575,62 @@ public class Connect_DB {
 		}
 		return r;
 	}
+	
+	//이름중복확인
+	public boolean stockname(String name) {
+		boolean aa=true;
+		
+		// String으로 입력한 날짜를 '년월일' 합쳐서 int로 변환
+		try {
+			// DB 연결
+			con = DriverManager.getConnection(url,user,passwd);
+
+			// 쿼리문 세팅
+			String query ="SELECT p_name from product where p_name = ?";
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, name);
+
+			// 쿼리문 실행
+		    result = pstmt.executeQuery();
+			
+			String ace=null;
+			
+			if(result.next()) {
+			ace = result.getString(1);
+			System.out.println(ace+"상품이름");
+
+			}
+			
+			if(ace==null) {
+				aa=false;
+				return aa;
+			}
+			
+			
+			
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println(e+"다른문제있음");
+		} finally {
+			try {
+				// DB 연결 종료
+				pstmt.close();
+				con.close();
+				result.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
+		return aa;
+	}
+	
+	
+	
 	
 	
 	////상품삭제 

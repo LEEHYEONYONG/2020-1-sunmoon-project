@@ -19,7 +19,7 @@ public class CalcBtn extends JPanel{
 		cBtnCalc.setBackground(new Color(0, 0, 128));
 		cBtnCalc.setForeground(new Color(255, 255, 255));
 		cBtnCalc.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
-		cBtnCalc.setBounds(0, 28, 164, 85);
+		cBtnCalc.setBounds(547, 27, 164, 85);
 		add(cBtnCalc);
 		
 		

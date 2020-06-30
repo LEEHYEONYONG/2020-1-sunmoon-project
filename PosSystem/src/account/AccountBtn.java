@@ -33,18 +33,18 @@ public class AccountBtn extends JPanel {
 		*/
 		
 		AccountDelete = new JButton("∞Ë¡§ªË¡¶");
-		AccountDelete.setBounds(176, 28, 164, 85);
+		AccountDelete.setBounds(170, 28, 164, 85);
 		add(AccountDelete);
 		AccountDelete.setForeground(Color.WHITE);
 		AccountDelete.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
 		AccountDelete.setBackground(new Color(100, 149, 237));
 		
 		AccountChange = new JButton("∞Ë¡§∫Ø∞Ê");
-		AccountChange.setBounds(350, 28, 164, 85);
+		AccountChange.setBounds(340, 28, 164, 85);
 		add(AccountChange);
 		AccountChange.setForeground(Color.WHITE);
 		AccountChange.setFont(new Font("∏º¿∫ ∞ÌµÒ", Font.BOLD, 20));
-		AccountChange.setBackground(new Color(100, 149, 237));
+		AccountChange.setBackground(new Color(0, 0, 128));
 		
 	}
 
