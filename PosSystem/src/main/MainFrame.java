@@ -23,7 +23,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-import db.PosDto;
 import db.PosUse;
 import sale.DealCancel;
 import sale.Payment_1;
@@ -110,7 +109,6 @@ public class MainFrame extends JFrame implements ActionListener, Runnable{// 메�
 //	상품보류 버튼 눌림 여부 확인
 	boolean isHold = false;
 //	보류한 상품들의 PosDto객체들을 저장할 벡터
-	Vector<PosDto> hodingProductList = null;
 	
 	public ViewSalesInput viewSalesInput = new ViewSalesInput();
 	public SalesInputService salesInputService = new SalesInputService(this);

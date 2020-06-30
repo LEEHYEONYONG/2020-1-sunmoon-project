@@ -30,7 +30,6 @@ public class Connect_DB {
 	
 	ResultSet result = null;
 
-	PosDto posDto = null;
 	public PosUse posUse = null;
 	SalesInputService salesInputService;
 	int rf_index = 0;//환불 행
@@ -1117,7 +1116,6 @@ public class Connect_DB {
 			//DB연결
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			con = DriverManager.getConnection(url,user,passwd);
-			posDto = new PosDto();
 			//쿼리문 세팅
 			String query = "SELECT P.P_NUM AS '상품코드', P.P_CATEGORY AS '상품분류', P.P_NAME AS '상품명', P.P_COST AS '가격', V.SC AS '판매수량', P.P_COST * V.SC AS '매출합계', P.P_PROVIDE AS '제조사'\r\n"+
 					"FROM PRODUCT P, (SELECT CHARGE.C_NAME, SUM(CHARGE.C_AMOUNT) SC FROM CHARGE where date_format(c_day,'%Y%m')=? and c_state='구매' group by C_NAME) V\r\n"+

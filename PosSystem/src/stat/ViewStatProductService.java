@@ -15,7 +15,6 @@ import org.jfree.ui.RectangleInsets;
 import org.jfree.util.Rotation;
 
 import db.Connect_DB;
-import db.PosDto;
 import db.PosUse;
 
 public class ViewStatProductService implements ActionListener {

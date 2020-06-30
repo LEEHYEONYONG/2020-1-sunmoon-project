@@ -20,7 +20,6 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.TextAnchor;
 
 import db.Connect_DB;
-import db.PosDto;
 import db.PosUse;
 
 

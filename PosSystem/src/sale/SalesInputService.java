@@ -28,7 +28,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
-import db.PosDto;
 import db.PosUse;
 import main.MainFrame;
 import db.Connect_DB;
